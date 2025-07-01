@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1A1A1A;
+  color: #F4F4F4;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: "Inconsolata", monospace;
+}
+
+/* testo centrato dentro al cerchio */
+.titolo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* paragrafo descrittivo sotto */
+.text {
+  max-width: 500px;
+  text-align: center;
+  font-size: 18px;
+  padding: 0 20px;
+}
+
+.paragrafo {
+  margin-left: 220px;  /* lascia spazio al menu fisso */
+  width: 30vw;         /* 30% del viewport */
+  margin-top: 40px;
+  text-align: left;
+}
+
+::selection {
+  background: #F4F4F4;
+  color: rgb(31, 31, 31);
+  text-shadow: none;
+}
+
+.cliccabile {
+    margin-top: 20px;
+}
+
+.cliccabile:link {
+    color: #F4F4F4;
+}
+
+.cliccabile:hover {
+    color: #a5a5a5;
+}
+
+.cliccabile:visited {
+    color: inherit;
+}
+
+/* MENU----------------------------------------------- */
+.menu-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  font-family: "Inconsolata", monospace;
+}
+
+.menu {
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 4px;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  margin: 4px 0;
+}

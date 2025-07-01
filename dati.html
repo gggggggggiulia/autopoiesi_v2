@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+  <title>autopoiesi / dati</title>
+  <link rel="stylesheet" href="info.css" />
+</head>
+<body>
+
+  <div class="menu-container">
+    <nav class="menu">
+      <a href="home.html">autopoiesi</a><br>
+      <a href="info.html">info</a><br>
+      <a href="#"><u>dati</u></a><br>
+      <a href="index.html">rete</a>
+    </nav>
+  </div>
+
+  <div class="paragrafo">
+    DATI<br><br>
+    Autopoiesi è pensato per essere integrato a dati sempre nuovi. Una collaborazione con i ricercatori, infatti, risulta fondamentale per il mantenimento di un database aggiornato e sempre più accurato. <br><br>
+    Tutto il sistema è basato sulla lettura di due file csv: quello dei nodi <i>(Nodes)</i> e quello delle connessioni <i>(Edges)</i>.<br><br>
+
+    Questi file possono essere continuamente aggiornati, a patto che vengano mantenuti i nomi delle colonne. Non solo, è possibile infatti aggiungere delle proprietà personalizzate sia ai nodi che alle connessioni, in modo da ottenere nuovi parametri su cui costruire per esempio filtri, contatori o altri strumenti.<br><br><br>
+
+    FORMATTAZIONE NODI<br><br>
+    La struttura del documento <i>nodes.csv</i> è la seguente:<br><br>
+    scientific_name / Vulpes vulpes<br>
+    node_type / Animalia<br>
+    name / Volpe rossa<br>
+    image / https://i.postimg.cc/nLxTLMMr/volpe.png<br>
+    observations / Nessuna
+    <br><br><br>
+
+    FORMATTAZIONE CONNESSIONI<br><br>
+    La struttura del documento <i>edges.csv</i> è la seguente:<br><br>
+    source / Vulpes vulpes<br>
+    target / Lepus europaeus<br>
+    type / interagisce con<br>
+    
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+  </div>
+
+</body>
+</html>

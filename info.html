@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+  <title>autopoiesi / info</title>
+  <link rel="stylesheet" href="info.css" />
+</head>
+<body>
+
+  <div class="menu-container">
+    <nav class="menu">
+      <a href="home.html">autopoiesi</a><br>
+      <a href="info.html"><u>info</u></a><br>
+      <a href="dati.html">dati</a><br>
+      <a href="index.html">rete</a>
+    </nav>
+  </div>
+
+  <div class="paragrafo">
+    L'idea del progetto è quella di esplorare un concetto estremamente esteso e complesso come quello delle interazioni biologiche tra specie. Per poter procedere con ordine e comprendere a pieno tutti gli aspetti di questo obiettivo, occorre partire dal termine <i>interazioni</i>. In biologia, il termine fa riferimento ai modi in cui gli organismi viventi interagiscono tra loro e con il loro ambiente.
+  <br><br><br>
+    Nei paper dei ricercatori di tutto il mondo si sono catalogati vari tipi di interazioni possibili <i>(↗ <a class="cliccabile" href="https://www.ebi.ac.uk/ols4/" target="_blank">https://www.ebi.ac.uk/ols4/</a>)</i>. Bisogna tenere conto che questa catalogazione presenta dei limiti, difatti si parla di dati, quelli delle interazioni, non quantificabili in maniera esatta. Possiamo sapere che qualcuno ha scritto di una interazione di un certo tipo tra due determinate specie, ma non possiamo con certezza sapere se tutte le interazioni tra due determinate specie siano state effettivamente osservate, o studiate.
+  <br><br><br>
+    > Visti tutti i livelli di complicazione, come possiamo esplorare questi dati? Cosa ci possono dire sulle specie dell'Oasi Cave di Noale?
+  <br><br><br>
+    PROCESSO <br><br>
+    La prima porzione di dati riguarda le specie presenti all'interno dell'Oasi di Noale. Un incrocio di database ha portato alla lista definitiva di tutte le specie osservate.<br>
+    <i>[iNaturalist, Consorzio, ]</i>
+  <br><br><br>
+    La seconda porzione di dati è quella riguardante le interazioni tra le specie raccolte. A questo scopo è stato utilizzato Globi. Si tratta di una piattaforma pensata per essere un vero e proprio motore di ricerca di interazioni tra specie. Il programma effettua una ricerca su un ampio database di paper scientifici da tutto il mondo e, una volta inserito il nome della specie <i>source</i> (A) e della specie <i>target</i> (B) restituisce i risultati basandosi sulle citazioni delle specie (e talvolta di una specifica interazione) in questi paper. <br><br>La piattaforma è stata utilizzata per raccogliere le interazioni di tutte le specie interne all'oasi. Questa base dati è stata poi convertita in una visualizzazione a rete.
+  <br><br><br>
+    IL GRAFICO<br><br>
+    La visualizzazione a rete permette di avere uno sguardo generale su una ampia mole di dati. Questo tipo di grafico, però, si presta anche ad una esplorazione più approfondita, talvolta verticale su una singola specie, bisogna avvicinarsi, cliccare sui nodi, incuriosirsi. Per una buona fruizione del grafico, occorre tenere a mente alcune caratteristiche:<br><br>
+    - Ogni nodo rappresenta una specie.<br><br>
+    - La dimensione di ciascun nodo è proporzionale alla quantità di specie con cui interagisce.<br><br>
+    - I nodi oscurati rappresentano le specie con 0 osservazioni nell'Oasi su iNaturalist.<br><br>
+    - La disposizione dei nodi nello spazio non corrisponde ad una disposizione geografica, l'algoritmo utilizzato ha l'obiettivo di avvicinare i nodi connessi tra loro.<br><br>
+    - È possibile trascinare e spostare i nodi nello spazio, premendo la [barra spaziatrice] si rigenera la posizione iniziale.<br><br>
+    - Cliccando sui collegamenti si ottengono informazioni riguardanti il tipo di relazione tra le due specie.<br><br>
+    - In alto a destra è presente un contatore che segnala in automatico la specie che interagisce con il maggior numero di specie.<br><br>
+    - Se si fa zoom out si visualizza un cerchio contenitore di tutti i nodi. Questo comprende tutte le specie dell'Oasi di Noale, è stato pensato in ottica di una possibile estensione futura del progetto, che vedrebbe l'integrazione di altri cerchi e quindi di altre oasi.
+    <br><br><br>
+    <a href="rete.html" class="cliccabile">> Vai alla rete</a>
+    
+    <br><br><br><br><br><br><br><br><br><br><br><br>
+  </div>
+
+</body>
+</html>

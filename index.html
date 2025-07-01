@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+  <title>autopoiesi / rete</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="menu-container">
+    <nav class="menu">
+      <a href="home.html">autopoiesi</a><br>
+      <a href="info.html">info</a><br>
+      <a href="dati.html">dati</a><br>
+      <a href="index.html"><u>rete</u></a>
+    </nav>
+  </div>
+
+  <div id="overlay"></div>
+  <button id="reset">
+    <img src="reload.png" id="reload">
+  </button>
+  <svg><g id="container"></g></svg>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+  <script src="script.js"></script>
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menuContainer = document.querySelector('.menu-container');
+
+    menuToggle.addEventListener('click', () => {
+      menuContainer.classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
