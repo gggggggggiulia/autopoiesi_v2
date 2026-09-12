@@ -94,10 +94,12 @@ d3.select("body").append("div")
     // nessun collegamento viene comunque "respinto" da tutti gli altri
     // (forceManyBody) ma non ha nulla che lo richiami indietro, perché
     // forceCenter agisce solo sul baricentro complessivo del grafo, non
-    // sul singolo nodo. Questo faceva sì che i nodi isolati finissero
-    // molto lontani dal resto della rete.
-    .force("x", d3.forceX(width / 2).strength(0.06))
-    .force("y", d3.forceY(height / 2).strength(0.06));
+    // sul singolo nodo. La forza è più intensa sui nodi con grado basso
+    // (che non hanno un forceLink a tenerli ancorati alla rete) e più
+    // debole sui nodi ben connessi, che si organizzano naturalmente
+    // tramite i loro collegamenti.
+    .force("x", d3.forceX(width / 2).strength(d => d.degree === 0 ? 0.35 : d.degree === 1 ? 0.12 : 0.03))
+    .force("y", d3.forceY(height / 2).strength(d => d.degree === 0 ? 0.35 : d.degree === 1 ? 0.12 : 0.03));
 
   const linkGroup = container.append("g").attr("class", "links");
 
