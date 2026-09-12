@@ -1,3 +1,16 @@
+// Impedisce lo zoom nativo del browser (pagina intera) durante il pinch
+// sul trackpad, indipendentemente da dove si trova il cursore — es. sopra
+// l'info-box che appare quando un nodo è aperto. Senza questo, il pinch
+// sopra elementi HTML esterni all'<svg> viene gestito dal browser invece
+// che da D3, creando il "salto" percepito nello zoom.
+document.addEventListener("wheel", (event) => {
+  if (event.ctrlKey) event.preventDefault();
+}, { passive: false });
+
+document.addEventListener("gesturestart", (event) => event.preventDefault());
+document.addEventListener("gesturechange", (event) => event.preventDefault());
+document.addEventListener("gestureend", (event) => event.preventDefault());
+
 const width = window.innerWidth;
 const height = window.innerHeight;
 
