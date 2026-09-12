@@ -61,6 +61,45 @@ Promise.all([
     d.degree = adjacency[d.scientific_name]?.size || 0;
   });
 
+  // Individua le componenti connesse: gruppi di nodi collegati tra loro
+  // ma isolati dal resto della rete (es. 3 specie che interagiscono solo
+  // fra loro e con nessun'altra). Un nodo del genere può avere grado 2 o
+  // 3 "al suo interno", quindi un controllo basato solo sul grado non lo
+  // intercetta: qui invece marchiamo ogni nodo con l'id della sua
+  // componente, per poter trattare diversamente chi sta nella rete
+  // principale da chi sta in un gruppetto satellite.
+  const visitedForComponents = new Set();
+  const componentSizes = [];
+  nodes.forEach(startNode => {
+    const startId = startNode.scientific_name;
+    if (visitedForComponents.has(startId)) return;
+    const compIndex = componentSizes.length;
+    const queue = [startId];
+    visitedForComponents.add(startId);
+    let size = 0;
+    while (queue.length) {
+      const currentId = queue.shift();
+      const currentNode = nodes.find(n => n.scientific_name === currentId);
+      if (currentNode) currentNode.componentId = compIndex;
+      size++;
+      (adjacency[currentId] || new Set()).forEach(neighborId => {
+        if (!visitedForComponents.has(neighborId)) {
+          visitedForComponents.add(neighborId);
+          queue.push(neighborId);
+        }
+      });
+    }
+    componentSizes.push(size);
+  });
+
+  // La componente più grande è la "rete principale"; tutte le altre sono
+  // cluster satellite da tenere vicini, indipendentemente dal grado
+  // interno dei loro nodi.
+  const mainComponentId = componentSizes.indexOf(Math.max(...componentSizes));
+  nodes.forEach(d => {
+    d.isMainComponent = d.componentId === mainComponentId;
+  });
+
   // Trova la specie con il maggior numero di connessioni
 const maxDegreeNode = nodes.reduce((max, node) => node.degree > max.degree ? node : max, nodes[0]);
 
@@ -214,27 +253,25 @@ d3.select("body").append("div")
   }
 
   simulation.on("tick", () => {
-    // Vincolo rigido: un nodo isolato (grado 0) o poco connesso (grado 1)
-    // non può mai superare una distanza massima dal centro, qualunque
-    // cosa facciano le altre forze e quante volte si riavvii la
-    // simulazione con la barra spaziatrice. A differenza di una "molla"
-    // (forceX/forceY), questo è un limite assoluto: niente tiro alla
-    // fune con la repulsione, niente peggioramento progressivo.
+    // Vincolo rigido: qualunque nodo che NON fa parte della componente
+    // connessa principale (cioè fa parte di un cluster satellite,
+    // magari collegato solo ad altri 2-3 nodi ma isolato dal resto della
+    // rete) non può mai superare una distanza massima dal centro,
+    // qualunque cosa facciano le altre forze e quante volte si riavvii
+    // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistIsolated = Math.min(width, height) * 0.22;
-    const maxDistWeak = Math.min(width, height) * 0.36;
+    const maxDistSatellite = Math.min(width, height) * 0.32;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
-      const maxDist = d.degree === 0 ? maxDistIsolated : d.degree === 1 ? maxDistWeak : Infinity;
-      if (maxDist === Infinity) return;
+      if (d.isMainComponent) return;
 
       const dx = d.x - cx;
       const dy = d.y - cy;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist > maxDist) {
-        const k = maxDist / dist;
+      if (dist > maxDistSatellite) {
+        const k = maxDistSatellite / dist;
         d.x = cx + dx * k;
         d.y = cy + dy * k;
         // smorza la velocità residua: senza questo il nodo "rimbalzerebbe"
