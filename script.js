@@ -87,19 +87,13 @@ d3.select("body").append("div")
 
   simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(90))
-    .force("charge", d3.forceManyBody().strength(-250))
+    .force("charge", d3.forceManyBody().strength(-350))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
-    // Gravità individuale: senza queste due forze, un nodo con pochi o
-    // nessun collegamento viene comunque "respinto" da tutti gli altri
-    // (forceManyBody) ma non ha nulla che lo richiami indietro, perché
-    // forceCenter agisce solo sul baricentro complessivo del grafo, non
-    // sul singolo nodo. La forza è più intensa sui nodi con grado basso
-    // (che non hanno un forceLink a tenerli ancorati alla rete) e più
-    // debole sui nodi ben connessi, che si organizzano naturalmente
-    // tramite i loro collegamenti.
-    .force("x", d3.forceX(width / 2).strength(d => d.degree === 0 ? 0.35 : d.degree === 1 ? 0.12 : 0.03))
-    .force("y", d3.forceY(height / 2).strength(d => d.degree === 0 ? 0.35 : d.degree === 1 ? 0.12 : 0.03));
+    // Coesione leggera e uniforme per tutti i nodi (aiuta il layout
+    // generale, non basta da sola a "salvare" i nodi isolati)
+    .force("x", d3.forceX(width / 2).strength(0.02))
+    .force("y", d3.forceY(height / 2).strength(0.02));
 
   const linkGroup = container.append("g").attr("class", "links");
 
@@ -220,6 +214,36 @@ d3.select("body").append("div")
   }
 
   simulation.on("tick", () => {
+    // Vincolo rigido: un nodo isolato (grado 0) o poco connesso (grado 1)
+    // non può mai superare una distanza massima dal centro, qualunque
+    // cosa facciano le altre forze e quante volte si riavvii la
+    // simulazione con la barra spaziatrice. A differenza di una "molla"
+    // (forceX/forceY), questo è un limite assoluto: niente tiro alla
+    // fune con la repulsione, niente peggioramento progressivo.
+    const cx = width / 2;
+    const cy = height / 2;
+    const maxDistIsolated = Math.min(width, height) * 0.22;
+    const maxDistWeak = Math.min(width, height) * 0.36;
+
+    nodes.forEach(d => {
+      if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
+      const maxDist = d.degree === 0 ? maxDistIsolated : d.degree === 1 ? maxDistWeak : Infinity;
+      if (maxDist === Infinity) return;
+
+      const dx = d.x - cx;
+      const dy = d.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > maxDist) {
+        const k = maxDist / dist;
+        d.x = cx + dx * k;
+        d.y = cy + dy * k;
+        // smorza la velocità residua: senza questo il nodo "rimbalzerebbe"
+        // subito di nuovo verso l'esterno al tick successivo
+        d.vx *= 0.15;
+        d.vy *= 0.15;
+      }
+    });
+
     curvedLinks.attr("d", function (d, i) {
       const x1 = d.source.x;
       const y1 = d.source.y;
