@@ -16,6 +16,7 @@ svg {
   width: 100vw;
   height: 100vh;
   background: black; /* colore di sfondo */
+  touch-action: none;
 }
 
 button#reset {
