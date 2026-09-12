@@ -15,7 +15,8 @@ if (infoBox.empty()) {
   infoBox = d3.select("body").append("div").attr("id", "info-box");
 }
 
-let simulation, node, curvedLinks, edgeLabels;
+let simulation, node, curvedLinks, edgeLabels, zoom;
+let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
 
 const interactionDescriptions = {
   "è vettore di": "A è un vettore per B se trasporta e trasmette un patogeno infettivo in un altro organismo vivente.",
@@ -73,9 +74,17 @@ d3.select("body").append("div")
 
   simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(90))
-    .force("charge", d3.forceManyBody().strength(-500))
+    .force("charge", d3.forceManyBody().strength(-350))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5));
+    .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
+    // Gravità individuale: senza queste due forze, un nodo con pochi o
+    // nessun collegamento viene comunque "respinto" da tutti gli altri
+    // (forceManyBody) ma non ha nulla che lo richiami indietro, perché
+    // forceCenter agisce solo sul baricentro complessivo del grafo, non
+    // sul singolo nodo. Questo faceva sì che i nodi isolati finissero
+    // molto lontani dal resto della rete.
+    .force("x", d3.forceX(width / 2).strength(0.06))
+    .force("y", d3.forceY(height / 2).strength(0.06));
 
   const linkGroup = container.append("g").attr("class", "links");
 
@@ -302,7 +311,7 @@ d3.select("body").append("div")
     edgeLabels.selectAll("*").remove();
   }
 
-  const zoom = d3.zoom()
+  zoom = d3.zoom()
     .scaleExtent([0.1, 5])
     .on("zoom", (event) => {
       container.attr("transform", event.transform);
@@ -310,12 +319,22 @@ d3.select("body").append("div")
 
   svg.call(zoom);
 
+  // L'auto-fit iniziale deve avvenire una sola volta: prima usava sia
+  // "simulation end" sia un setTimeout, e "end" si riattiva ogni volta
+  // che si trascina un nodo, quindi la vista si ricentrava da sola e
+  // cancellava lo zoom/pan manuale dell'utente ("salto" percepito).
   simulation.on("end", () => {
-    scaleAndCenter(nodes);
+    if (!hasAutoFitted) {
+      hasAutoFitted = true;
+      scaleAndCenter(nodes);
+    }
   });
 
   setTimeout(() => {
-    scaleAndCenter(nodes);
+    if (!hasAutoFitted) {
+      hasAutoFitted = true;
+      scaleAndCenter(nodes);
+    }
   }, 2000);
 
   function updateBoundary() {
@@ -375,8 +394,11 @@ function scaleAndCenter(nodes) {
 
   svg.transition()
     .duration(1000)
-    .call(d3.zoom().transform, t)
-    .ease(d3.easeCubicOut);
+    .ease(d3.easeCubicOut)
+    .call(zoom.transform, t); // stessa istanza di zoom usata da svg.call(zoom) sopra,
+                              // così l'evento "zoom" viene ricevuto dall'handler che
+                              // aggiorna container.attr("transform", ...) ad ogni frame
+                              // della transizione, invece di scattare di colpo alla fine
 }
 
 function drag(simulation) {
