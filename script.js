@@ -87,7 +87,7 @@ d3.select("body").append("div")
 
   simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(90))
-    .force("charge", d3.forceManyBody().strength(-350))
+    .force("charge", d3.forceManyBody().strength(-250))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
     // Gravità individuale: senza queste due forze, un nodo con pochi o
