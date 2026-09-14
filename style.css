@@ -95,7 +95,7 @@ button#reset:hover {
 .selection-ring {
   transform-box: fill-box;
   transform-origin: center;
-  animation: rotate-selection-ring 14s linear infinite;
+  animation: rotate-selection-ring 30s linear infinite;
 }
 
 @keyframes rotate-selection-ring {
