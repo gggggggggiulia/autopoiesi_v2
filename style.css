@@ -65,7 +65,7 @@ button#reset:hover {
   color: #F4F4F4;
   padding: 15px;
   font-size: 14px;
-  pointer-events: auto;
+  pointer-events: none; /* lascia passare drag/zoom verso l'svg sottostante */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -85,6 +85,7 @@ button#reset:hover {
   width: 100%;
   height: auto;
   margin-top: 10px;
+  pointer-events: auto; /* le immagini restano cliccabili per l'ingrandimento */
 }
 
 .node {
