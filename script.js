@@ -407,6 +407,12 @@ d3.select("body").append("div")
 
   svg.call(zoom);
 
+  // Disattiva lo zoom-al-doppio-click integrato di D3: senza questo,
+  // cliccare un nodo e poi cliccare altrove per chiuderlo (due click
+  // ravvicinati) può essere interpretato dal browser come un doppio
+  // click sull'svg, facendo scattare uno zoom improvviso non voluto.
+  svg.on("dblclick.zoom", null);
+
   // L'auto-fit iniziale deve avvenire una sola volta: prima usava sia
   // "simulation end" sia un setTimeout, e "end" si riattiva ogni volta
   // che si trascina un nodo, quindi la vista si ricentrava da sola e
