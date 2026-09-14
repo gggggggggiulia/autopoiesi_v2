@@ -92,6 +92,17 @@ button#reset:hover {
   cursor: pointer;
 }
 
+.selection-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rotate-selection-ring 14s linear infinite;
+}
+
+@keyframes rotate-selection-ring {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* #overlay {
   position: fixed;
   top: 0; left: 0;
