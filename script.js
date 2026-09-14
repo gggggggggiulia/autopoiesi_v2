@@ -30,6 +30,7 @@ if (infoBox.empty()) {
 
 let simulation, node, curvedLinks, edgeLabels, zoom;
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
+let selectedNodeId = null; // id del nodo attualmente aperto, per tenere l'anello di selezione agganciato
 
 const interactionDescriptions = {
   "è vettore di": "A è un vettore per B se trasporta e trasmette un patogeno infettivo in un altro organismo vivente.",
@@ -56,7 +57,7 @@ Promise.all([
 
   nodes.forEach(d => {
     d.observations = d.observations === "Nessuna" ? 0 : +d.observations;
-    d.opacity = d.observations === 0 ? 0.7 : 1;
+    d.notObserved = d.observations === 0; // specie non ancora osservata nel territorio
     d.color = "#000000";
     d.degree = adjacency[d.scientific_name]?.size || 0;
   });
@@ -126,8 +127,8 @@ d3.select("body").append("div")
     .range([15, 45]);
 
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(150))
-    .force("charge", d3.forceManyBody().strength(-600))
+    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(90))
+    .force("charge", d3.forceManyBody().strength(-350))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
     // Coesione leggera e uniforme per tutti i nodi (aiuta il layout
@@ -156,6 +157,8 @@ d3.select("body").append("div")
   container.selectAll("circle.bg").style("opacity", 1);
   curvedLinks.style("opacity", 1);
   edgeLabels.selectAll("*").remove();
+  selectedNodeId = null;
+  selectionRing.style("opacity", 0);
 
   const sourceNode = typeof d.source === "object" ? d.source : nodes.find(n => n.scientific_name === d.source);
   const targetNode = typeof d.target === "object" ? d.target : nodes.find(n => n.scientific_name === d.target);
@@ -179,6 +182,17 @@ d3.select("body").append("div")
 
   const defs = svg.select("defs").empty() ? svg.append("defs") : svg.select("defs");
 
+  // Filtro di desaturazione per le specie non ancora osservate: più
+  // intuitivo e più elegante di un semplice abbassamento di opacità,
+  // e coerente con l'idea di "presenza non confermata".
+  if (defs.select("#grayscale-filter").empty()) {
+    defs.append("filter")
+      .attr("id", "grayscale-filter")
+      .append("feColorMatrix")
+      .attr("type", "saturate")
+      .attr("values", 0);
+  }
+
   defs.selectAll("pattern")
     .data(nodes)
     .enter()
@@ -192,7 +206,7 @@ d3.select("body").append("div")
     .attr("preserveAspectRatio", "xMidYMid slice")
     .attr("width", d => sizeScale(d.degree) * 2)
     .attr("height", d => sizeScale(d.degree) * 2)
-    .attr("opacity", d => d.opacity);
+    .attr("filter", d => d.notObserved ? "url(#grayscale-filter)" : null);
 
   container.selectAll("circle.bg")
     .data(nodes)
@@ -211,8 +225,8 @@ d3.select("body").append("div")
     .attr("r", d => sizeScale(d.degree))
     .attr("stroke", "#646466")
     .attr("stroke-width", 0.4) // <-- stroke nodo
+    .attr("stroke-dasharray", d => d.notObserved ? "4 3" : null) // tratteggio = non osservata
     .attr("fill", d => `url(#img-${d.scientific_name.replace(/\s+/g, "_")})`)
-    .attr("fill-opacity", d => d.opacity)
     .call(drag(simulation));
 
   let boundary = container.selectAll("circle.boundary").data([null]);
@@ -262,7 +276,7 @@ d3.select("body").append("div")
     // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistSatellite = Math.min(width, height) * 0.7;
+    const maxDistSatellite = Math.min(width, height) * 0.32;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
@@ -279,7 +293,7 @@ d3.select("body").append("div")
         // il nodo rientra scivolando dolcemente nei fotogrammi
         // successivi invece di saltare di colpo.
         const overshoot = dist - maxDistSatellite;
-        const pullStrength = 0.04; // più alto = rientro più rapido/deciso
+        const pullStrength = 0.08; // più alto = rientro più rapido/deciso
         d.vx -= (dx / dist) * overshoot * pullStrength;
         d.vy -= (dy / dist) * overshoot * pullStrength;
       }
@@ -305,6 +319,13 @@ d3.select("body").append("div")
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
 
+    if (selectedNodeId) {
+      const selectedNode = nodes.find(n => n.scientific_name === selectedNodeId);
+      if (selectedNode) {
+        selectionRing.attr("cx", selectedNode.x).attr("cy", selectedNode.y);
+      }
+    }
+
     updateBoundary();
   });
 
@@ -320,6 +341,18 @@ d3.select("body").append("div")
     d3.select("#reset").dispatch("click");
   }
   });
+
+  let selectionRing = container.selectAll("circle.selection-ring").data([null]);
+  selectionRing = selectionRing.enter()
+    .append("circle")
+    .attr("class", "selection-ring")
+    .attr("fill", "none")
+    .attr("stroke", "#F4F4F4")
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "4 6")
+    .style("opacity", 0)
+    .style("pointer-events", "none")
+    .merge(selectionRing);
 
   node.on("click", (event, d) => {
     event.stopPropagation();
@@ -338,6 +371,13 @@ d3.select("body").append("div")
       );
 
     edgeLabels.selectAll("*").remove();
+
+    selectedNodeId = clickedId;
+    selectionRing
+      .attr("cx", d.x)
+      .attr("cy", d.y)
+      .attr("r", sizeScale(d.degree) + 8)
+      .style("opacity", 1);
 
     const edgesToShow = links.filter(lk => {
       const src = typeof lk.source === "object" ? lk.source.scientific_name : lk.source;
@@ -389,6 +429,8 @@ d3.select("body").append("div")
     curvedLinks.style("opacity", 1);
     container.selectAll("circle.bg").style("opacity", 1);
     edgeLabels.selectAll("*").remove();
+    selectedNodeId = null;
+    selectionRing.style("opacity", 0);
   }
 
   let isMouseDragging = false;
