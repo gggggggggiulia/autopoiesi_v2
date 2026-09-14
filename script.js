@@ -117,6 +117,7 @@ d3.select("body").append("div")
   .style("font-size", "14px")
   .style("border-radius", "6px")
   .style("box-shadow", "0 2px 6px rgba(0, 0, 0, 0)")
+  .style("pointer-events", "none") // pannello puramente informativo: lascia passare drag/zoom verso l'svg
   .html(`<b>Specie che interagisce con il maggor numero di altre specie:</b><br>${maxDegreeNode.name} <br><i>(${maxDegreeNode.scientific_name})</i>`);
 
 
