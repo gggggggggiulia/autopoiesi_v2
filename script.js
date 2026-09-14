@@ -126,9 +126,22 @@ d3.select("body").append("div")
     .domain(d3.extent(nodes, d => d.degree))
     .range([15, 45]);
 
+  // Calcola uno stroke-dasharray che si ripete un numero intero di volte
+  // lungo la circonferenza di un cerchio di raggio r, così il tratteggio
+  // si richiude sempre in modo pulito invece di lasciare un trattino
+  // storto/tagliato nel punto in cui il percorso ricomincia.
+  function seamlessDashArray(r, dashFraction = 4 / 7, targetUnit = 7) {
+    const circumference = 2 * Math.PI * r;
+    const repeats = Math.max(3, Math.round(circumference / targetUnit));
+    const unit = circumference / repeats;
+    const dash = unit * dashFraction;
+    const gap = unit - dash;
+    return `${dash.toFixed(2)} ${gap.toFixed(2)}`;
+  }
+
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(130))
-    .force("charge", d3.forceManyBody().strength(-400))
+    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(90))
+    .force("charge", d3.forceManyBody().strength(-350))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
     // Coesione leggera e uniforme per tutti i nodi (aiuta il layout
@@ -225,7 +238,7 @@ d3.select("body").append("div")
     .attr("r", d => sizeScale(d.degree))
     .attr("stroke", "#646466")
     .attr("stroke-width", 0.4) // <-- stroke nodo
-    .attr("stroke-dasharray", d => d.notObserved ? "4 3" : null) // tratteggio = non osservata
+    .attr("stroke-dasharray", d => d.notObserved ? seamlessDashArray(sizeScale(d.degree)) : null) // tratteggio = non osservata
     .attr("fill", d => `url(#img-${d.scientific_name.replace(/\s+/g, "_")})`)
     .call(drag(simulation));
 
@@ -267,6 +280,19 @@ d3.select("body").append("div")
     return (index - (sameLinks.length - 1) / 2) * separation;
   }
 
+  // Calcola il punto medio di un collegamento e l'angolo di rotazione
+  // per la sua etichetta, normalizzato in modo che il testo non sia mai
+  // capovolto (se il collegamento "punta" a sinistra, ruotiamo di 180°).
+  function getLinkLabelTransform(d) {
+    const x1 = d.source.x, y1 = d.source.y;
+    const x2 = d.target.x, y2 = d.target.y;
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    let angleDeg = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+    if (angleDeg > 90 || angleDeg < -90) angleDeg += 180;
+    return { x: mx, y: my, angle: angleDeg };
+  }
+
   simulation.on("tick", () => {
     // Vincolo rigido: qualunque nodo che NON fa parte della componente
     // connessa principale (cioè fa parte di un cluster satellite,
@@ -276,7 +302,7 @@ d3.select("body").append("div")
     // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistSatellite = Math.min(width, height) * 1.1;
+    const maxDistSatellite = Math.min(width, height) * 0.32;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
@@ -293,7 +319,7 @@ d3.select("body").append("div")
         // il nodo rientra scivolando dolcemente nei fotogrammi
         // successivi invece di saltare di colpo.
         const overshoot = dist - maxDistSatellite;
-        const pullStrength = 0.04; // più alto = rientro più rapido/deciso
+        const pullStrength = 0.08; // più alto = rientro più rapido/deciso
         d.vx -= (dx / dist) * overshoot * pullStrength;
         d.vy -= (dy / dist) * overshoot * pullStrength;
       }
@@ -318,6 +344,11 @@ d3.select("body").append("div")
     container.selectAll("circle.bg")
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
+
+    edgeLabels.selectAll("text").attr("transform", d => {
+      const t = getLinkLabelTransform(d);
+      return `translate(${t.x}, ${t.y}) rotate(${t.angle})`;
+    });
 
     if (selectedNodeId) {
       const selectedNode = nodes.find(n => n.scientific_name === selectedNodeId);
@@ -377,6 +408,7 @@ d3.select("body").append("div")
       .attr("cx", d.x)
       .attr("cy", d.y)
       .attr("r", sizeScale(d.degree) + 8)
+      .attr("stroke-dasharray", seamlessDashArray(sizeScale(d.degree) + 8, 3 / 7, 6))
       .style("opacity", 1);
 
     const edgesToShow = links.filter(lk => {
@@ -392,11 +424,13 @@ d3.select("body").append("div")
       .attr("class", "edge-label")
       .attr("font-size", 8)
       .attr("fill", "white")
-      .attr("pointer-events", "none")
-      .append("textPath")
-      .attr("xlink:href", (d, i) => `#link-path-${links.indexOf(d)}`)
-      .attr("startOffset", "50%")
       .attr("text-anchor", "middle")
+      .attr("pointer-events", "none")
+      .attr("transform", d => {
+        const t = getLinkLabelTransform(d);
+        return `translate(${t.x}, ${t.y}) rotate(${t.angle})`;
+      })
+      .attr("dy", -3)
       .text(d => d.type);
 
     const interactionCounts = {};
@@ -453,19 +487,12 @@ d3.select("body").append("div")
       if (event.sourceEvent && event.sourceEvent.type === "mousedown") {
         isMouseDragging = true;
       }
-      // Le etichette con textPath sono costose da ridisegnare ad ogni
-      // fotogramma (il browser deve ricalcolare la posizione di ogni
-      // lettera lungo la curva). Nascondendole durante il movimento
-      // attivo si evita il crollo di frame rate che causava i "salti"
-      // — soprattutto evidente sui nodi con molti collegamenti aperti.
-      edgeLabels.style("display", "none");
     })
     .on("zoom", (event) => {
       container.attr("transform", event.transform);
     })
     .on("end", () => {
       isMouseDragging = false;
-      edgeLabels.style("display", null);
     });
 
   svg.call(zoom);
