@@ -1,4 +1,3 @@
-
 // Impedisce lo zoom nativo del browser (pagina intera) durante il pinch
 // sul trackpad, indipendentemente da dove si trova il cursore — es. sopra
 // l'info-box che appare quando un nodo è aperto. Senza questo, il pinch
@@ -29,7 +28,7 @@ if (infoBox.empty()) {
   infoBox = d3.select("body").append("div").attr("id", "info-box");
 }
 
-let simulation, node, curvedLinks, edgeLabels, zoom;
+let simulation, node, curvedLinks, linkTextPaths, edgeLabels, zoom;
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
 let selectedNodeId = null; // id del nodo attualmente aperto, per tenere l'anello di selezione agganciato
 
@@ -149,6 +148,21 @@ d3.select("body").append("div")
     .attr("fill", "none")
     .attr("id", (d, i) => `link-path-${i}`)
     .style("pointer-events", "stroke");  // così la hitbox è sullo stroke, non solo sul riempimento
+
+    // Path "gemelli" invisibili, uno per ogni edge: hanno la stessa forma
+    // dell'arco visibile ma vengono ridisegnati (vedi tick) in modo da
+    // andare sempre da sinistra verso destra. Il testo si aggancia a
+    // questi invece che al path visibile, così non appare mai capovolto,
+    // indipendentemente da come sono orientati nodo sorgente e nodo target.
+    const textPathGroup = container.append("g").attr("class", "link-text-paths");
+    linkTextPaths = textPathGroup.selectAll("path")
+      .data(links)
+      .enter()
+      .append("path")
+      .attr("class", "link-text-path")
+      .attr("id", (d, i) => `link-text-path-${i}`)
+      .attr("fill", "none")
+      .attr("stroke", "none");
 
     curvedLinks.on("click", (event, d) => {
   event.stopPropagation();
@@ -312,6 +326,26 @@ d3.select("body").append("div")
       return `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2 + offset},${y2 + offset}`;
     });
 
+    // Stessa curva dell'arco visibile, ma tracciata sempre da sinistra a
+    // destra: se il nodo sorgente sta a destra del target, scambiamo i
+    // due estremi e invertiamo lo sweep-flag (1 -> 0). Questo produce
+    // esattamente la stessa forma sullo schermo, ma il testo lungo il
+    // path segue sempre una direzione "leggibile" invece di percorrere
+    // l'arco al contrario, il che è ciò che lo fa apparire capovolto.
+    linkTextPaths.attr("d", function (d, i) {
+      const x1 = d.source.x;
+      const y1 = d.source.y;
+      const offset = getLinkArcOffset(d, i, links);
+      const x2 = d.target.x + offset;
+      const y2 = d.target.y + offset;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dr = Math.sqrt(dx * dx + dy * dy);
+      return x1 <= x2
+        ? `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2},${y2}`
+        : `M${x2},${y2} A${dr},${dr} 0 0,0 ${x1},${y1}`;
+    });
+
     container.selectAll("circle.node")
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
@@ -374,10 +408,12 @@ d3.select("body").append("div")
     edgeLabels.selectAll("*").remove();
 
     selectedNodeId = clickedId;
+    const selectionRadius = sizeScale(d.degree) + 8;
     selectionRing
       .attr("cx", d.x)
       .attr("cy", d.y)
-      .attr("r", sizeScale(d.degree) + 8)
+      .attr("r", selectionRadius)
+      .attr("stroke-dasharray", computeEvenDashArray(selectionRadius, 4, 6))
       .style("opacity", 1);
 
     const edgesToShow = links.filter(lk => {
@@ -395,7 +431,7 @@ d3.select("body").append("div")
       .attr("fill", "white")
       .attr("pointer-events", "none")
       .append("textPath")
-      .attr("xlink:href", (d, i) => `#link-path-${links.indexOf(d)}`)
+      .attr("xlink:href", (d, i) => `#link-text-path-${links.indexOf(d)}`)
       .attr("startOffset", "50%")
       .attr("text-anchor", "middle")
       .text(d => d.type);
@@ -459,7 +495,11 @@ d3.select("body").append("div")
       // lettera lungo la curva). Nascondendole durante il movimento
       // attivo si evita il crollo di frame rate che causava i "salti"
       // — soprattutto evidente sui nodi con molti collegamenti aperti.
-      edgeLabels.style("display", "none");
+      // Se però un nodo è selezionato, l'utente vuole vederle sempre:
+      // in quel caso rinunciamo all'ottimizzazione e le lasciamo visibili.
+      if (!selectedNodeId) {
+        edgeLabels.style("display", "none");
+      }
     })
     .on("zoom", (event) => {
       container.attr("transform", event.transform);
@@ -526,6 +566,23 @@ d3.select("body").append("div")
     svg.select(`#${textPathId}`).attr("d", d);
   }
 });
+
+// Un dasharray fisso (es. "4 6") lascia quasi sempre un residuo nel punto
+// in cui il cerchio si richiude, perché la circonferenza raramente è un
+// multiplo esatto di dash+gap: lì si vede un trattino più corto o uno
+// spazio più lungo. Calcolando quanti segmenti "entrano" nella
+// circonferenza e ridistribuendo la lunghezza in modo uniforme, il
+// tratteggio si richiude sempre in modo pulito, qualunque sia il raggio.
+function computeEvenDashArray(radius, dashLength = 4, gapLength = 6) {
+  const circumference = 2 * Math.PI * radius;
+  const unit = dashLength + gapLength;
+  const segments = Math.max(1, Math.round(circumference / unit));
+  const actualUnit = circumference / segments;
+  const dashRatio = dashLength / unit;
+  const dash = actualUnit * dashRatio;
+  const gap = actualUnit - dash;
+  return `${dash} ${gap}`;
+}
 
 function scaleAndCenter(nodes) {
   const padding = 40;
