@@ -388,25 +388,28 @@ d3.select("body").append("div")
     edgeLabels.selectAll("*").remove();
   }
 
+  let isMouseDragging = false;
+
   zoom = d3.zoom()
     .scaleExtent([0.1, 5])
     .filter((event) => {
-      // I trackpad (soprattutto su Mac) possono generare un micro-evento
-      // "wheel" spurio quando si clicca fisicamente, anche senza alcuna
-      // intenzione di zoommare. Ignoriamo le variazioni troppo piccole
-      // per essere un vero pinch/scroll, lasciando passare solo i gesti
-      // di zoom genuini.
       if (event.type === "wheel") {
+        // Mentre si sta trascinando con click+mouse, ignoriamo QUALSIASI
+        // evento wheel (pinch autentico o rumore che sia): non deve mai
+        // poter alterare lo zoom finché il trascinamento è in corso.
+        if (isMouseDragging) return false;
         // Un vero pinch da trackpad viene sempre segnalato dal browser
         // con ctrlKey: true, quindi quello lo lasciamo sempre passare.
-        // In assenza di ctrlKey (es. rumore del sensore durante un
-        // trascinamento, o rotellina del mouse), richiediamo una
-        // variazione più ampia per escludere segnali spuri.
+        // In assenza di ctrlKey (es. rotellina del mouse), richiediamo
+        // una variazione più ampia per escludere segnali spuri.
         return event.ctrlKey || Math.abs(event.deltaY) > 25;
       }
       return !event.ctrlKey && !event.button;
     })
-    .on("start", () => {
+    .on("start", (event) => {
+      if (event.sourceEvent && event.sourceEvent.type === "mousedown") {
+        isMouseDragging = true;
+      }
       // Le etichette con textPath sono costose da ridisegnare ad ogni
       // fotogramma (il browser deve ricalcolare la posizione di ogni
       // lettera lungo la curva). Nascondendole durante il movimento
@@ -418,6 +421,7 @@ d3.select("body").append("div")
       container.attr("transform", event.transform);
     })
     .on("end", () => {
+      isMouseDragging = false;
       edgeLabels.style("display", null);
     });
 
