@@ -390,6 +390,17 @@ d3.select("body").append("div")
 
   zoom = d3.zoom()
     .scaleExtent([0.1, 5])
+    .filter((event) => {
+      // I trackpad (soprattutto su Mac) possono generare un micro-evento
+      // "wheel" spurio quando si clicca fisicamente, anche senza alcuna
+      // intenzione di zoommare. Ignoriamo le variazioni troppo piccole
+      // per essere un vero pinch/scroll, lasciando passare solo i gesti
+      // di zoom genuini.
+      if (event.type === "wheel") {
+        return Math.abs(event.deltaY) > 2;
+      }
+      return !event.ctrlKey && !event.button;
+    })
     .on("start", () => {
       // Le etichette con textPath sono costose da ridisegnare ad ogni
       // fotogramma (il browser deve ricalcolare la posizione di ogni
