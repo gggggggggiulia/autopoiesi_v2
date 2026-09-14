@@ -276,7 +276,7 @@ d3.select("body").append("div")
     // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistSatellite = Math.min(width, height) * 0.62;
+    const maxDistSatellite = Math.min(width, height) * 0.8;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
