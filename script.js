@@ -262,7 +262,7 @@ d3.select("body").append("div")
     // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistSatellite = Math.min(width, height) * 0.5;
+    const maxDistSatellite = Math.min(width, height) * 0.7;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
@@ -279,7 +279,7 @@ d3.select("body").append("div")
         // il nodo rientra scivolando dolcemente nei fotogrammi
         // successivi invece di saltare di colpo.
         const overshoot = dist - maxDistSatellite;
-        const pullStrength = 0.08; // più alto = rientro più rapido/deciso
+        const pullStrength = 0.04; // più alto = rientro più rapido/deciso
         d.vx -= (dx / dist) * overshoot * pullStrength;
         d.vy -= (dy / dist) * overshoot * pullStrength;
       }
