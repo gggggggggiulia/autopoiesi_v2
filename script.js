@@ -127,8 +127,8 @@ d3.select("body").append("div")
     .range([15, 45]);
 
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(160))
-    .force("charge", d3.forceManyBody().strength(-600))
+    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(130))
+    .force("charge", d3.forceManyBody().strength(-400))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
     // Coesione leggera e uniforme per tutti i nodi (aiuta il layout
