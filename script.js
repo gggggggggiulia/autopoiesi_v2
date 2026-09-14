@@ -127,8 +127,8 @@ d3.select("body").append("div")
     .range([15, 45]);
 
   simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(90))
-    .force("charge", d3.forceManyBody().strength(-350))
+    .force("link", d3.forceLink(links).id(d => d.scientific_name).distance(160))
+    .force("charge", d3.forceManyBody().strength(-600))
     .force("center", d3.forceCenter(width / 2, height / 2))
     .force("collide", d3.forceCollide(d => sizeScale(d.degree) + 5))
     // Coesione leggera e uniforme per tutti i nodi (aiuta il layout
@@ -276,7 +276,7 @@ d3.select("body").append("div")
     // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistSatellite = Math.min(width, height) * 0.32;
+    const maxDistSatellite = Math.min(width, height) * 0.01;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
@@ -293,7 +293,7 @@ d3.select("body").append("div")
         // il nodo rientra scivolando dolcemente nei fotogrammi
         // successivi invece di saltare di colpo.
         const overshoot = dist - maxDistSatellite;
-        const pullStrength = 0.08; // più alto = rientro più rapido/deciso
+        const pullStrength = 0.04; // più alto = rientro più rapido/deciso
         d.vx -= (dx / dist) * overshoot * pullStrength;
         d.vy -= (dy / dist) * overshoot * pullStrength;
       }
