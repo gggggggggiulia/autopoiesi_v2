@@ -397,7 +397,12 @@ d3.select("body").append("div")
       // per essere un vero pinch/scroll, lasciando passare solo i gesti
       // di zoom genuini.
       if (event.type === "wheel") {
-        return Math.abs(event.deltaY) > 2;
+        // Un vero pinch da trackpad viene sempre segnalato dal browser
+        // con ctrlKey: true, quindi quello lo lasciamo sempre passare.
+        // In assenza di ctrlKey (es. rumore del sensore durante un
+        // trascinamento, o rotellina del mouse), richiediamo una
+        // variazione più ampia per escludere segnali spuri.
+        return event.ctrlKey || Math.abs(event.deltaY) > 25;
       }
       return !event.ctrlKey && !event.button;
     })
