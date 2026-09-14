@@ -262,7 +262,7 @@ d3.select("body").append("div")
     // la simulazione con la barra spaziatrice.
     const cx = width / 2;
     const cy = height / 2;
-    const maxDistSatellite = Math.min(width, height) * 0.32;
+    const maxDistSatellite = Math.min(width, height) * 0.2;
 
     nodes.forEach(d => {
       if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
@@ -272,13 +272,16 @@ d3.select("body").append("div")
       const dy = d.y - cy;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist > maxDistSatellite) {
-        const k = maxDistSatellite / dist;
-        d.x = cx + dx * k;
-        d.y = cy + dy * k;
-        // smorza la velocità residua: senza questo il nodo "rimbalzerebbe"
-        // subito di nuovo verso l'esterno al tick successivo
-        d.vx *= 0.15;
-        d.vy *= 0.15;
+        // Invece di teletrasportare il nodo esattamente sul bordo (il
+        // che causava uno "scatto" visibile quando si rilasciava un
+        // nodo trascinato fuori dal raggio), applichiamo una leggera
+        // spinta verso il centro proporzionale a quanto si è sconfinato:
+        // il nodo rientra scivolando dolcemente nei fotogrammi
+        // successivi invece di saltare di colpo.
+        const overshoot = dist - maxDistSatellite;
+        const pullStrength = 0.08; // più alto = rientro più rapido/deciso
+        d.vx -= (dx / dist) * overshoot * pullStrength;
+        d.vy -= (dy / dist) * overshoot * pullStrength;
       }
     });
 
@@ -394,15 +397,13 @@ d3.select("body").append("div")
     .scaleExtent([0.1, 5])
     .filter((event) => {
       if (event.type === "wheel") {
-        // Mentre si sta trascinando con click+mouse, ignoriamo QUALSIASI
-        // evento wheel (pinch autentico o rumore che sia): non deve mai
-        // poter alterare lo zoom finché il trascinamento è in corso.
+        // Non alterare lo zoom mentre si sta trascinando attivamente
+        // con il click (evita conflitti durante il pan).
         if (isMouseDragging) return false;
-        // Un vero pinch da trackpad viene sempre segnalato dal browser
-        // con ctrlKey: true, quindi quello lo lasciamo sempre passare.
-        // In assenza di ctrlKey (es. rotellina del mouse), richiediamo
-        // una variazione più ampia per escludere segnali spuri.
-        return event.ctrlKey || Math.abs(event.deltaY) > 25;
+        // Per il resto, lascia passare qualsiasi evento wheel: sia il
+        // pinch (ctrlKey) sia lo scroll a due dita, sia la rotellina
+        // del mouse.
+        return true;
       }
       return !event.ctrlKey && !event.button;
     })
