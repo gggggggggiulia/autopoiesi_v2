@@ -390,8 +390,19 @@ d3.select("body").append("div")
 
   zoom = d3.zoom()
     .scaleExtent([0.1, 5])
+    .on("start", () => {
+      // Le etichette con textPath sono costose da ridisegnare ad ogni
+      // fotogramma (il browser deve ricalcolare la posizione di ogni
+      // lettera lungo la curva). Nascondendole durante il movimento
+      // attivo si evita il crollo di frame rate che causava i "salti"
+      // — soprattutto evidente sui nodi con molti collegamenti aperti.
+      edgeLabels.style("display", "none");
+    })
     .on("zoom", (event) => {
       container.attr("transform", event.transform);
+    })
+    .on("end", () => {
+      edgeLabels.style("display", null);
     });
 
   svg.call(zoom);
