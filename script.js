@@ -585,6 +585,12 @@ d3.select("body").append("div")
   });
 
   d3.select("body").on("keydown", (event) => {
+  // Se si sta scrivendo in un campo di testo (la barra di ricerca), lo
+  // spazio deve restare uno spazio: senza questo controllo ogni parola
+  // composta digitata nella ricerca faceva ripartire la simulazione.
+  const tag = event.target && event.target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || (event.target && event.target.isContentEditable)) return;
+
   if (event.code === "Space") {
     event.preventDefault(); // Impedisce lo scroll della pagina
     d3.select("#reset").dispatch("click");
@@ -603,8 +609,12 @@ d3.select("body").append("div")
     .style("pointer-events", "none")
     .merge(selectionRing);
 
-  node.on("click", (event, d) => {
-    event.stopPropagation();
+  // Tutto ciò che accade quando una specie viene "aperta": evidenziazione,
+  // anello di selezione, etichette sugli edge, pannello informativo.
+  // Estratto dall'handler del click perché ora ci si arriva da due strade
+  // diverse — il click sul nodo e la selezione dalla barra di ricerca —
+  // e devono comportarsi in modo identico.
+  function selectNode(d) {
     const clickedId = d.scientific_name;
     const connected = adjacency[clickedId] || new Set();
 
@@ -670,11 +680,376 @@ d3.select("body").append("div")
       <p style="margin-top: 10px;"><u>Osservazioni</u>: ${d.observations}</p>
       <p style="margin-top: 10px;"><u>Interazioni</u>:<br>${interactionText || "Nessuna"}</p>
     `).style("opacity", 1);
+  }
+
+  node.on("click", (event, d) => {
+    event.stopPropagation();
+    selectNode(d);
   });
 
   svg.on("click", () => {
     resetHighlightAndLabels();
     infoBox.style("opacity", 0);
+    closeSearchResults();
+  });
+
+  // ======================================================================
+  // BARRA DI RICERCA
+  // ======================================================================
+  // Posizione: in alto a SINISTRA. L'angolo in alto a destra è già del
+  // contatore della specie più connessa e quello in basso a destra
+  // dell'info-box, quindi è l'unico angolo che resta libero anche quando
+  // una specie è aperta — e la ricerca è la prima cosa che si cerca con
+  // lo sguardo, quindi sta bene nell'angolo di lettura naturale.
+
+  if (!document.getElementById("search-box-styles")) {
+    const searchStyle = document.createElement("style");
+    searchStyle.id = "search-box-styles";
+    searchStyle.textContent = `
+      #search-box {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 320px;
+        max-width: calc(100vw - 40px);
+        font-family: Inconsolata, monospace;
+        z-index: 10;
+      }
+      #search-field {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.75);
+        border-radius: 6px;
+        border: 1px solid transparent;
+        transition: border-color 0.15s ease;
+      }
+      #search-box.is-focused #search-field { border-color: rgba(244, 244, 244, 0.35); }
+      #search-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #F4F4F4;
+        font-family: inherit;
+        font-size: 14px;
+        padding: 0;
+      }
+      #search-input::placeholder { color: #8a8a8c; }
+      #search-clear {
+        flex: 0 0 auto;
+        background: none;
+        border: none;
+        color: #8a8a8c;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 2px;
+        display: none;
+      }
+      #search-clear:hover { color: #F4F4F4; }
+      #search-box.has-query #search-clear { display: block; }
+      #search-results {
+        display: none;
+        margin-top: 6px;
+        background: rgba(0, 0, 0, 0.85);
+        border-radius: 6px;
+        max-height: 46vh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      #search-box.is-open #search-results { display: block; }
+      .search-result {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+      .search-result:last-child { border-bottom: none; }
+      .search-result:hover,
+      .search-result.is-active { background: rgba(255, 255, 255, 0.12); }
+      .search-result img {
+        flex: 0 0 auto;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #222;
+      }
+      .search-result.not-observed img { filter: saturate(0); }
+      .sr-text { flex: 1 1 auto; min-width: 0; }
+      .sr-name {
+        color: #F4F4F4;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sr-sci {
+        color: #9a9a9c;
+        font-size: 11px;
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sr-deg { flex: 0 0 auto; color: #9a9a9c; font-size: 11px; }
+      .search-result mark { background: none; color: #ffffff; font-weight: 700; }
+      #search-empty { padding: 12px; color: #9a9a9c; font-size: 12px; }
+    `;
+    document.head.appendChild(searchStyle);
+  }
+
+  // Quali colonne del CSV vengono interrogate. Invece di fissarle a mano,
+  // vengono raccolte tutte quelle che "parlano di nomi": così se domani
+  // il CSV guadagna una colonna (common_name, nome_dialettale...) entra
+  // nella ricerca da sola, senza toccare questo file.
+  const searchFields = Array.from(new Set(
+    ["name", "scientific_name"].concat(
+      Object.keys(nodes[0] || {}).filter(k => /name|nome|specie|species/i.test(k))
+    )
+  )).filter(k => nodes.some(n => typeof n[k] === "string" && n[k].trim()));
+
+  // Accenti e maiuscole non devono mai far fallire una ricerca: "Ardea"
+  // trova "ardea", "cicogna" trova "Cicógna".
+  function normalizeForSearch(value) {
+    return String(value == null ? "" : value)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
+
+  nodes.forEach(d => {
+    d.__search = searchFields.map(f => normalizeForSearch(d[f]));
+  });
+
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // Evidenzia in grassetto il pezzo di testo che corrisponde alla query,
+  // così si capisce a colpo d'occhio PERCHÉ un risultato è nell'elenco
+  // (utile quando il match è sul nome scientifico e non su quello comune).
+  function highlightMatch(raw, query) {
+    const text = String(raw == null ? "" : raw);
+    if (!query) return escapeHtml(text);
+    const i = normalizeForSearch(text).indexOf(query);
+    if (i < 0) return escapeHtml(text);
+    return escapeHtml(text.slice(0, i)) +
+      "<mark>" + escapeHtml(text.slice(i, i + query.length)) + "</mark>" +
+      escapeHtml(text.slice(i + query.length));
+  }
+
+  // Punteggio più basso = risultato migliore. Un match a inizio parola
+  // vale più di uno a metà parola, e un match sul nome comune vale più
+  // di uno su un campo secondario: così chi digita "air" vede prima
+  // "Airone cenerino" e non una specie il cui nome scientifico contiene
+  // "air" da qualche parte in mezzo.
+  function scoreNode(d, query) {
+    let best = Infinity;
+    d.__search.forEach((value, fieldRank) => {
+      if (!value) return;
+      const i = value.indexOf(query);
+      if (i < 0) return;
+      const position = i === 0 ? 0 : (/[\s\-'']/.test(value[i - 1]) ? 1 : 2);
+      best = Math.min(best, position * 10 + fieldRank);
+    });
+    return best === Infinity ? null : best;
+  }
+
+  const MAX_RESULTS = 12;
+  let currentResults = [];
+  let activeIndex = -1;
+
+  const searchBox = d3.select("body").append("div").attr("id", "search-box");
+  const searchField = searchBox.append("div").attr("id", "search-field");
+
+  searchField.append("svg")
+    .attr("width", 14).attr("height", 14).attr("viewBox", "0 0 14 14")
+    .html('<circle cx="6" cy="6" r="4.5" fill="none" stroke="#8a8a8c" stroke-width="1.4"/>' +
+          '<line x1="9.4" y1="9.4" x2="13" y2="13" stroke="#8a8a8c" stroke-width="1.4" stroke-linecap="round"/>');
+
+  const searchInput = searchField.append("input")
+    .attr("id", "search-input")
+    .attr("type", "text")
+    .attr("autocomplete", "off")
+    .attr("spellcheck", "false")
+    .attr("placeholder", "Cerca una specie\u2026");
+
+  const searchClear = searchField.append("button")
+    .attr("id", "search-clear")
+    .attr("type", "button")
+    .attr("aria-label", "Cancella la ricerca")
+    .text("\u00d7");
+
+  const searchResults = searchBox.append("div").attr("id", "search-results");
+
+  const inputEl = searchInput.node();
+  const resultsEl = searchResults.node();
+
+  function closeSearchResults() {
+    searchBox.classed("is-open", false);
+    activeIndex = -1;
+  }
+
+  function renderResults(query) {
+    if (!query) {
+      currentResults = [];
+      closeSearchResults();
+      return;
+    }
+
+    currentResults = nodes
+      .map(d => ({ node: d, score: scoreNode(d, query) }))
+      .filter(r => r.score !== null)
+      .sort((a, b) =>
+        a.score - b.score ||
+        b.node.degree - a.node.degree ||
+        String(a.node.name).localeCompare(String(b.node.name))
+      )
+      .slice(0, MAX_RESULTS)
+      .map(r => r.node);
+
+    activeIndex = currentResults.length ? 0 : -1;
+
+    if (!currentResults.length) {
+      resultsEl.innerHTML = '<div id="search-empty">Nessuna specie trovata.</div>';
+    } else {
+      resultsEl.innerHTML = currentResults.map((d, i) => `
+        <div class="search-result${i === activeIndex ? " is-active" : ""}${d.notObserved ? " not-observed" : ""}" data-index="${i}">
+          <img src="${escapeHtml(d.image)}" alt="" />
+          <div class="sr-text">
+            <div class="sr-name">${highlightMatch(d.name, query)}</div>
+            <div class="sr-sci">${highlightMatch(d.scientific_name, query)}</div>
+          </div>
+          <div class="sr-deg">${d.degree}</div>
+        </div>
+      `).join("");
+    }
+
+    searchBox.classed("is-open", true);
+  }
+
+  function setActiveIndex(next) {
+    if (!currentResults.length) return;
+    // Scorrimento circolare: da fondo elenco si torna in cima e viceversa.
+    activeIndex = (next + currentResults.length) % currentResults.length;
+    const items = resultsEl.querySelectorAll(".search-result");
+    items.forEach((el, i) => el.classList.toggle("is-active", i === activeIndex));
+    const active = items[activeIndex];
+    if (active) active.scrollIntoView({ block: "nearest" });
+  }
+
+  // Porta la vista sulla specie scelta. Senza questo la selezione da
+  // ricerca "funzionerebbe" ma il nodo potrebbe restare fuori schermo,
+  // e sembrerebbe che non sia successo nulla.
+  function focusOnNode(d) {
+    // Se l'utente cerca prima che la simulazione si sia stabilizzata,
+    // l'auto-fit iniziale scatterebbe dopo, cancellando l'inquadratura.
+    hasAutoFitted = true;
+
+    const current = d3.zoomTransform(svg.node());
+    const scale = Math.min(Math.max(current.k, 1.1), 2.2);
+    // Leggermente a sinistra del centro: l'info-box occupa la parte
+    // destra dello schermo appena la specie viene aperta.
+    const targetX = width * 0.42;
+    const targetY = height * 0.5;
+
+    svg.transition()
+      .duration(750)
+      .ease(d3.easeCubicOut)
+      .call(
+        zoom.transform,
+        d3.zoomIdentity.translate(targetX - scale * d.x, targetY - scale * d.y).scale(scale)
+      );
+  }
+
+  function chooseResult(d) {
+    if (!d) return;
+    inputEl.value = d.name;
+    searchBox.classed("has-query", true);
+    closeSearchResults();
+    inputEl.blur();
+    selectNode(d);
+    focusOnNode(d);
+  }
+
+  searchInput
+    .on("input", () => {
+      const query = normalizeForSearch(inputEl.value);
+      searchBox.classed("has-query", inputEl.value.length > 0);
+      renderResults(query);
+    })
+    .on("focus", () => {
+      searchBox.classed("is-focused", true);
+      if (currentResults.length) searchBox.classed("is-open", true);
+    })
+    .on("blur", () => searchBox.classed("is-focused", false))
+    .on("keydown", (event) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActiveIndex(activeIndex + 1);
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveIndex(activeIndex - 1);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        chooseResult(currentResults[activeIndex]);
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        closeSearchResults();
+        inputEl.blur();
+      }
+    });
+
+  searchClear.on("click", () => {
+    inputEl.value = "";
+    searchBox.classed("has-query", false);
+    currentResults = [];
+    closeSearchResults();
+    inputEl.focus();
+    resetHighlightAndLabels();
+    infoBox.style("opacity", 0);
+  });
+
+  // Il mousedown (non il click) previene il blur dell'input prima che il
+  // risultato venga registrato: altrimenti su alcuni browser l'elenco si
+  // chiude un istante prima che il click arrivi a destinazione.
+  searchResults
+    .on("mousedown", (event) => event.preventDefault())
+    .on("click", (event) => {
+      const item = event.target.closest(".search-result");
+      if (!item) return;
+      chooseResult(currentResults[+item.dataset.index]);
+    });
+
+  // Un click ovunque fuori dalla barra chiude l'elenco. Il click sull'svg
+  // ha già il suo handler (che resetta la selezione); questo copre il
+  // resto della pagina.
+  document.addEventListener("click", (event) => {
+    if (!searchBox.node().contains(event.target)) closeSearchResults();
+  });
+
+  // "/" mette il cursore nella ricerca, come nelle interfacce di ricerca
+  // più diffuse. Non interferisce con la barra spaziatrice del reset.
+  document.addEventListener("keydown", (event) => {
+    const tag = event.target && event.target.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (event.key === "/") {
+      event.preventDefault();
+      inputEl.focus();
+      inputEl.select();
+    }
   });
 
   function resetHighlightAndLabels() {
