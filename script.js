@@ -714,6 +714,25 @@ d3.select("body").append("div")
         max-width: calc(100vw - 40px);
         font-family: Inconsolata, monospace;
         z-index: 10;
+        box-sizing: border-box;
+      }
+      #search-box *,
+      #search-box *::before,
+      #search-box *::after {
+        box-sizing: border-box;
+      }
+      /* Un CSS globale del tipo "svg { width: ...; height: ... }" ha
+         specificità più alta degli attributi width/height messi
+         sull'elemento: senza queste regole esplicite l'icona della
+         lente erediterebbe quella dimensione, finendo per riempire
+         l'intera barra invece di restare una piccola icona 14x14. */
+      #search-box svg.search-icon {
+        flex: 0 0 14px;
+        width: 14px !important;
+        height: 14px !important;
+        max-width: 14px;
+        max-height: 14px;
+        display: block;
       }
       #search-field {
         display: flex;
@@ -729,17 +748,22 @@ d3.select("body").append("div")
       #search-input {
         flex: 1 1 auto;
         min-width: 0;
+        width: auto;
         background: transparent;
         border: none;
         outline: none;
         color: #F4F4F4;
         font-family: inherit;
         font-size: 14px;
+        line-height: 1.2;
         padding: 0;
+        height: auto;
       }
       #search-input::placeholder { color: #8a8a8c; }
       #search-clear {
         flex: 0 0 auto;
+        width: auto;
+        height: auto;
         background: none;
         border: none;
         color: #8a8a8c;
@@ -774,9 +798,11 @@ d3.select("body").append("div")
       .search-result:hover,
       .search-result.is-active { background: rgba(255, 255, 255, 0.12); }
       .search-result img {
-        flex: 0 0 auto;
-        width: 32px;
-        height: 32px;
+        flex: 0 0 32px;
+        width: 32px !important;
+        height: 32px !important;
+        max-width: 32px;
+        max-height: 32px;
         border-radius: 50%;
         object-fit: cover;
         background: #222;
@@ -875,6 +901,7 @@ d3.select("body").append("div")
   const searchField = searchBox.append("div").attr("id", "search-field");
 
   searchField.append("svg")
+    .attr("class", "search-icon")
     .attr("width", 14).attr("height", 14).attr("viewBox", "0 0 14 14")
     .html('<circle cx="6" cy="6" r="4.5" fill="none" stroke="#8a8a8c" stroke-width="1.4"/>' +
           '<line x1="9.4" y1="9.4" x2="13" y2="13" stroke="#8a8a8c" stroke-width="1.4" stroke-linecap="round"/>');
