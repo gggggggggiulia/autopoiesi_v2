@@ -145,6 +145,30 @@ d3.select("body").append("div")
     .force("x", d3.forceX(width / 2).strength(0.02))
     .force("y", d3.forceY(height / 2).strength(0.02));
 
+  // d3.forceLink ha già sostituito le stringhe con i veri oggetti-nodo,
+  // ma in alcuni punti del codice gli edge vengono letti prima: questo
+  // helper normalizza i due casi.
+  function nodeIdOf(v) {
+    return typeof v === "object" && v !== null ? v.scientific_name : v;
+  }
+
+  // Precalcolo, UNA VOLTA SOLA, quanti edge paralleli collegano la stessa
+  // coppia (sorgente → target) e che posizione occupa ciascuno nel gruppo.
+  // Prima veniva ricalcolato con un filter() su tutti i link, per ogni
+  // link e ad ogni fotogramma del tick: costoso e fragile.
+  const parallelGroups = new Map();
+  links.forEach(l => {
+    const key = `${nodeIdOf(l.source)}\u0000${nodeIdOf(l.target)}`;
+    if (!parallelGroups.has(key)) parallelGroups.set(key, []);
+    parallelGroups.get(key).push(l);
+  });
+  parallelGroups.forEach(group => {
+    group.forEach((l, idx) => {
+      l.parallelIndex = idx;
+      l.parallelCount = group.length;
+    });
+  });
+
   const linkGroup = container.append("g").attr("class", "links");
 
   curvedLinks = linkGroup.selectAll("path.link-path")
@@ -347,14 +371,11 @@ d3.select("body").append("div")
     .attr("text-anchor", "middle")
     .text("Oasi Cave di Noale");
 
-  function getLinkArcOffset(d, i, links) {
-    const sameLinks = links.filter(l =>
-      l.source === d.source && l.target === d.target
-    );
-    const index = sameLinks.indexOf(d);
-    const separation = 10;
-    return (index - (sameLinks.length - 1) / 2) * separation;
-  }
+  // Quanto l'arco si scosta dalla corda, in frazione della corda stessa.
+  // 0.134 riproduce esattamente la curvatura di prima (raggio = corda).
+  const ARC_BULGE = 0.134;
+  // Distanza fra archi paralleli fra la stessa coppia di specie, in px.
+  const ARC_SEPARATION = 16;
 
   // Il punto finale dell'arco coincide col centro del nodo target: la
   // punta della freccia finirebbe quindi sempre nascosta sotto il suo
@@ -371,76 +392,121 @@ d3.select("body").append("div")
     };
   }
 
-  // Gli estremi "grezzi" (centro-centro) dell'edge, accorciati sul bordo
-  // di entrambi i nodi invece che sul centro. Sono l'UNICA fonte di
-  // verità geometrica per questo edge: sia il path visibile/hitbox sia
-  // il path-guida del testo partono da questi stessi due punti, così
-  // sono garantiti essere sempre lo stesso identico arco — prima erano
-  // calcolati in due punti diversi del codice con margini diversi, e la
-  // curvatura (che dipende dalla distanza fra gli estremi) finiva per
-  // essere leggermente diversa: il testo "cavalcava" un arco un po'
-  // diverso da quello disegnato, invece di seguirlo esattamente.
-  function computeArcEndpoints(d, i) {
-    const offset = getLinkArcOffset(d, i, links);
+  // Interseca il cerchio su cui giace l'arco (centro O, raggio R) con il
+  // cerchio di un nodo (centro C, raggio r). Le intersezioni sono due:
+  // teniamo quella rivolta verso l'altro nodo, cioè il punto in cui
+  // l'arco esce davvero dal disco del nodo.
+  function arcCircleIntersection(ox, oy, R, cx, cy, r, towardX, towardY) {
+    const dx = cx - ox;
+    const dy = cy - oy;
+    const dist = Math.hypot(dx, dy);
+    if (!dist) return null;
+
+    const a = (R * R - r * r + dist * dist) / (2 * dist);
+    const h2 = R * R - a * a;
+    if (!(h2 >= 0)) return null; // cerchi che non si incontrano (o NaN)
+
+    const h = Math.sqrt(h2);
+    const mx = ox + (a * dx) / dist;
+    const my = oy + (a * dy) / dist;
+    const px = (-dy * h) / dist;
+    const py = (dx * h) / dist;
+
+    const c1 = { x: mx + px, y: my + py };
+    const c2 = { x: mx - px, y: my - py };
+    return Math.hypot(c1.x - towardX, c1.y - towardY) <=
+           Math.hypot(c2.x - towardX, c2.y - towardY) ? c1 : c2;
+  }
+
+  // UNICA fonte di verità geometrica per un edge: restituisce i due
+  // estremi E il raggio dell'arco. Sia il path visibile, sia la hit-area,
+  // sia il path-guida del testo partono da qui, quindi sono garantiti
+  // essere esattamente la stessa curva.
+  //
+  // La differenza rispetto a prima: gli estremi non sono più calcolati
+  // sulla RETTA fra i due centri e poi usati per disegnare un ARCO (due
+  // curve diverse: l'arco parte dal punto giusto ma se ne va per la sua
+  // strada, e con gli edge paralleli l'estremo veniva pure traslato in
+  // diagonale di (offset, offset), staccandolo dal nodo). Qui l'arco
+  // viene definito prima, e gli estremi sono l'intersezione esatta fra
+  // quell'arco e i bordi dei due nodi: per costruzione non può restare
+  // "appeso". E gli edge paralleli si separano variando la curvatura,
+  // non spostando gli attacchi.
+  function arcGeometry(d) {
     const x1 = d.source.x;
     const y1 = d.source.y;
     const x2 = d.target.x;
     const y2 = d.target.y;
-    const totalLen = Math.hypot(x2 - x1, y2 - y1) || 1;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const chord = Math.hypot(dx, dy);
 
-    // Zero margine extra oltre al raggio: l'estremo tocca esattamente il
-    // bordo del nodo, niente più "spazio vuoto" prima della freccia.
-    let sourceMargin = sizeScale(d.source.degree);
-    let targetMargin = sizeScale(d.target.degree);
-    const maxMargin = totalLen * 0.85;
-    if (sourceMargin + targetMargin > maxMargin) {
-      const scale = maxMargin / (sourceMargin + targetMargin);
-      sourceMargin *= scale;
-      targetMargin *= scale;
+    const r1 = sizeScale(d.source.degree);
+    const r2 = sizeScale(d.target.degree);
+
+    const index = d.parallelIndex || 0;
+    const count = d.parallelCount || 1;
+
+    // Sagitta = scostamento massimo dell'arco dalla corda. Variandola si
+    // "aprono a ventaglio" gli edge paralleli tenendoli però ancorati.
+    // I limiti evitano sia l'arco quasi-dritto sia il semicerchio (che
+    // richiederebbe large-arc-flag = 1).
+    let sagitta = chord * ARC_BULGE + (index - (count - 1) / 2) * ARC_SEPARATION;
+    sagitta = Math.max(chord * 0.03, Math.min(sagitta, chord * 0.45));
+
+    const R = (chord * chord / 4 + sagitta * sagitta) / (2 * sagitta);
+
+    // Centro del cerchio dell'arco, nella convenzione SVG usata qui
+    // (large-arc-flag 0, sweep-flag 1).
+    const h = Math.sqrt(Math.max(0, R * R - (chord * chord) / 4));
+    const nx = -dy / chord;
+    const ny = dx / chord;
+    const ox = (x1 + x2) / 2 + h * nx;
+    const oy = (y1 + y2) / 2 + h * ny;
+
+    let p1 = null;
+    let p2 = null;
+
+    // Se i nodi sono praticamente sovrapposti l'intersezione non esiste o
+    // è instabile: in quel caso si ripiega sull'accorciamento lineare,
+    // con i raggi riscalati per non incrociarsi.
+    if (chord > r1 + r2 + 1) {
+      p1 = arcCircleIntersection(ox, oy, R, x1, y1, r1, x2, y2);
+      p2 = arcCircleIntersection(ox, oy, R, x2, y2, r2, x1, y1);
     }
 
-    // Importante: l'accorciamento è calcolato rispetto ai VERI centri dei
-    // nodi (x1,y1 / x2,y2), non rispetto al punto già spostato
-    // dall'offset — altrimenti con più interazioni fra la stessa coppia
-    // di specie la direzione usata per "tirare indietro" l'estremo è
-    // leggermente sbagliata, e l'edge resta staccato dal nodo. L'offset
-    // (che serve solo a separare visivamente gli edge paralleli) va
-    // sommato DOPO, come spostamento del punto già ancorato al bordo.
-    const p1 = shortenToRadius(x2, y2, x1, y1, sourceMargin);
-    const p2raw = shortenToRadius(x1, y1, x2, y2, targetMargin);
+    if (!p1 || !p2) {
+      let m1 = r1;
+      let m2 = r2;
+      const maxMargin = (chord || 1) * 0.85;
+      if (m1 + m2 > maxMargin) {
+        const k = maxMargin / (m1 + m2);
+        m1 *= k;
+        m2 *= k;
+      }
+      p1 = shortenToRadius(x2, y2, x1, y1, m1);
+      p2 = shortenToRadius(x1, y1, x2, y2, m2);
+    }
 
-    return {
-      p1,
-      p2: { x: p2raw.x + offset, y: p2raw.y + offset }
-    };
+    return { p1, p2, R };
   }
 
-  // Path-guida per il testo: stessi identici estremi/raggio del path
-  // visibile (computeArcEndpoints), quindi stessa identica curva — solo
-  // eventualmente percorsa al contrario (stesso trucco di prima: scambio
-  // degli estremi + sweep-flag invertito) per non far apparire il testo
-  // capovolto.
-  function computeTextPathD(d, i) {
-    const { p1, p2 } = computeArcEndpoints(d, i);
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const dr = Math.sqrt(dx * dx + dy * dy) || 1;
+  // Path-guida per il testo: stessa identica curva del path visibile,
+  // solo eventualmente percorsa al contrario (scambio degli estremi +
+  // sweep-flag invertito, che produce la stessa forma sullo schermo) per
+  // non far apparire il testo capovolto.
+  function computeTextPathD(d) {
+    const { p1, p2, R } = d.__arc || arcGeometry(d);
     return p1.x <= p2.x
-      ? `M${p1.x},${p1.y} A${dr},${dr} 0 0,1 ${p2.x},${p2.y}`
-      : `M${p2.x},${p2.y} A${dr},${dr} 0 0,0 ${p1.x},${p1.y}`;
+      ? `M${p1.x},${p1.y} A${R},${R} 0 0,1 ${p2.x},${p2.y}`
+      : `M${p2.x},${p2.y} A${R},${R} 0 0,0 ${p1.x},${p1.y}`;
   }
 
-  // Path visibile e sua hit-area: stessi identici estremi/raggio del
-  // path-guida del testo (computeArcEndpoints) — devono essere
-  // geometricamente identici, altrimenti l'hitbox non coincide col
-  // tratto disegnato (è esattamente il bug che causava l'attivazione
-  // "scostata").
-  function computeArcD(d, i) {
-    const { p1, p2 } = computeArcEndpoints(d, i);
-    const dx = p2.x - p1.x;
-    const dy = p2.y - p1.y;
-    const dr = Math.sqrt(dx * dx + dy * dy) || 1;
-    return `M${p1.x},${p1.y} A${dr},${dr} 0 0,1 ${p2.x},${p2.y}`;
+  // Path visibile e sua hit-area: stessa geometria del path-guida del
+  // testo, così l'hitbox coincide sempre col tratto disegnato.
+  function computeArcD(d) {
+    const { p1, p2, R } = d.__arc || arcGeometry(d);
+    return `M${p1.x},${p1.y} A${R},${R} 0 0,1 ${p2.x},${p2.y}`;
   }
 
   simulation.on("tick", () => {
@@ -475,11 +541,16 @@ d3.select("body").append("div")
       }
     });
 
-    curvedLinks.attr("d", (d, i) => computeArcD(d, i));
+    // La geometria di ogni edge viene calcolata una volta sola per
+    // fotogramma e riusata dai tre path che la condividono (visibile,
+    // hit-area, guida del testo): prima veniva ricalcolata tre volte.
+    links.forEach(l => { l.__arc = arcGeometry(l); });
+
+    curvedLinks.attr("d", computeArcD);
 
     // Stessa identica geometria del path visibile (computeArcD): la
     // hit-area deve sovrapporsi esattamente all'arco, solo più larga.
-    linkHitAreas.attr("d", (d, i) => computeArcD(d, i));
+    linkHitAreas.attr("d", computeArcD);
 
     // Stessa curva dell'arco visibile, ma tracciata sempre da sinistra a
     // destra: se il nodo sorgente sta a destra del target, scambiamo i
@@ -487,7 +558,7 @@ d3.select("body").append("div")
     // esattamente la stessa forma sullo schermo, ma il testo lungo il
     // path segue sempre una direzione "leggibile" invece di percorrere
     // l'arco al contrario, il che è ciò che lo fa apparire capovolto.
-    linkTextPaths.attr("d", (d, i) => computeTextPathD(d, i));
+    linkTextPaths.attr("d", computeTextPathD);
 
     container.selectAll("circle.node")
       .attr("cx", d => d.x)
