@@ -156,7 +156,7 @@ d3.select("body").append("div")
     .attr("stroke-width", 0.4)
     .attr("fill", "none")
     .attr("id", (d, i) => `link-path-${i}`)
-    .attr("marker-end", "url(#arrow-end)")
+    .attr("marker-end", "none")
     .style("pointer-events", "none"); // l'interazione passa alla hit-area più larga qui sotto
 
   // Un path di 0.4px è scomodissimo da colpire col mouse (impossibile col
@@ -175,11 +175,13 @@ d3.select("body").append("div")
     .attr("fill", "none")
     .style("pointer-events", "none");
 
-  // Rende cliccabili solo gli edge passati (quelli del nodo selezionato);
-  // con un array vuoto disattiva tutto, com'è allo stato iniziale.
+  // Rende cliccabili e mostra la freccia solo sugli edge passati (quelli
+  // del nodo selezionato); con un array vuoto disattiva/nasconde tutto,
+  // com'è allo stato iniziale.
   function setActiveEdges(activeLinks) {
     const activeSet = new Set(activeLinks);
     linkHitAreas.style("pointer-events", d => activeSet.has(d) ? "stroke" : "none");
+    curvedLinks.attr("marker-end", d => activeSet.has(d) ? "url(#arrow-end)" : "none");
   }
 
   // Path "gemelli" invisibili, uno per ogni edge: hanno la stessa forma
@@ -198,18 +200,10 @@ d3.select("body").append("div")
     .attr("stroke", "none");
 
   // Apre il pannello informativo dedicato a un singolo edge (l'interazione
-  // fra le due specie). Estratta in una funzione così può essere chiamata
-  // sia dal click sull'edge (hit-area) sia dal click sulla sua etichetta.
+  // fra le due specie), nello stesso "inspector" in basso a destra usato
+  // per i nodi. Non tocca la selezione del nodo: rimani nella vista
+  // filtrata su di esso, cambia solo il contenuto del pannello.
   function openEdgeInfo(d) {
-    // Reset opacità nodi ed edges
-    node.style("opacity", 1);
-    container.selectAll("circle.bg").style("opacity", 1);
-    curvedLinks.style("opacity", 1);
-    edgeLabels.selectAll("*").remove();
-    selectedNodeId = null;
-    selectionRing.style("opacity", 0);
-    setActiveEdges([]);
-
     const sourceNode = typeof d.source === "object" ? d.source : nodes.find(n => n.scientific_name === d.source);
     const targetNode = typeof d.target === "object" ? d.target : nodes.find(n => n.scientific_name === d.target);
 
@@ -254,22 +248,26 @@ d3.select("body").append("div")
   // destinatario (freccia proprio accanto a lui). Due varianti invece di
   // "fill: context-stroke" per non dipendere dal supporto browser.
   [
-    { id: "arrow-end", fill: "#646466" },
-    { id: "arrow-end-hover", fill: "#F4F4F4" }
-  ].forEach(({ id, fill }) => {
+    { id: "arrow-end", stroke: "#646466" },
+    { id: "arrow-end-hover", stroke: "#F4F4F4" }
+  ].forEach(({ id, stroke }) => {
     if (defs.select(`#${id}`).empty()) {
       defs.append("marker")
         .attr("id", id)
         .attr("viewBox", "0 0 10 10")
-        .attr("refX", 8.5)
+        .attr("refX", 7)
         .attr("refY", 5)
         .attr("markerWidth", 6)
         .attr("markerHeight", 6)
         .attr("markerUnits", "userSpaceOnUse") // dimensione fissa, non legata allo stroke-width sottilissimo dell'edge
         .attr("orient", "auto")
         .append("path")
-        .attr("d", "M0,0 L10,5 L0,10 Z")
-        .attr("fill", fill);
+        .attr("d", "M2,1.5 L7,5 L2,8.5") // chevron aperto ">" invece di triangolo pieno, più leggero
+        .attr("fill", "none")
+        .attr("stroke", stroke)
+        .attr("stroke-width", 1.5)
+        .attr("stroke-linecap", "round")
+        .attr("stroke-linejoin", "round");
     }
   });
 
@@ -373,6 +371,24 @@ d3.select("body").append("div")
     };
   }
 
+  // Un'unica funzione per il "d" dell'arco, usata sia per il path
+  // visibile sia per la sua hit-area: devono essere geometricamente
+  // identici, altrimenti l'hitbox non coincide col tratto disegnato
+  // (è esattamente il bug che causava l'attivazione "scostata").
+  function computeArcD(d, i) {
+    const x1 = d.source.x;
+    const y1 = d.source.y;
+    const offset = getLinkArcOffset(d, i, links);
+    const rawX2 = d.target.x + offset;
+    const rawY2 = d.target.y + offset;
+    const targetRadius = sizeScale(d.target.degree) + 1.5;
+    const { x: x2, y: y2 } = shortenToRadius(x1, y1, rawX2, rawY2, targetRadius);
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const dr = Math.sqrt(dx * dx + dy * dy);
+    return `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2},${y2}`;
+  }
+
   simulation.on("tick", () => {
     // Vincolo rigido: qualunque nodo che NON fa parte della componente
     // connessa principale (cioè fa parte di un cluster satellite,
@@ -405,33 +421,11 @@ d3.select("body").append("div")
       }
     });
 
-    curvedLinks.attr("d", function (d, i) {
-      const x1 = d.source.x;
-      const y1 = d.source.y;
-      const offset = getLinkArcOffset(d, i, links);
-      const rawX2 = d.target.x + offset;
-      const rawY2 = d.target.y + offset;
-      const targetRadius = sizeScale(d.target.degree) + 1.5;
-      const { x: x2, y: y2 } = shortenToRadius(x1, y1, rawX2, rawY2, targetRadius);
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const dr = Math.sqrt(dx * dx + dy * dy);
-      return `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2},${y2}`;
-    });
+    curvedLinks.attr("d", (d, i) => computeArcD(d, i));
 
-    // Stessa identica forma del link visibile: la hit-area deve
-    // sovrapporsi esattamente all'arco, solo più larga.
-    linkHitAreas.attr("d", function (d, i) {
-      const x1 = d.source.x;
-      const y1 = d.source.y;
-      const x2 = d.target.x;
-      const y2 = d.target.y;
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const dr = Math.sqrt(dx * dx + dy * dy);
-      const offset = getLinkArcOffset(d, i, links);
-      return `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2 + offset},${y2 + offset}`;
-    });
+    // Stessa identica geometria del path visibile (computeArcD): la
+    // hit-area deve sovrapporsi esattamente all'arco, solo più larga.
+    linkHitAreas.attr("d", (d, i) => computeArcD(d, i));
 
     // Stessa curva dell'arco visibile, ma tracciata sempre da sinistra a
     // destra: se il nodo sorgente sta a destra del target, scambiamo i
