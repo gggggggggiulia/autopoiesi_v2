@@ -469,7 +469,7 @@ d3.select("body").append("div")
         // il nodo rientra scivolando dolcemente nei fotogrammi
         // successivi invece di saltare di colpo.
         const overshoot = dist - maxDistSatellite;
-        const pullStrength = 0.01; // più alto = rientro più rapido/deciso
+        const pullStrength = 0.001; // più alto = rientro più rapido/deciso
         d.vx -= (dx / dist) * overshoot * pullStrength;
         d.vy -= (dy / dist) * overshoot * pullStrength;
       }
