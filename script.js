@@ -371,14 +371,16 @@ d3.select("body").append("div")
     };
   }
 
-  // Path-guida per il testo, accorciato da entrambi i lati in base al
-  // raggio di source e target: il testo è centrato al 50% di questo path
-  // (vedi creazione delle etichette), quindi se non lo accorciamo il
-  // punto centrale può cadere dentro il cerchio di un nodo grande o
-  // quando i due nodi sono vicini. Se i nodi sono così vicini/grandi da
-  // "mangiarsi" tutto lo spazio fra loro, riduco i margini proporzionalmente
-  // invece di far collassare l'arco.
-  function computeTextPathD(d, i) {
+  // Gli estremi "grezzi" (centro-centro) dell'edge, accorciati sul bordo
+  // di entrambi i nodi invece che sul centro. Sono l'UNICA fonte di
+  // verità geometrica per questo edge: sia il path visibile/hitbox sia
+  // il path-guida del testo partono da questi stessi due punti, così
+  // sono garantiti essere sempre lo stesso identico arco — prima erano
+  // calcolati in due punti diversi del codice con margini diversi, e la
+  // curvatura (che dipende dalla distanza fra gli estremi) finiva per
+  // essere leggermente diversa: il testo "cavalcava" un arco un po'
+  // diverso da quello disegnato, invece di seguirlo esattamente.
+  function computeArcEndpoints(d, i) {
     const offset = getLinkArcOffset(d, i, links);
     const rawX1 = d.source.x;
     const rawY1 = d.source.y;
@@ -386,17 +388,30 @@ d3.select("body").append("div")
     const rawY2 = d.target.y + offset;
     const totalLen = Math.hypot(rawX2 - rawX1, rawY2 - rawY1) || 1;
 
-    let sourceMargin = sizeScale(d.source.degree) + 3;
-    let targetMargin = sizeScale(d.target.degree) + 3;
-    const maxMargin = totalLen * 0.8;
+    // Zero margine extra oltre al raggio: l'estremo tocca esattamente il
+    // bordo del nodo, niente più "spazio vuoto" prima della freccia.
+    let sourceMargin = sizeScale(d.source.degree);
+    let targetMargin = sizeScale(d.target.degree);
+    const maxMargin = totalLen * 0.85;
     if (sourceMargin + targetMargin > maxMargin) {
       const scale = maxMargin / (sourceMargin + targetMargin);
       sourceMargin *= scale;
       targetMargin *= scale;
     }
 
-    const p1 = shortenToRadius(rawX2, rawY2, rawX1, rawY1, sourceMargin);
-    const p2 = shortenToRadius(rawX1, rawY1, rawX2, rawY2, targetMargin);
+    return {
+      p1: shortenToRadius(rawX2, rawY2, rawX1, rawY1, sourceMargin),
+      p2: shortenToRadius(rawX1, rawY1, rawX2, rawY2, targetMargin)
+    };
+  }
+
+  // Path-guida per il testo: stessi identici estremi/raggio del path
+  // visibile (computeArcEndpoints), quindi stessa identica curva — solo
+  // eventualmente percorsa al contrario (stesso trucco di prima: scambio
+  // degli estremi + sweep-flag invertito) per non far apparire il testo
+  // capovolto.
+  function computeTextPathD(d, i) {
+    const { p1, p2 } = computeArcEndpoints(d, i);
     const dx = p2.x - p1.x;
     const dy = p2.y - p1.y;
     const dr = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -405,28 +420,17 @@ d3.select("body").append("div")
       : `M${p2.x},${p2.y} A${dr},${dr} 0 0,0 ${p1.x},${p1.y}`;
   }
 
-  // Un'unica funzione per il "d" dell'arco, usata sia per il path
-  // visibile sia per la sua hit-area: devono essere geometricamente
-  // identici, altrimenti l'hitbox non coincide col tratto disegnato
-  // (è esattamente il bug che causava l'attivazione "scostata").
+  // Path visibile e sua hit-area: stessi identici estremi/raggio del
+  // path-guida del testo (computeArcEndpoints) — devono essere
+  // geometricamente identici, altrimenti l'hitbox non coincide col
+  // tratto disegnato (è esattamente il bug che causava l'attivazione
+  // "scostata").
   function computeArcD(d, i) {
-    const x1 = d.source.x;
-    const y1 = d.source.y;
-    const offset = getLinkArcOffset(d, i, links);
-    const targetRadius = sizeScale(d.target.degree) + 1.5;
-    // Importante: l'accorciamento va calcolato rispetto al VERO centro del
-    // nodo target (d.target.x/y), non rispetto al punto già spostato
-    // dall'offset — altrimenti con più edge paralleli tra la stessa coppia
-    // di nodi la direzione usata per "tirare indietro" il punto finale è
-    // leggermente sbagliata, e la freccia può restare staccata dal nodo.
-    // L'offset va sommato DOPO, solo per separare visivamente gli archi.
-    const shortened = shortenToRadius(x1, y1, d.target.x, d.target.y, targetRadius);
-    const x2 = shortened.x + offset;
-    const y2 = shortened.y + offset;
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const dr = Math.sqrt(dx * dx + dy * dy);
-    return `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2},${y2}`;
+    const { p1, p2 } = computeArcEndpoints(d, i);
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dr = Math.sqrt(dx * dx + dy * dy) || 1;
+    return `M${p1.x},${p1.y} A${dr},${dr} 0 0,1 ${p2.x},${p2.y}`;
   }
 
   simulation.on("tick", () => {
