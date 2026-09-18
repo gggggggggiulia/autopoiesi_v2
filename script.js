@@ -382,11 +382,11 @@ d3.select("body").append("div")
   // diverso da quello disegnato, invece di seguirlo esattamente.
   function computeArcEndpoints(d, i) {
     const offset = getLinkArcOffset(d, i, links);
-    const rawX1 = d.source.x;
-    const rawY1 = d.source.y;
-    const rawX2 = d.target.x + offset;
-    const rawY2 = d.target.y + offset;
-    const totalLen = Math.hypot(rawX2 - rawX1, rawY2 - rawY1) || 1;
+    const x1 = d.source.x;
+    const y1 = d.source.y;
+    const x2 = d.target.x;
+    const y2 = d.target.y;
+    const totalLen = Math.hypot(x2 - x1, y2 - y1) || 1;
 
     // Zero margine extra oltre al raggio: l'estremo tocca esattamente il
     // bordo del nodo, niente più "spazio vuoto" prima della freccia.
@@ -399,9 +399,19 @@ d3.select("body").append("div")
       targetMargin *= scale;
     }
 
+    // Importante: l'accorciamento è calcolato rispetto ai VERI centri dei
+    // nodi (x1,y1 / x2,y2), non rispetto al punto già spostato
+    // dall'offset — altrimenti con più interazioni fra la stessa coppia
+    // di specie la direzione usata per "tirare indietro" l'estremo è
+    // leggermente sbagliata, e l'edge resta staccato dal nodo. L'offset
+    // (che serve solo a separare visivamente gli edge paralleli) va
+    // sommato DOPO, come spostamento del punto già ancorato al bordo.
+    const p1 = shortenToRadius(x2, y2, x1, y1, sourceMargin);
+    const p2raw = shortenToRadius(x1, y1, x2, y2, targetMargin);
+
     return {
-      p1: shortenToRadius(rawX2, rawY2, rawX1, rawY1, sourceMargin),
-      p2: shortenToRadius(rawX1, rawY1, rawX2, rawY2, targetMargin)
+      p1,
+      p2: { x: p2raw.x + offset, y: p2raw.y + offset }
     };
   }
 
