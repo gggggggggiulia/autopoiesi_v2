@@ -371,6 +371,40 @@ d3.select("body").append("div")
     };
   }
 
+  // Path-guida per il testo, accorciato da entrambi i lati in base al
+  // raggio di source e target: il testo è centrato al 50% di questo path
+  // (vedi creazione delle etichette), quindi se non lo accorciamo il
+  // punto centrale può cadere dentro il cerchio di un nodo grande o
+  // quando i due nodi sono vicini. Se i nodi sono così vicini/grandi da
+  // "mangiarsi" tutto lo spazio fra loro, riduco i margini proporzionalmente
+  // invece di far collassare l'arco.
+  function computeTextPathD(d, i) {
+    const offset = getLinkArcOffset(d, i, links);
+    const rawX1 = d.source.x;
+    const rawY1 = d.source.y;
+    const rawX2 = d.target.x + offset;
+    const rawY2 = d.target.y + offset;
+    const totalLen = Math.hypot(rawX2 - rawX1, rawY2 - rawY1) || 1;
+
+    let sourceMargin = sizeScale(d.source.degree) + 3;
+    let targetMargin = sizeScale(d.target.degree) + 3;
+    const maxMargin = totalLen * 0.8;
+    if (sourceMargin + targetMargin > maxMargin) {
+      const scale = maxMargin / (sourceMargin + targetMargin);
+      sourceMargin *= scale;
+      targetMargin *= scale;
+    }
+
+    const p1 = shortenToRadius(rawX2, rawY2, rawX1, rawY1, sourceMargin);
+    const p2 = shortenToRadius(rawX1, rawY1, rawX2, rawY2, targetMargin);
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dr = Math.sqrt(dx * dx + dy * dy) || 1;
+    return p1.x <= p2.x
+      ? `M${p1.x},${p1.y} A${dr},${dr} 0 0,1 ${p2.x},${p2.y}`
+      : `M${p2.x},${p2.y} A${dr},${dr} 0 0,0 ${p1.x},${p1.y}`;
+  }
+
   // Un'unica funzione per il "d" dell'arco, usata sia per il path
   // visibile sia per la sua hit-area: devono essere geometricamente
   // identici, altrimenti l'hitbox non coincide col tratto disegnato
@@ -379,10 +413,16 @@ d3.select("body").append("div")
     const x1 = d.source.x;
     const y1 = d.source.y;
     const offset = getLinkArcOffset(d, i, links);
-    const rawX2 = d.target.x + offset;
-    const rawY2 = d.target.y + offset;
     const targetRadius = sizeScale(d.target.degree) + 1.5;
-    const { x: x2, y: y2 } = shortenToRadius(x1, y1, rawX2, rawY2, targetRadius);
+    // Importante: l'accorciamento va calcolato rispetto al VERO centro del
+    // nodo target (d.target.x/y), non rispetto al punto già spostato
+    // dall'offset — altrimenti con più edge paralleli tra la stessa coppia
+    // di nodi la direzione usata per "tirare indietro" il punto finale è
+    // leggermente sbagliata, e la freccia può restare staccata dal nodo.
+    // L'offset va sommato DOPO, solo per separare visivamente gli archi.
+    const shortened = shortenToRadius(x1, y1, d.target.x, d.target.y, targetRadius);
+    const x2 = shortened.x + offset;
+    const y2 = shortened.y + offset;
     const dx = x2 - x1;
     const dy = y2 - y1;
     const dr = Math.sqrt(dx * dx + dy * dy);
@@ -433,19 +473,7 @@ d3.select("body").append("div")
     // esattamente la stessa forma sullo schermo, ma il testo lungo il
     // path segue sempre una direzione "leggibile" invece di percorrere
     // l'arco al contrario, il che è ciò che lo fa apparire capovolto.
-    linkTextPaths.attr("d", function (d, i) {
-      const x1 = d.source.x;
-      const y1 = d.source.y;
-      const offset = getLinkArcOffset(d, i, links);
-      const x2 = d.target.x + offset;
-      const y2 = d.target.y + offset;
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const dr = Math.sqrt(dx * dx + dy * dy);
-      return x1 <= x2
-        ? `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2},${y2}`
-        : `M${x2},${y2} A${dr},${dr} 0 0,0 ${x1},${y1}`;
-    });
+    linkTextPaths.attr("d", (d, i) => computeTextPathD(d, i));
 
     container.selectAll("circle.node")
       .attr("cx", d => d.x)
