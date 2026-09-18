@@ -28,6 +28,15 @@ if (infoBox.empty()) {
   infoBox = d3.select("body").append("div").attr("id", "info-box");
 }
 
+// Anteprima al volo del tipo di interazione, mostrata solo sugli edge
+// "attivi" (collegati al nodo attualmente selezionato) — sugli altri il
+// hover resta muto, per non distrarre da ciò che l'utente ha scelto di
+// esplorare.
+let edgeTooltip = d3.select("body").select("#edge-tooltip");
+if (edgeTooltip.empty()) {
+  edgeTooltip = d3.select("body").append("div").attr("id", "edge-tooltip");
+}
+
 let simulation, node, curvedLinks, linkTextPaths, edgeLabels, zoom;
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
 let selectedNodeId = null; // id del nodo attualmente aperto, per tenere l'anello di selezione agganciato
@@ -138,7 +147,7 @@ d3.select("body").append("div")
 
   const linkGroup = container.append("g").attr("class", "links");
 
-  curvedLinks = linkGroup.selectAll("path")
+  curvedLinks = linkGroup.selectAll("path.link-path")
     .data(links)
     .enter()
     .append("path")
@@ -147,55 +156,122 @@ d3.select("body").append("div")
     .attr("stroke-width", 0.4)
     .attr("fill", "none")
     .attr("id", (d, i) => `link-path-${i}`)
-    .style("pointer-events", "stroke");  // così la hitbox è sullo stroke, non solo sul riempimento
+    .attr("marker-end", "url(#arrow-end)")
+    .style("pointer-events", "none"); // l'interazione passa alla hit-area più larga qui sotto
 
-    // Path "gemelli" invisibili, uno per ogni edge: hanno la stessa forma
-    // dell'arco visibile ma vengono ridisegnati (vedi tick) in modo da
-    // andare sempre da sinistra verso destra. Il testo si aggancia a
-    // questi invece che al path visibile, così non appare mai capovolto,
-    // indipendentemente da come sono orientati nodo sorgente e nodo target.
-    const textPathGroup = container.append("g").attr("class", "link-text-paths");
-    linkTextPaths = textPathGroup.selectAll("path")
-      .data(links)
-      .enter()
-      .append("path")
-      .attr("class", "link-text-path")
-      .attr("id", (d, i) => `link-text-path-${i}`)
-      .attr("fill", "none")
-      .attr("stroke", "none");
+  // Un path di 0.4px è scomodissimo da colpire col mouse (impossibile col
+  // dito). Sovrapponiamo a ogni edge un path invisibile ma spesso ~16px:
+  // stessa forma, hitbox molto più larga, aspetto visivo invariato.
+  // Di default nessun edge è interattivo: lo stroke largo esiste già nel
+  // DOM (serve per il calcolo del path), ma non intercetta il mouse finché
+  // non viene "attivato" dal click su uno dei suoi due nodi.
+  const linkHitAreas = linkGroup.selectAll("path.link-hit")
+    .data(links)
+    .enter()
+    .append("path")
+    .attr("class", "link-hit")
+    .attr("stroke", "transparent")
+    .attr("stroke-width", 16)
+    .attr("fill", "none")
+    .style("pointer-events", "none");
 
-    curvedLinks.on("click", (event, d) => {
-  event.stopPropagation();
+  // Rende cliccabili solo gli edge passati (quelli del nodo selezionato);
+  // con un array vuoto disattiva tutto, com'è allo stato iniziale.
+  function setActiveEdges(activeLinks) {
+    const activeSet = new Set(activeLinks);
+    linkHitAreas.style("pointer-events", d => activeSet.has(d) ? "stroke" : "none");
+  }
 
-  // Reset opacità nodi ed edges
-  node.style("opacity", 1);
-  container.selectAll("circle.bg").style("opacity", 1);
-  curvedLinks.style("opacity", 1);
-  edgeLabels.selectAll("*").remove();
-  selectedNodeId = null;
-  selectionRing.style("opacity", 0);
+  // Path "gemelli" invisibili, uno per ogni edge: hanno la stessa forma
+  // dell'arco visibile ma vengono ridisegnati (vedi tick) in modo da
+  // andare sempre da sinistra verso destra. Il testo si aggancia a
+  // questi invece che al path visibile, così non appare mai capovolto,
+  // indipendentemente da come sono orientati nodo sorgente e nodo target.
+  const textPathGroup = container.append("g").attr("class", "link-text-paths");
+  linkTextPaths = textPathGroup.selectAll("path")
+    .data(links)
+    .enter()
+    .append("path")
+    .attr("class", "link-text-path")
+    .attr("id", (d, i) => `link-text-path-${i}`)
+    .attr("fill", "none")
+    .attr("stroke", "none");
 
-  const sourceNode = typeof d.source === "object" ? d.source : nodes.find(n => n.scientific_name === d.source);
-  const targetNode = typeof d.target === "object" ? d.target : nodes.find(n => n.scientific_name === d.target);
+  // Apre il pannello informativo dedicato a un singolo edge (l'interazione
+  // fra le due specie). Estratta in una funzione così può essere chiamata
+  // sia dal click sull'edge (hit-area) sia dal click sulla sua etichetta.
+  function openEdgeInfo(d) {
+    // Reset opacità nodi ed edges
+    node.style("opacity", 1);
+    container.selectAll("circle.bg").style("opacity", 1);
+    curvedLinks.style("opacity", 1);
+    edgeLabels.selectAll("*").remove();
+    selectedNodeId = null;
+    selectionRing.style("opacity", 0);
+    setActiveEdges([]);
 
-  const interaction = d.type;
-  const description = interactionDescriptions[interaction] || "";
+    const sourceNode = typeof d.source === "object" ? d.source : nodes.find(n => n.scientific_name === d.source);
+    const targetNode = typeof d.target === "object" ? d.target : nodes.find(n => n.scientific_name === d.target);
 
-  infoBox.html(`
-    <h3><i>${sourceNode.name}</i> → <em>${interaction}</em> → <i>${targetNode.name}</i></h3>
-    <div style="display: flex; gap: 10px; margin-top: 10px;">
-      <img src="${sourceNode.image}" alt="${sourceNode.name}" style="width: 80px; height: auto" />
-      <img src="${targetNode.image}" alt="${targetNode.name}" style="width: 80px; height: auto" />
-    </div>
-    ${description ? `<p style="margin-top: 10px;">${description}</p>` : ""}
-  `).style("opacity", 1);
-  /* ; border-radius: 400px; */
-});
+    const interaction = d.type;
+    const description = interactionDescriptions[interaction] || "";
 
+    infoBox.html(`
+      <h3><i>${sourceNode.name}</i> → <em>${interaction}</em> → <i>${targetNode.name}</i></h3>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <img src="${sourceNode.image}" alt="${sourceNode.name}" style="width: 80px; height: auto" />
+        <img src="${targetNode.image}" alt="${targetNode.name}" style="width: 80px; height: auto" />
+      </div>
+      ${description ? `<p style="margin-top: 10px;">${description}</p>` : ""}
+    `).style("opacity", 1);
+  }
+
+  linkHitAreas
+    .on("mouseenter", (event, d) => {
+      d3.select(`#link-path-${links.indexOf(d)}`)
+        .attr("stroke", "#F4F4F4")
+        .attr("stroke-width", 1.4)
+        .attr("marker-end", "url(#arrow-end-hover)");
+    })
+    .on("mouseleave", (event, d) => {
+      d3.select(`#link-path-${links.indexOf(d)}`)
+        .attr("stroke", "#646466")
+        .attr("stroke-width", 0.4)
+        .attr("marker-end", "url(#arrow-end)");
+    })
+    .on("click", (event, d) => {
+      event.stopPropagation();
+      openEdgeInfo(d);
+    });
 
   edgeLabels = container.append("g").attr("class", "edge-labels");
 
   const defs = svg.select("defs").empty() ? svg.append("defs") : svg.select("defs");
+
+  // Frecce di direzione sugli edge: agganciate al nodo target, mostrano
+  // subito, guardando un nodo selezionato, quali interazioni partono da
+  // lui (freccia lontana, vicino all'altro nodo) e quali lo hanno come
+  // destinatario (freccia proprio accanto a lui). Due varianti invece di
+  // "fill: context-stroke" per non dipendere dal supporto browser.
+  [
+    { id: "arrow-end", fill: "#646466" },
+    { id: "arrow-end-hover", fill: "#F4F4F4" }
+  ].forEach(({ id, fill }) => {
+    if (defs.select(`#${id}`).empty()) {
+      defs.append("marker")
+        .attr("id", id)
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 8.5)
+        .attr("refY", 5)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("markerUnits", "userSpaceOnUse") // dimensione fissa, non legata allo stroke-width sottilissimo dell'edge
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,0 L10,5 L0,10 Z")
+        .attr("fill", fill);
+    }
+  });
 
   // Filtro di desaturazione per le specie non ancora osservate: più
   // intuitivo e più elegante di un semplice abbassamento di opacità,
@@ -282,6 +358,21 @@ d3.select("body").append("div")
     return (index - (sameLinks.length - 1) / 2) * separation;
   }
 
+  // Il punto finale dell'arco coincide col centro del nodo target: la
+  // punta della freccia finirebbe quindi sempre nascosta sotto il suo
+  // cerchio. La accorciamo lungo la direzione (approssimata alla retta
+  // fra i due centri, sufficiente vista la leggera curvatura degli archi)
+  // di un raggio, così la freccia resta visibile appena fuori dal nodo.
+  function shortenToRadius(x1, y1, x2, y2, radius) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    return {
+      x: x2 - (dx / len) * radius,
+      y: y2 - (dy / len) * radius
+    };
+  }
+
   simulation.on("tick", () => {
     // Vincolo rigido: qualunque nodo che NON fa parte della componente
     // connessa principale (cioè fa parte di un cluster satellite,
@@ -308,13 +399,29 @@ d3.select("body").append("div")
         // il nodo rientra scivolando dolcemente nei fotogrammi
         // successivi invece di saltare di colpo.
         const overshoot = dist - maxDistSatellite;
-        const pullStrength = 0.005; // più alto = rientro più rapido/deciso
+        const pullStrength = 0.01; // più alto = rientro più rapido/deciso
         d.vx -= (dx / dist) * overshoot * pullStrength;
         d.vy -= (dy / dist) * overshoot * pullStrength;
       }
     });
 
     curvedLinks.attr("d", function (d, i) {
+      const x1 = d.source.x;
+      const y1 = d.source.y;
+      const offset = getLinkArcOffset(d, i, links);
+      const rawX2 = d.target.x + offset;
+      const rawY2 = d.target.y + offset;
+      const targetRadius = sizeScale(d.target.degree) + 1.5;
+      const { x: x2, y: y2 } = shortenToRadius(x1, y1, rawX2, rawY2, targetRadius);
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dr = Math.sqrt(dx * dx + dy * dy);
+      return `M${x1},${y1} A${dr},${dr} 0 0,1 ${x2},${y2}`;
+    });
+
+    // Stessa identica forma del link visibile: la hit-area deve
+    // sovrapporsi esattamente all'arco, solo più larga.
+    linkHitAreas.attr("d", function (d, i) {
       const x1 = d.source.x;
       const y1 = d.source.y;
       const x2 = d.target.x;
@@ -436,6 +543,8 @@ d3.select("body").append("div")
       .attr("text-anchor", "middle")
       .text(d => d.type);
 
+    setActiveEdges(edgesToShow);
+
     const interactionCounts = {};
     edgesToShow.forEach(edge => {
       if (!interactionCounts[edge.type]) interactionCounts[edge.type] = 0;
@@ -468,6 +577,7 @@ d3.select("body").append("div")
     edgeLabels.selectAll("*").remove();
     selectedNodeId = null;
     selectionRing.style("opacity", 0);
+    setActiveEdges([]);
   }
 
   let isMouseDragging = false;
