@@ -27,10 +27,20 @@ body {
   padding: 0 20px;
 }
 
-.paragrafo {
+/* Contenitore delle due colonne: testo a sinistra, video a destra.
+   Il margine che prima stava su .paragrafo (spazio per il menu fisso +
+   distanza dall'alto) ora vive qui, una volta sola, invece che ripetuto
+   su ogni colonna. */
+.layout {
+  display: flex;
+  align-items: flex-start;  /* le due colonne partono allineate in alto */
+  gap: 40px;
   margin-left: 220px;  /* lascia spazio al menu fisso */
-  width: 30vw;         /* 30% del viewport */
   margin-top: 40px;
+}
+
+.paragrafo {
+  width: 30vw;         /* 30% del viewport */
   text-align: left;
 }
 
@@ -79,16 +89,23 @@ body {
   margin: 4px 0;
 }
 
+/* Colonna video, a fianco del testo.
+   aspect-ratio sostituisce il vecchio trucco "padding-top in %": con
+   quello, ogni volta che si cambiava la larghezza bisognava
+   ricalcolare a mano anche il padding, ed è lì che si era disallineato
+   (65vw di width ma un padding-top ancora tarato per 45vw). Con
+   aspect-ratio la proporzione (44.43% di padding-top che Vimeo aveva
+   fornito, cioè height = 0.4443 × width) è fissata una volta sola e
+   vale per qualunque larghezza. */
 .video-wrap {
-  position: relative;
-  width: 65vw;          /* SOLO questa riga controlla la dimensione */
-  padding-top: 20vw;    /* 45vw * 0.4443 = 20vw, ricalcolato per il nuovo width */
-  overflow: visible;
+  flex: 1 1 320px;     /* si allarga per riempire lo spazio rimasto, min 320px */
+  max-width: 35vw;     /* ma non oltre questa larghezza */
+  aspect-ratio: 1 / 0.4443;
+  overflow: hidden;
 }
 .video-wrap iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: block;
   width: 100%;
   height: 100%;
+  border: none;
 }
