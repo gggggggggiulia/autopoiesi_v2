@@ -79,12 +79,12 @@ body {
   margin: 4px 0;
 }
 
+/* in info.css */
 .video-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  padding-top: 44.43%;   /* proporzioni reali del tuo video, da Vimeo */
   overflow: hidden;
-  border-radius: 4px;
 }
 .video-wrap iframe {
   position: absolute;
