@@ -81,7 +81,7 @@ body {
 
 .video-wrap {
   position: relative;
-  width: 45vw;          /* SOLO questa riga controlla la dimensione */
+  width: 65vw;          /* SOLO questa riga controlla la dimensione */
   padding-top: 20vw;    /* 45vw * 0.4443 = 20vw, ricalcolato per il nuovo width */
   overflow: visible;
 }
