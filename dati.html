@@ -22,25 +22,16 @@
 
   <div class="paragrafo">
     DATI<br><br>
-    Autopoiesi è pensato per essere integrato a dati sempre nuovi. Una collaborazione con i ricercatori, infatti, risulta fondamentale per il mantenimento di un database aggiornato e sempre più accurato. <br><br>
-    Tutto il sistema è basato sulla lettura di due file csv: quello dei nodi <i>(Nodes)</i> e quello delle connessioni <i>(Edges)</i>.<br><br>
+    La costruzione del grafico a rete è basata su due elementi chiave: <i>nodes</i> e <i>edges</i>. I nodes rappresentano tutte le specie osservate all’interno dell’oasi, mentre gli edges rappresentano le loro interazioni.<br><br><br>
 
-    Questi file possono essere continuamente aggiornati, a patto che vengano mantenuti i nomi delle colonne. Non solo, è possibile infatti aggiungere delle proprietà personalizzate sia ai nodi che alle connessioni, in modo da ottenere nuovi parametri su cui costruire per esempio filtri, contatori o altri strumenti.<br><br><br>
-
-    FORMATTAZIONE NODI<br><br>
-    La struttura del documento <i>nodes.csv</i> è la seguente:<br><br>
-    scientific_name / Vulpes vulpes<br>
-    node_type / Animalia<br>
-    name / Volpe rossa<br>
-    image / https://i.postimg.cc/nLxTLMMr/volpe.png<br>
-    observations / Nessuna
+    NODES<br><br>
+    Per ottenere la lista di interazioni è stata utilizzato GloBi, una piattaforma pensata per essere un vero e proprio motore di ricerca di interazioni tra specie. Il programma effettua una ricerca su un ampio database di paper scientifici da tutto il mondo e, una volta inserito il nome della specie source (A) e della specie target (B) restituisce i risultati basandosi sulle citazioni delle specie (e talvolta di una specifica interazione).
+Per lo scopo del progetto, è stata inserita la lista di tutte le specie sia come source che come target. In questo modo è stato ottenuto un ulteriore database che descrive le interazioni tra le specie osservate nell’Oasi di Noale.
     <br><br><br>
 
-    FORMATTAZIONE CONNESSIONI<br><br>
-    La struttura del documento <i>edges.csv</i> è la seguente:<br><br>
-    source / Vulpes vulpes<br>
-    target / Lepus europaeus<br>
-    type / interagisce con<br>
+    GRAFICO<br><br>
+    Il grafico a rete è un modello visivo che permette in particolare di esplorare ciascun elemento sia nella sua specificità che in relazione alle altre entità. A differenza di altri modelli visivi, il grafico a rete invita l’utente ad esplorare continuamente, avvicinandosi e allontanandosi, muovendosi nello spazio e cliccando sugli elementi che lo compongono.
+Questo aspetto è fondamentale per il progetto: la visualizzazione delle interazioni tra specie non vuole mostrare un unico risultato certo, ma fornire all’utente uno strumento per curiosare un sistema molto intricato.
     
     <br><br><br><br><br><br><br><br><br><br><br><br>
   </div>
