@@ -1049,11 +1049,19 @@ d3.select("body").append("div")
       }
     });
 
-  searchClear.on("click", () => {
+  // Svuota il campo e chiude l'elenco. Condivisa fra il tasto × e il
+  // click fuori dalla barra: in entrambi i casi non deve restare scritto
+  // né il nome digitato a metà né quello di una specie già selezionata
+  // dalla ricerca.
+  function clearSearchInput() {
     inputEl.value = "";
     searchBox.classed("has-query", false);
     currentResults = [];
     closeSearchResults();
+  }
+
+  searchClear.on("click", () => {
+    clearSearchInput();
     inputEl.focus();
     resetHighlightAndLabels();
     infoBox.style("opacity", 0);
@@ -1070,11 +1078,13 @@ d3.select("body").append("div")
       chooseResult(currentResults[+item.dataset.index]);
     });
 
-  // Un click ovunque fuori dalla barra chiude l'elenco. Il click sull'svg
-  // ha già il suo handler (che resetta la selezione); questo copre il
-  // resto della pagina.
+  // Un click ovunque fuori dalla barra svuota il campo e chiude l'elenco:
+  // non deve restare visibile né una ricerca a metà né il nome di una
+  // specie scelta in precedenza. Il click sui risultati (dentro
+  // searchBox) e quello sui nodi/sull'svg non rientrano in questo
+  // branch — qui si gestisce solo il "click altrove".
   document.addEventListener("click", (event) => {
-    if (!searchBox.node().contains(event.target)) closeSearchResults();
+    if (!searchBox.node().contains(event.target)) clearSearchInput();
   });
 
   // "/" mette il cursore nella ricerca, come nelle interfacce di ricerca
