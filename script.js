@@ -696,11 +696,11 @@ d3.select("body").append("div")
   // ======================================================================
   // BARRA DI RICERCA
   // ======================================================================
-  // Posizione: in alto a SINISTRA. L'angolo in alto a destra è già del
-  // contatore della specie più connessa e quello in basso a destra
-  // dell'info-box, quindi è l'unico angolo che resta libero anche quando
-  // una specie è aperta — e la ricerca è la prima cosa che si cerca con
-  // lo sguardo, quindi sta bene nell'angolo di lettura naturale.
+  // Posizione: in alto al CENTRO, sopra al grafo. Il contatore della
+  // specie più connessa resta in alto a destra e l'info-box in basso a
+  // destra: nessuno dei due viene toccato. Sotto i 960px di larghezza
+  // (vedi media query qui sotto) la ricerca scende su una seconda riga
+  // per non sovrapporsi al contatore.
 
   if (!document.getElementById("search-box-styles")) {
     const searchStyle = document.createElement("style");
@@ -709,12 +709,22 @@ d3.select("body").append("div")
       #search-box {
         position: absolute;
         top: 20px;
-        left: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         width: 320px;
         max-width: calc(100vw - 40px);
         font-family: Inconsolata, monospace;
         z-index: 10;
         box-sizing: border-box;
+      }
+      /* Il contatore "top-species-counter" è largo 300px e ancorato a
+         right:0. Centrando la ricerca, sotto i ~960px di larghezza i due
+         riquadri arriverebbero a toccarsi: qui la ricerca scende su una
+         seconda riga invece di sovrapporsi. La soglia (960px) è quella
+         a cui, con box centrato 320px e contatore 300px+20px di margine,
+         i due bordi combaciano esattamente. */
+      @media (max-width: 960px) {
+        #search-box { top: 90px; }
       }
       #search-box *,
       #search-box *::before,
