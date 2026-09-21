@@ -82,8 +82,9 @@ body {
 /* in info.css */
 .video-wrap {
   position: relative;
-  width: 100%;
-  padding-top: 44.43%;   /* proporzioni reali del tuo video, da Vimeo */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);  /* lo fa "rompere" fuori dal contenitore centrato */
+  padding-top: 44.43%;            /* percentuale ora calcolata sui 100vw */
   overflow: hidden;
 }
 .video-wrap iframe {
