@@ -99,7 +99,7 @@ body {
    vale per qualunque larghezza. */
 .video-wrap {
   flex: 1 1 320px;     /* si allarga per riempire lo spazio rimasto, min 320px */
-  max-width: 35vw;     /* ma non oltre questa larghezza */
+  max-width: 48vw;     /* ma non oltre questa larghezza */
   aspect-ratio: 1 / 0.4443;
   overflow: hidden;
 }
