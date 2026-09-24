@@ -7,6 +7,7 @@ body {
   flex-direction: column;
   height: 100vh;
   font-family: "Inconsolata", monospace;
+  font-size: 16px;
 }
 
 /* testo centrato dentro al cerchio */
@@ -97,8 +98,8 @@ body {
    prima con l'aspect-ratio fissato sull'intera cornice. */
 .media-frame {
   position: relative;
-  flex: 1 1 320px;     /* si allarga per riempire lo spazio rimasto, min 320px */
-  max-width: 35vw;     /* ma non oltre questa larghezza */
+  flex: 1 1 320px;     /* si allarga per riempire tutto lo spazio rimasto, min 320px */
+  margin-right: 40px;  /* respiro dal bordo destro dello schermo, come il gap fra le colonne */
   overflow: hidden;    /* rete di sicurezza, non dovrebbe mai servire ora */
 }
 
