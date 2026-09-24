@@ -37,11 +37,14 @@
 
     <!--
       MEDIA-FRAME: la cornice a destra resta sempre nella stessa
-      posizione/dimensione. Dentro, più "layer" sovrapposti: solo uno alla
-      volta è visibile (classe .is-active), gestita da info.js.
+      posizione orizzontale/larghezza massima. Dentro, più "layer": solo
+      uno alla volta visibile (classe .is-active, gestita da info.js).
+      L'altezza NON è più fissa: ogni layer occupa la larghezza della
+      colonna e si ridimensiona in altezza secondo la propria proporzione
+      naturale, quindi la cornice "respira" in base a cosa sta mostrando.
 
       Per aggiungere una nuova coppia parola→immagine:
-        1. metti l'immagine in /images/ (es. images/rete.jpg)
+        1. metti l'immagine in /img/ (es. img/rete.jpg)
         2. aggiungi qui sotto un nuovo <div class="media-layer" data-layer="NOME">
         3. nel testo a sinistra, avvolgi la parola con
            <span class="trigger" data-layer="NOME">parola</span>
@@ -60,7 +63,7 @@
 
       <!-- ESEMPIO: sostituisci il src con la tua immagine reale -->
       <div class="media-layer" data-layer="cave">
-        <img src="img/Noale_Map.webp" alt="Le Cave di Noale">
+        <img src="img/Noale_Map.webp.jpg" alt="Le Cave di Noale">
       </div>
       <div class="media-layer" data-layer="zsc">
         <img src="img/zona-conservazione.jpg" alt="Zona Speciale di Conservazione">
