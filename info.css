@@ -89,46 +89,55 @@ body {
   margin: 4px 0;
 }
 
-/* Colonna visiva, a fianco del testo: una cornice FISSA (stessa
-   posizione/dimensione sempre) che contiene più "layer" sovrapposti
-   (video + immagini). Cambia solo quale layer è visibile, mai la
-   cornice stessa — evita che il layout salti quando cambia contenuto. */
+/* Colonna visiva, a fianco del testo. La LARGHEZZA resta fissa (stessa
+   posizione, stesso ingombro orizzontale sempre); l'ALTEZZA no: ogni
+   layer (video o immagine) occupa la larghezza della colonna e si
+   ridimensiona in altezza secondo la propria proporzione naturale —
+   niente più un unico formato "a forza" per tutto, come succedeva
+   prima con l'aspect-ratio fissato sull'intera cornice. */
 .media-frame {
   position: relative;
   flex: 1 1 320px;     /* si allarga per riempire lo spazio rimasto, min 320px */
   max-width: 35vw;     /* ma non oltre questa larghezza */
-  aspect-ratio: 1 / 0.4443;  /* proporzione del video Vimeo (44.43% di padding-top) */
-  overflow: hidden;
+  overflow: hidden;    /* rete di sicurezza, non dovrebbe mai servire ora */
 }
 
+/* Cambio di contenuto ISTANTANEO (niente dissolvenza): solo il layer
+   attivo viene renderizzato, gli altri sono display:none e quindi non
+   occupano spazio né ricevono interazioni — un solo <div> "vivo" alla
+   volta, la cornice assume automaticamente la sua altezza. */
 .media-layer {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;  /* solo il layer attivo deve poter ricevere interazioni */
+  display: none;
 }
 .media-layer.is-active {
-  opacity: 1;
-  pointer-events: auto;
+  display: block;
 }
 
-.media-layer iframe,
 .media-layer img {
   display: block;
   width: 100%;
-  height: 100%;
+  height: auto;   /* la proporzione la decide l'immagine stessa */
+}
+
+/* Il video Vimeo, a differenza di un'immagine, non ha una dimensione
+   "naturale" che il browser possa leggere da solo: l'aspect-ratio va
+   dichiarato esplicitamente, ma solo qui, sul suo layer — non più
+   imposto a tutta la cornice come prima. */
+.media-layer[data-layer="default"] iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 0.4443;  /* proporzione del video Vimeo (44.43% di padding-top) */
   border: none;
-  object-fit: cover;  /* le immagini riempiono la cornice mantenendo le proporzioni */
 }
 
 /* Parole nel testo che attivano un layer. Il trattino sotto, sottile e
    puntinato, segnala che sono interattive senza somigliare a un link
-   vero e proprio (quello stile è già preso da .cliccabile). */
+   vero e proprio (quello stile è già preso da .cliccabile). Nessuna
+   transition: il cambio colore è istantaneo, coerente con lo scambio
+   istantaneo dei media qui sopra. */
 .trigger {
   cursor: pointer;
   border-bottom: 1px dotted #8a8a8c;
-  transition: color 0.15s ease, border-color 0.15s ease;
 }
 .trigger:hover,
 .trigger.is-pinned {
