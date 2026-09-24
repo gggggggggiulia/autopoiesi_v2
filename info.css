@@ -89,23 +89,49 @@ body {
   margin: 4px 0;
 }
 
-/* Colonna video, a fianco del testo.
-   aspect-ratio sostituisce il vecchio trucco "padding-top in %": con
-   quello, ogni volta che si cambiava la larghezza bisognava
-   ricalcolare a mano anche il padding, ed è lì che si era disallineato
-   (65vw di width ma un padding-top ancora tarato per 45vw). Con
-   aspect-ratio la proporzione (44.43% di padding-top che Vimeo aveva
-   fornito, cioè height = 0.4443 × width) è fissata una volta sola e
-   vale per qualunque larghezza. */
-.video-wrap {
+/* Colonna visiva, a fianco del testo: una cornice FISSA (stessa
+   posizione/dimensione sempre) che contiene più "layer" sovrapposti
+   (video + immagini). Cambia solo quale layer è visibile, mai la
+   cornice stessa — evita che il layout salti quando cambia contenuto. */
+.media-frame {
+  position: relative;
   flex: 1 1 320px;     /* si allarga per riempire lo spazio rimasto, min 320px */
-  max-width: 48vw;     /* ma non oltre questa larghezza */
-  aspect-ratio: 1 / 0.4443;
+  max-width: 35vw;     /* ma non oltre questa larghezza */
+  aspect-ratio: 1 / 0.4443;  /* proporzione del video Vimeo (44.43% di padding-top) */
   overflow: hidden;
 }
-.video-wrap iframe {
+
+.media-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;  /* solo il layer attivo deve poter ricevere interazioni */
+}
+.media-layer.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.media-layer iframe,
+.media-layer img {
   display: block;
   width: 100%;
   height: 100%;
   border: none;
+  object-fit: cover;  /* le immagini riempiono la cornice mantenendo le proporzioni */
+}
+
+/* Parole nel testo che attivano un layer. Il trattino sotto, sottile e
+   puntinato, segnala che sono interattive senza somigliare a un link
+   vero e proprio (quello stile è già preso da .cliccabile). */
+.trigger {
+  cursor: pointer;
+  border-bottom: 1px dotted #8a8a8c;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.trigger:hover,
+.trigger.is-pinned {
+  color: #ffffff;
+  border-bottom-color: #F4F4F4;
 }
