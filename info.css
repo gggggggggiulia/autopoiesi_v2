@@ -1,105 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap"
-      rel="stylesheet"
-    />
-    <title>autopoiesi / info</title>
-    <link rel="stylesheet" href="info.css" />
-  </head>
-  <body>
-    <div class="menu-container">
-      <nav class="menu">
-        <a href="home.html">autopoiesi</a><br />
-        <a href="info.html"><u>info</u></a
-        ><br />
-        <a href="dati.html">dati</a><br />
-        <a href="index.html">rete</a>
-      </nav>
-    </div>
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #1a1a1a;
+  color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: "Inconsolata", monospace;
+  font-size: 16px;
+}
 
-    <div class="layout">
-      <div class="paragrafo">
-        INFO<br /><br />
-        Autopoiesi visualizza la rete di interazioni tra le specie osservate
-        nell’<span class="trigger" data-layer="cave"
-          >Oasi delle Cave di Noale</span
-        >. <br /><br /><br />
-        L’Oasi delle Cave di Noale fa parte di una serie di progetti del
-        <a
-          class="cliccabile"
-          href="https://www.acquerisorgive.it/"
-          target="_blank"
-          >Consorzio delle Acque Risorgive della regione Veneto ↗</a
-        >. Il Consorzio si occupa della rigenerazione di aree urbane o limitrofe
-        ad esse, con l’obiettivo di bonificarle difendendo l’ambiente e la sua
-        biodiversità. <br /><br /><br />
-        Uno degli interventi del consorzio si è svolto nei pressi della città di
-        Noale, che ha portato alla creazione dell’oasi che oggi viene
-        considerata
-        <a
-          class="cliccabile"
-          href="https://www.mase.gov.it/portale/sic-zsc-e-zps-in-italia"
-          target="_blank"
-          >Zona Speciale di Conservazione ↗</a
-        >. <br /><br /><br />
-        Creare un ambiente ricco di specie di specie diverse è importante dal
-        momento che ogni sistema basa il suo auto sostentamento sulle
-        interazioni che avvengono tra le specie che lo abitano.
-        <br /><br /><br />
-        INTERAZIONI <br /><br />
-        Le interazioni tra specie sono un fenomeno complesso e variegato,
-        talvolta difficile da catalogare con assoluta precisione e certezza. Il
-        progetto è costruito sulle interazioni attualmente catalogate dalla
-        comunità scientifica, che ha sviluppato una lista dettagliata -- per
-        quanto sempre approssimativa -- di 48 tipologie di interazioni.
-      </div>
+/* testo centrato dentro al cerchio */
+.titolo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: 600;
+}
 
-      <!--
-      MEDIA-FRAME: la cornice a destra resta sempre nella stessa
-      posizione orizzontale/larghezza massima. Dentro, più "layer": solo
-      uno alla volta visibile (classe .is-active, gestita da info.js).
-      L'altezza NON è più fissa: ogni layer occupa la larghezza della
-      colonna e si ridimensiona in altezza secondo la propria proporzione
-      naturale, quindi la cornice "respira" in base a cosa sta mostrando.
+/* paragrafo descrittivo sotto */
+.text {
+  max-width: 500px;
+  text-align: center;
+  font-size: 18px;
+  padding: 0 20px;
+}
 
-      Per aggiungere una nuova coppia parola→immagine:
-        1. metti l'immagine in /img/ (es. img/rete.jpg)
-        2. aggiungi qui sotto un nuovo <div class="media-layer" data-layer="NOME">
-        3. nel testo a sinistra, avvolgi la parola con
-           <span class="trigger" data-layer="NOME">parola</span>
-      "NOME" deve coincidere fra i due punti 2 e 3: è la chiave che li lega.
-    -->
-      <div class="media-frame" id="mediaFrame">
-        <div class="media-layer is-active" data-layer="default">
-          <iframe
-            src="https://player.vimeo.com/video/1228844138?badge=0&autopause=0&player_id=0&app_id=58479&background=1&loop=1&muted=1&dnt=1"
-            frameborder="0"
-            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            title="Noale_Map_Pins_bw"
-          >
-          </iframe>
-        </div>
+/* Contenitore delle due colonne: testo a sinistra, video a destra.
+   Il margine che prima stava su .paragrafo (spazio per il menu fisso +
+   distanza dall'alto) ora vive qui, una volta sola, invece che ripetuto
+   su ogni colonna. */
+.layout {
+  display: flex;
+  align-items: flex-start; /* le due colonne partono allineate in alto */
+  gap: 40px;
+  margin-left: 220px; /* lascia spazio al menu fisso */
+  margin-top: 40px;
+}
 
-        <!-- ESEMPIO: sostituisci il src con la tua immagine reale -->
-        <div class="media-layer" data-layer="cave">
-          <img src="img/ezgif.com-optimize.gif" alt="Le Cave di Noale" />
-        </div>
-        <div class="media-layer" data-layer="zsc">
-          <img
-            src="img/zona-conservazione.jpg"
-            alt="Zona Speciale di Conservazione"
-          />
-        </div>
-      </div>
-    </div>
+.paragrafo {
+  width: 30vw; /* 30% del viewport */
+  text-align: left;
+}
 
-    <script src="info.js"></script>
-  </body>
-</html>
+::selection {
+  background: #f4f4f4;
+  color: rgb(31, 31, 31);
+  text-shadow: none;
+}
+
+.cliccabile {
+  margin-top: 20px;
+}
+
+.cliccabile:link {
+  color: #f4f4f4;
+  /* color: #a5a5a5; */
+  text-decoration: none;
+  border-bottom: 1px dotted #8a8a8c;
+}
+
+.cliccabile:visited {
+  color: inherit;
+  border-bottom: 1px dotted #8a8a8c;
+}
+
+.cliccabile:hover {
+  /* color: #a5a5a5; */
+  border-bottom-color: #f4f4f4;
+}
+
+/* MENU----------------------------------------------- */
+.menu-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  font-family: "Inconsolata", monospace;
+}
+
+.menu {
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 4px;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+/* Colonna visiva, a fianco del testo. La LARGHEZZA resta fissa (stessa
+   posizione, stesso ingombro orizzontale sempre); l'ALTEZZA no: ogni
+   layer (video o immagine) occupa la larghezza della colonna e si
+   ridimensiona in altezza secondo la propria proporzione naturale —
+   niente più un unico formato "a forza" per tutto, come succedeva
+   prima con l'aspect-ratio fissato sull'intera cornice. */
+.media-frame {
+  position: relative;
+  flex: 1 1 320px; /* si allarga per riempire tutto lo spazio rimasto, min 320px */
+  min-width: 0; /* senza questa riga, un'immagine "grande" (nella sua risoluzione
+                           reale) o l'iframe possono forzare .media-frame a una larghezza
+                           diversa dal solito: è il default min-width:auto degli elementi
+                           flessibili, che li ancora alla dimensione intrinseca del loro
+                           contenuto invece di rispettare flex-basis/flex-grow. Con
+                           min-width:0 la larghezza dipende SOLO dal calcolo flex, uguale
+                           per ogni layer, che sia video o immagine. */
+  margin-right: 40px; /* respiro dal bordo destro dello schermo, come il gap fra le colonne */
+  overflow: hidden; /* rete di sicurezza, non dovrebbe mai servire ora */
+}
+
+/* Cambio di contenuto ISTANTANEO (niente dissolvenza): solo il layer
+   attivo viene renderizzato, gli altri sono display:none e quindi non
+   occupano spazio né ricevono interazioni — un solo <div> "vivo" alla
+   volta, la cornice assume automaticamente la sua altezza. */
+.media-layer {
+  display: none;
+}
+.media-layer.is-active {
+  display: block;
+}
+
+.media-layer img {
+  display: block;
+  width: 100%;
+  height: auto; /* la proporzione la decide l'immagine stessa */
+}
+
+/* Il video Vimeo, a differenza di un'immagine, non ha una dimensione
+   "naturale" che il browser possa leggere da solo: l'aspect-ratio va
+   dichiarato esplicitamente, ma solo qui, sul suo layer — non più
+   imposto a tutta la cornice come prima. */
+.media-layer[data-layer="default"] iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 0.4443; /* proporzione del video Vimeo (44.43% di padding-top) */
+  border: none;
+}
+
+/* Parole nel testo che attivano un layer. Il trattino sotto, sottile e
+   puntinato, segnala che sono interattive senza somigliare a un link
+   vero e proprio (quello stile è già preso da .cliccabile). Nessuna
+   transition: il cambio colore è istantaneo, coerente con lo scambio
+   istantaneo dei media qui sopra. */
+.trigger {
+  cursor: default;
+  color: #8a8a8c;
+  /* border-bottom: 1px dotted #8a8a8c; */
+}
+.trigger:hover,
+.trigger.is-pinned {
+  color: #ffffff;
+  border-bottom-color: #f4f4f4;
+}
