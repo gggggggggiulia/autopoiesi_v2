@@ -99,6 +99,13 @@ body {
 .media-frame {
   position: relative;
   flex: 1 1 320px;     /* si allarga per riempire tutto lo spazio rimasto, min 320px */
+  min-width: 0;        /* senza questa riga, un'immagine "grande" (nella sua risoluzione
+                           reale) o l'iframe possono forzare .media-frame a una larghezza
+                           diversa dal solito: è il default min-width:auto degli elementi
+                           flessibili, che li ancora alla dimensione intrinseca del loro
+                           contenuto invece di rispettare flex-basis/flex-grow. Con
+                           min-width:0 la larghezza dipende SOLO dal calcolo flex, uguale
+                           per ogni layer, che sia video o immagine. */
   margin-right: 40px;  /* respiro dal bordo destro dello schermo, come il gap fra le colonne */
   overflow: hidden;    /* rete di sicurezza, non dovrebbe mai servire ora */
 }
