@@ -1,44 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
-  <title>autopoiesi / dati</title>
-  <link rel="stylesheet" href="info.css" />
-</head>
-<body>
-
-  <div class="menu-container">
-    <nav class="menu">
-      <a href="home.html">autopoiesi</a><br>
-      <a href="info.html">info</a><br>
-      <a href="#"><u>dati</u></a><br>
-      <a href="index.html">rete</a>
-    </nav>
-  </div>
-
-  <div class="layout">
-    <div class="paragrafo">
-    DATI<br><br>
-    La costruzione del grafico a rete è basata su due elementi chiave: <i>nodes</i> e <i>edges</i>. I nodes rappresentano tutte le specie osservate all’interno dell’oasi, mentre gli edges rappresentano le loro interazioni.<br><br><br>
-
-    NODES<br><br>
-    L’obiettivo era quello di creare una lista quanto più completa possibile delle specie che abitano la zona dell’Oasi delle Cave di Noale. La lista è stata ottenuta incrociando una serie di dataset quali iNaturalist, Consorzio delle Acque Risorgive, NNB Ispra (Network Nazionale Biodiversità).
-      <br><br><br>
-
-    EDGES<br><br>
-    Per ottenere la lista di interazioni è stata utilizzato <i>(↗ <a class="cliccabile" href="https://www.globalbioticinteractions.org/" target="_blank">GloBi</a>)</i>, una piattaforma pensata per essere un vero e proprio motore di ricerca di interazioni tra specie. Il programma effettua una ricerca su un ampio database di paper scientifici da tutto il mondo e, una volta inserito il nome della specie source (A) e della specie target (B) restituisce i risultati basandosi sulle citazioni delle specie (e talvolta di una specifica interazione).
-Per lo scopo del progetto, è stata inserita la lista di tutte le specie sia come source che come target. In questo modo è stato ottenuto un ulteriore database che descrive le interazioni tra le specie osservate nell’Oasi di Noale.
-    <br><br><br>
-
-    GRAFICO<br><br>
-    Il grafico a rete è un modello visivo che permette in particolare di esplorare ciascun elemento sia nella sua specificità che in relazione alle altre entità. A differenza di altri modelli visivi, il grafico a rete invita l’utente ad esplorare continuamente, avvicinandosi e allontanandosi, muovendosi nello spazio e cliccando sugli elementi che lo compongono.
-Questo aspetto è fondamentale per il progetto: la visualizzazione delle interazioni tra specie non vuole mostrare un unico risultato certo, ma fornire all’utente uno strumento per curiosare un sistema molto intricato.
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>autopoiesi / dati</title>
+    <link rel="stylesheet" href="info.css" />
+  </head>
+  <body>
+    <div class="menu-container">
+      <nav class="menu">
+        <a href="home.html">autopoiesi</a><br />
+        <a href="info.html">info</a><br />
+        <a href="#"><u>dati</u></a
+        ><br />
+        <a href="index.html">rete</a>
+      </nav>
     </div>
-  </div>
 
-</body>
+    <div class="layout">
+      <div class="paragrafo">
+        DATI<br /><br />
+        La costruzione del grafico a rete è basata su due elementi chiave:
+        <i>nodes</i> e <i>edges</i>. I nodes rappresentano tutte le specie
+        osservate all’interno dell’oasi, mentre gli edges rappresentano le loro
+        interazioni.<br /><br /><br />
+
+        NODES<br /><br />
+        Rappresentano una lista quanto più completa possibile delle specie che
+        abitano la zona dell’Oasi delle Cave di Noale. La lista è stata ottenuta
+        incrociando una serie di dataset quali iNaturalist, Consorzio delle
+        Acque Risorgive, NNB Ispra (Network Nazionale Biodiversità).
+        <br /><br /><br />
+
+        EDGES<br /><br />
+        Per ottenere la lista di interazioni è stata utilizzato
+        <a
+          class="cliccabile"
+          href="https://www.globalbioticinteractions.org/"
+          target="_blank"
+          >GloBi ↗</a
+        >, una piattaforma pensata per essere un vero e proprio motore di
+        ricerca di interazioni tra specie. Il programma effettua una ricerca su
+        un ampio database di paper scientifici da tutto il mondo e, una volta
+        inserito il nome della specie source (A) e della specie target (B)
+        restituisce i risultati basandosi sulle citazioni delle specie (e
+        talvolta di una specifica interazione). Per lo scopo del progetto, è
+        stata inserita la lista di tutte le specie sia come source che come
+        target. In questo modo è stato ottenuto un ulteriore database che
+        descrive le interazioni tra le specie osservate nell’Oasi di Noale.
+        <br /><br /><br />
+
+        GRAFICO<br /><br />
+        Il grafico a rete è un modello visivo che permette in particolare di
+        esplorare ciascun elemento sia nella sua specificità che in relazione
+        alle altre entità. A differenza di altri modelli visivi, il grafico a
+        rete invita l’utente ad esplorare continuamente, avvicinandosi e
+        allontanandosi, muovendosi nello spazio e cliccando sugli elementi che
+        lo compongono. Questo aspetto è fondamentale per il progetto: la
+        visualizzazione delle interazioni tra specie non vuole mostrare un unico
+        risultato certo, ma fornire all’utente uno strumento per curiosare un
+        sistema molto intricato.
+      </div>
+    </div>
+  </body>
 </html>
