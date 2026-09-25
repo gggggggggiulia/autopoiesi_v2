@@ -1,8 +1,8 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #1A1A1A;
-  color: #F4F4F4;
+  background-color: #1a1a1a;
+  color: #f4f4f4;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -34,37 +34,38 @@ body {
    su ogni colonna. */
 .layout {
   display: flex;
-  align-items: flex-start;  /* le due colonne partono allineate in alto */
+  align-items: flex-start; /* le due colonne partono allineate in alto */
   gap: 40px;
-  margin-left: 220px;  /* lascia spazio al menu fisso */
+  margin-left: 220px; /* lascia spazio al menu fisso */
   margin-top: 40px;
 }
 
 .paragrafo {
-  width: 30vw;         /* 30% del viewport */
+  width: 30vw; /* 30% del viewport */
   text-align: left;
 }
 
 ::selection {
-  background: #F4F4F4;
+  background: #f4f4f4;
   color: rgb(31, 31, 31);
   text-shadow: none;
 }
 
 .cliccabile {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .cliccabile:link {
-    color: #F4F4F4;
+  color: #f4f4f4;
+  text-decoration: none;
 }
 
 .cliccabile:hover {
-    color: #a5a5a5;
+  color: #a5a5a5;
 }
 
 .cliccabile:visited {
-    color: inherit;
+  color: inherit;
 }
 
 /* MENU----------------------------------------------- */
@@ -98,16 +99,16 @@ body {
    prima con l'aspect-ratio fissato sull'intera cornice. */
 .media-frame {
   position: relative;
-  flex: 1 1 320px;     /* si allarga per riempire tutto lo spazio rimasto, min 320px */
-  min-width: 0;        /* senza questa riga, un'immagine "grande" (nella sua risoluzione
+  flex: 1 1 320px; /* si allarga per riempire tutto lo spazio rimasto, min 320px */
+  min-width: 0; /* senza questa riga, un'immagine "grande" (nella sua risoluzione
                            reale) o l'iframe possono forzare .media-frame a una larghezza
                            diversa dal solito: è il default min-width:auto degli elementi
                            flessibili, che li ancora alla dimensione intrinseca del loro
                            contenuto invece di rispettare flex-basis/flex-grow. Con
                            min-width:0 la larghezza dipende SOLO dal calcolo flex, uguale
                            per ogni layer, che sia video o immagine. */
-  margin-right: 40px;  /* respiro dal bordo destro dello schermo, come il gap fra le colonne */
-  overflow: hidden;    /* rete di sicurezza, non dovrebbe mai servire ora */
+  margin-right: 40px; /* respiro dal bordo destro dello schermo, come il gap fra le colonne */
+  overflow: hidden; /* rete di sicurezza, non dovrebbe mai servire ora */
 }
 
 /* Cambio di contenuto ISTANTANEO (niente dissolvenza): solo il layer
@@ -124,7 +125,7 @@ body {
 .media-layer img {
   display: block;
   width: 100%;
-  height: auto;   /* la proporzione la decide l'immagine stessa */
+  height: auto; /* la proporzione la decide l'immagine stessa */
 }
 
 /* Il video Vimeo, a differenza di un'immagine, non ha una dimensione
@@ -134,7 +135,7 @@ body {
 .media-layer[data-layer="default"] iframe {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 0.4443;  /* proporzione del video Vimeo (44.43% di padding-top) */
+  aspect-ratio: 1 / 0.4443; /* proporzione del video Vimeo (44.43% di padding-top) */
   border: none;
 }
 
@@ -150,5 +151,5 @@ body {
 .trigger:hover,
 .trigger.is-pinned {
   color: #ffffff;
-  border-bottom-color: #F4F4F4;
+  border-bottom-color: #f4f4f4;
 }
