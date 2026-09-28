@@ -149,7 +149,7 @@ body {
    transition: il cambio colore è istantaneo, coerente con lo scambio
    istantaneo dei media qui sopra. */
 .trigger {
-  cursor: default;
+  cursor: help;
   color: #8a8a8c;
   /* border-bottom: 1px dotted #8a8a8c; */
 }
