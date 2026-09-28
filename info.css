@@ -44,6 +44,11 @@ body {
 .paragrafo {
   width: 30vw; /* 30% del viewport */
   text-align: left;
+  margin-bottom: 10vh;
+}
+
+h3 {
+  margin-top: 0px;
 }
 
 ::selection {
@@ -86,7 +91,6 @@ body {
   flex-direction: column;
   margin-top: 10px;
   padding: 10px 12px;
-  border-radius: 4px;
 }
 
 .menu a {
@@ -171,11 +175,14 @@ body {
    transition: il cambio colore è istantaneo, coerente con lo scambio
    istantaneo dei media qui sopra. */
 .trigger {
-  cursor: help;
+  cursor: url("img/inspect.png") 12 12, help;
   color: #8a8a8c;
   /* border-bottom: 1px dotted #8a8a8c; */
 }
-.trigger:hover,
+.trigger:hover {
+  color: #ffffff;
+  border-bottom-color: #f4f4f4;
+}
 .trigger.is-pinned {
   color: #ffffff;
   border-bottom-color: #f4f4f4;
