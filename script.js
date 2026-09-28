@@ -154,6 +154,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
 
     simulation = d3
       .forceSimulation(nodes)
+      .velocityDecay(0.5)
       .force(
         "link",
         d3
@@ -1398,7 +1399,7 @@ function drag(simulation) {
   return d3
     .drag()
     .on("start", (event, d) => {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
+      if (!event.active) simulation.alphaTarget(0.1).restart();
       d.fx = d.x;
       d.fy = d.y;
     })
