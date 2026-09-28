@@ -175,7 +175,7 @@ h3 {
    transition: il cambio colore è istantaneo, coerente con lo scambio
    istantaneo dei media qui sopra. */
 .trigger {
-  cursor: url("img/inspect.png") 12 12, help;
+  cursor: url("img/inspect_.png") 12 12, help;
   color: #8a8a8c;
   /* border-bottom: 1px dotted #8a8a8c; */
 }
