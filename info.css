@@ -133,15 +133,36 @@ body {
   height: auto; /* la proporzione la decide l'immagine stessa */
 }
 
-/* Il video Vimeo, a differenza di un'immagine, non ha una dimensione
-   "naturale" che il browser possa leggere da solo: l'aspect-ratio va
-   dichiarato esplicitamente, ma solo qui, sul suo layer — non più
-   imposto a tutta la cornice come prima. */
-.media-layer[data-layer="default"] iframe {
+/* <figure> è il contenitore opzionale di un layer: media + didascalia.
+   Il browser gli dà di default margini laterali di 40px, da azzerare. */
+.media-layer figure {
+  margin: 0;
+}
+
+.media-layer figcaption {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #8a8a8c;
+}
+
+/* Layer di solo testo (nessuna immagine/video): stessa larghezza della
+   colonna, altezza data dal contenuto. */
+.media-layer .media-text {
+  font-size: 16px;
+  line-height: 1.4;
+  color: #f4f4f4;
+}
+
+/* Layer video (tag <video>): come un'immagine, il browser legge da solo
+   la proporzione del file appena ne carica i metadati, quindi basta
+   larghezza piena e altezza automatica. Se un video ha un formato che
+   vuoi forzare, imposta sul suo layer  style="--video-ratio: 16 / 9". */
+.media-layer video {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 0.4443; /* proporzione del video Vimeo (44.43% di padding-top) */
-  border: none;
+  height: auto;
+  aspect-ratio: var(--video-ratio, auto);
 }
 
 /* Parole nel testo che attivano un layer. Il trattino sotto, sottile e
