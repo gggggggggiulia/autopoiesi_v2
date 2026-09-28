@@ -175,15 +175,19 @@ h3 {
    transition: il cambio colore è istantaneo, coerente con lo scambio
    istantaneo dei media qui sopra. */
 .trigger {
-  cursor: url("img/inspect_.png") 12 12, help;
-  color: #8a8a8c;
+  cursor: url("img/inspect.png") 12 12, help;
+  /* color: #8a8a8c; */
+  color: #1a1a1a;
+  background-color: #ffffffd9;
   /* border-bottom: 1px dotted #8a8a8c; */
 }
 .trigger:hover {
-  color: #ffffff;
-  border-bottom-color: #f4f4f4;
+  color: #8a8a8c;
+  background-color: #ffffffd9;
+  /* border-bottom-color: #f4f4f4; */
 }
 .trigger.is-pinned {
-  color: #ffffff;
-  border-bottom-color: #f4f4f4;
+  color: #8a8a8c;
+  background-color: #ffffffd9;
+  /* border-bottom-color: #f4f4f4; */
 }
