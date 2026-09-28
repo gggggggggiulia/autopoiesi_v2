@@ -1,3 +1,8 @@
+html {
+  overscroll-behavior: none;
+  height: 100%; /* Force standard height boundaries */
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -107,7 +112,8 @@ h3 {
    niente più un unico formato "a forza" per tutto, come succedeva
    prima con l'aspect-ratio fissato sull'intera cornice. */
 .media-frame {
-  position: relative;
+  position: sticky;
+  top: 40px;
   flex: 1 1 320px; /* si allarga per riempire tutto lo spazio rimasto, min 320px */
   min-width: 0; /* senza questa riga, un'immagine "grande" (nella sua risoluzione
                            reale) o l'iframe possono forzare .media-frame a una larghezza
@@ -175,7 +181,7 @@ h3 {
    transition: il cambio colore è istantaneo, coerente con lo scambio
    istantaneo dei media qui sopra. */
 .trigger {
-  cursor: url("img/inspect_.png") 12 12, help;
+  cursor: url("img/inspect.png") 12 12, help;
   /* color: #8a8a8c; */
   color: #1a1a1a;
   background-color: #ffffffd9;
