@@ -39,9 +39,9 @@
         >. Il Consorzio si occupa della rigenerazione di aree urbane o limitrofe
         ad esse, con l’obiettivo di bonificarle difendendo l’ambiente e la sua
         biodiversità. <br /><br /><br />
-        Uno degli interventi del consorzio si è svolto nei pressi della
+        Uno degli interventi del consorzio si è svolto nei
         <span class="trigger" data-layer="localizzazione"
-          >città di Noale</span
+          >pressi della città di Noale</span
         >, che ha portato alla creazione dell’oasi che oggi viene considerata
         <a
           class="cliccabile"
@@ -57,8 +57,8 @@
         Le interazioni tra specie sono un fenomeno complesso e variegato,
         talvolta difficile da catalogare con assoluta precisione e certezza. Il
         progetto è costruito sulle interazioni attualmente catalogate dalla
-        comunità scientifica, che ha sviluppato una lista dettagliata -- per
-        quanto sempre approssimativa -- di 48 tipologie di interazioni.
+        comunità scientifica, che ha sviluppato una lista dettagliata — per
+        quanto sempre approssimativa — di 48 tipologie di interazioni.
       </div>
 
       <!--
@@ -89,7 +89,9 @@
             preload="auto"
             disablepictureinpicture
           ></video>
-          <figcaption>Osservazioni su iNaturalist nella zona delle Cave</figcaption>
+          <figcaption>
+            Osservazioni su iNaturalist nella zona delle Cave
+          </figcaption>
         </div>
 
         <!-- ESEMPIO: sostituisci il src con la tua immagine reale -->
@@ -130,23 +132,25 @@
       // Layer video con data-restart: ogni volta che il layer diventa
       // attivo (hover sul trigger) il video riparte da 0; quando si nasconde
       // va in pausa. Si osserva la classe .is-active, come la imposta info.js.
-      document.querySelectorAll(".media-layer[data-restart]").forEach((layer) => {
-        const video = layer.querySelector("video");
-        if (!video) return;
-        let wasActive = false;
+      document
+        .querySelectorAll(".media-layer[data-restart]")
+        .forEach((layer) => {
+          const video = layer.querySelector("video");
+          if (!video) return;
+          let wasActive = false;
 
-        new MutationObserver(() => {
-          const isActive = layer.classList.contains("is-active");
-          if (isActive === wasActive) return; // cambiata un'altra classe: ignora
-          wasActive = isActive;
-          if (isActive) {
-            video.currentTime = 0;
-            video.play().catch(() => {}); // muto: l'autoplay è consentito
-          } else {
-            video.pause();
-          }
-        }).observe(layer, { attributes: true, attributeFilter: ["class"] });
-      });
+          new MutationObserver(() => {
+            const isActive = layer.classList.contains("is-active");
+            if (isActive === wasActive) return; // cambiata un'altra classe: ignora
+            wasActive = isActive;
+            if (isActive) {
+              video.currentTime = 0;
+              video.play().catch(() => {}); // muto: l'autoplay è consentito
+            } else {
+              video.pause();
+            }
+          }).observe(layer, { attributes: true, attributeFilter: ["class"] });
+        });
     </script>
   </body>
 </html>
