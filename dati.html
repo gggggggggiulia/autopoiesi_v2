@@ -32,21 +32,20 @@
         interazioni.<br /><br /><br />
 
         <h3>NODES</h3>
-        Rappresentano una lista quanto più completa possibile delle specie che
+        Rappresentano una lista quanto più completa possibile delle <span class="trigger" data-layer="nodes">specie</span> che
         abitano la zona dell’Oasi delle Cave di Noale. La lista è stata ottenuta
         incrociando una serie di dataset quali iNaturalist, Consorzio delle
         Acque Risorgive, NNB Ispra (Network Nazionale Biodiversità).
         <br /><br /><br />
 
         <h3>EDGES</h3>
-        Per ottenere la lista di interazioni è stata utilizzato
+        Per ottenere la lista di <span class="trigger" data-layer="edges">interazioni</span> è stata utilizzato
         <a
           class="cliccabile"
           href="https://www.globalbioticinteractions.org/"
           target="_blank"
           >GloBi ↗</a
-        >, un database aperto che raccoglie e connette informazioni su interazioni tra specie da fonti scientifiche in tutto il mondo. Il programma effettua una <span class="trigger" data-layer="scraping"
-        >ricerca</span> su
+        >, un database aperto che raccoglie e connette informazioni su interazioni tra specie da fonti scientifiche in tutto il mondo. Il programma effettua una ricerca su
         un ampio database di paper scientifici da tutto il mondo e, una volta
         inserito il nome della specie source (A) e della specie target (B)
         restituisce i risultati basandosi sulle citazioni delle specie (e
@@ -72,22 +71,30 @@
         <div class="media-layer is-active" data-layer="default">
           <!-- Video di default: sempre in loop continuo, muto (necessario
                per l'autoplay), senza controlli. -->
-          <video
-            src="img/Noale_Map_Pins_bw2_.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="auto"
-            disablepictureinpicture
-          ></video>
-          <figcaption>Osservazioni su iNaturalist nella zona delle Cave</figcaption>
+               <figure>
+                <img src="img/Scraping-6.gif" alt="Edges Data" />
+                <figcaption>Scraping dei dati da GloBi</figcaption>
+              </figure>
         </div>
 
-        <div class="media-layer" data-layer="scraping">
+        <!-- <div class="media-layer" data-layer="scraping">
           <figure>
             <img src="img/Scraping-6.gif" alt="Data Scraping" />
             <figcaption>Scraping dei dati da GloBi</figcaption>
+          </figure>
+        </div> -->
+
+        <div class="media-layer" data-layer="nodes">
+          <figure>
+            <img src="img/Data-2_.gif" alt="Data Scraping" />
+            <figcaption>Dati dei Nodes</figcaption>
+          </figure>
+        </div>
+
+        <div class="media-layer" data-layer="edges">
+          <figure>
+            <img src="img/Data-1_.gif" alt="Data Scraping" />
+            <figcaption>Dati degli Edges</figcaption>
           </figure>
         </div>
 
