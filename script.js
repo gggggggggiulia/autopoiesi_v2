@@ -39,6 +39,54 @@ if (edgeTooltip.empty()) {
   edgeTooltip = d3.select("body").append("div").attr("id", "edge-tooltip");
 }
 
+// Lightbox per ingrandire le immagini dentro l'inspector (sia quello dei
+// nodi sia quello degli edge, che condividono lo stesso #info-box). Il
+// pannello viene riscritto con .html() ogni volta che si apre qualcosa,
+// quindi un listener su ogni singola <img> andrebbe perso a ogni apertura:
+// il listener va invece su #info-box stesso, che esiste sempre, e usa
+// event delegation per intercettare il click qualunque immagine ci sia
+// dentro in quel momento.
+let lightbox = d3.select("body").select("#lightbox-overlay");
+if (lightbox.empty()) {
+  lightbox = d3
+    .select("body")
+    .append("div")
+    .attr("id", "lightbox-overlay")
+    .style("display", "none");
+  lightbox.append("img");
+}
+const lightboxImg = lightbox.select("img");
+
+function openLightbox(src, alt) {
+  lightboxImg.attr("src", src).attr("alt", alt || "");
+  lightbox.style("display", "flex");
+}
+
+function closeLightbox() {
+  lightbox.style("display", "none");
+  lightboxImg.attr("src", null);
+}
+
+infoBox.node().addEventListener("click", (event) => {
+  const img = event.target.closest("img");
+  if (!img) return;
+  // Ferma la propagazione QUI, non su document: altrimenti lo stesso click
+  // arriverebbe anche al listener "click fuori dalla ricerca" (che
+  // svuoterebbe la barra di ricerca) e a quello sull'svg (che chiuderebbe
+  // l'inspector) — nessuno dei due deve scattare per un click su
+  // un'immagine dentro il pannello.
+  event.stopPropagation();
+  openLightbox(img.getAttribute("src"), img.getAttribute("alt"));
+});
+
+// Click ovunque sull'overlay (immagine inclusa) per chiudere: pattern
+// standard di una lightbox minimale.
+lightbox.on("click", closeLightbox);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeLightbox();
+});
+
 let simulation, node, curvedLinks, linkTextPaths, edgeLabels, zoom;
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
 let selectedNodeId = null; // id del nodo attualmente aperto, per tenere l'anello di selezione agganciato
