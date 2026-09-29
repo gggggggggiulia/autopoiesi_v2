@@ -49,7 +49,7 @@ body {
 .paragrafo {
   width: 30vw; /* 30% del viewport */
   text-align: left;
-  margin-bottom: 10vh;
+  margin-bottom: 15vh;
 }
 
 h3 {
