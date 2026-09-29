@@ -160,9 +160,9 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         d3
           .forceLink(links)
           .id((d) => d.scientific_name)
-          .distance(130)
+          .distance(180)
       )
-      .force("charge", d3.forceManyBody().strength(-400))
+      .force("charge", d3.forceManyBody().strength(-600))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force(
         "collide",
