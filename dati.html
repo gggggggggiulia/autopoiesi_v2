@@ -9,7 +9,6 @@
       href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <title>autopoiesi / dati</title>
     <link rel="stylesheet" href="info.css" />
   </head>
@@ -35,8 +34,8 @@
         <h3>NODES</h3>
         Rappresentano una lista quanto più completa possibile delle specie che
         abitano la zona dell’Oasi delle Cave di Noale. La lista è stata ottenuta
-        incrociando una serie di dataset quali <a class="cliccabile" href="https://www.inaturalist.org/" target="_blank">iNaturalist ↗</a>, Consorzio delle
-        Acque Risorgive, <a class="cliccabile" href="https://www.nnb.isprambiente.it/" target="_blank">NNB Ispra (Network Nazionale Biodiversità) ↗</a>.
+        incrociando una serie di dataset quali iNaturalist, Consorzio delle
+        Acque Risorgive, NNB Ispra (Network Nazionale Biodiversità).
         <br /><br /><br />
 
         <h3>EDGES</h3>
@@ -46,8 +45,8 @@
           href="https://www.globalbioticinteractions.org/"
           target="_blank"
           >GloBi ↗</a
-        >, una piattaforma pensata per essere un vero e proprio motore di
-        ricerca di interazioni tra specie. Il programma effettua una ricerca su
+        >, un database aperto che raccoglie e connette informazioni su interazioni tra specie da fonti scientifiche in tutto il mondo. Il programma effettua una <span class="trigger" data-layer="scraping"
+        >ricerca</span> su
         un ampio database di paper scientifici da tutto il mondo e, una volta
         inserito il nome della specie source (A) e della specie target (B)
         restituisce i risultati basandosi sulle citazioni delle specie (e
@@ -58,7 +57,7 @@
         <br /><br /><br />
 
         <h3>GRAFICO</h3>
-        Il grafico a rete è un modello visivo che permette in particolare di
+        Il <span class="trigger" data-layer="grafo">grafico a rete</span> è un modello visivo che permette in particolare di
         esplorare ciascun elemento sia nella sua specificità che in relazione
         alle altre entità. A differenza di altri modelli visivi, il grafico a
         rete invita l’utente ad esplorare continuamente, avvicinandosi e
@@ -84,6 +83,21 @@
           ></video>
           <figcaption>Osservazioni su iNaturalist nella zona delle Cave</figcaption>
         </div>
+
+        <div class="media-layer" data-layer="scraping">
+          <figure>
+            <img src="img/Scraping-6.gif" alt="Data Scraping" />
+            <figcaption>Scraping dei dati da GloBi</figcaption>
+          </figure>
+        </div>
+
+        <div class="media-layer" data-layer="grafo">
+          <figure>
+            <img src="img/Noale_Grafo-3_.png" alt="Data Scraping" />
+            <figcaption>Prima visualizzazione delle interazioni su Gephi</figcaption>
+          </figure>
+        </div>
     </div>
+    <script src="info.js"></script>
   </body>
 </html>
