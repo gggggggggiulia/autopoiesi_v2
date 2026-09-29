@@ -179,3 +179,30 @@ button#reset:hover {
   font-size: 14px;
   margin: 4px 0;
 }
+
+/* ---------------------------- */
+
+#lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 20000;
+  display: none; /* alternato a "flex" dal JS */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+#lightbox-overlay img {
+  width: 90vw;
+  height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  filter: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
