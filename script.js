@@ -395,10 +395,10 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       <div style="display: flex; gap: 10px; margin-top: 10px;">
         <img src="${sourceNode.image}" alt="${
             sourceNode.name
-          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border:1px solid #8a8a8c" />
+          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border-radius: 4px;" />
         <img src="${targetNode.image}" alt="${
             targetNode.name
-          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border:1px solid #8a8a8c" />
+          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border-radius: 4px;" />
       </div>
       ${description ? `<p style="margin-top: 10px;">${description}</p>` : ""}
     `
