@@ -91,6 +91,61 @@ let simulation, node, curvedLinks, linkTextPaths, edgeLabels, zoom;
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
 let selectedNodeId = null; // id del nodo attualmente aperto, per tenere l'anello di selezione agganciato
 
+// Coppie di tipi che raccontano lo STESSO fatto da due punti di vista
+// opposti (es. "mangia" / "mangiato da"): edges.csv contiene solo UNA
+// riga per fatto — quale delle due forme sia salvata dipende da quale
+// era più frequente in fase di pulizia del dataset — ma nella
+// visualizzazione vogliamo sempre il verbo corretto rispetto al nodo
+// che si ha aperto: aprendo il predatore si legge "mangia", aprendo la
+// preda si legge "mangiato da", stesso identico edge.
+const INVERSE_TYPE = {
+  mangia: "mangiato da",
+  "mangiato da": "mangia",
+  preda: "predato da",
+  "predato da": "preda",
+  impollina: "impollinato da",
+  impollinato: "impollina",
+  "impollinato da": "impollina",
+  "fiore visitato da": "visita il fiore di",
+  "visita il fiore di": "fiore visitato da",
+  "visitato da": "visita",
+  visita: "visitato da",
+  "ospite di": "ha ospite",
+  "ha ospite": "ospite di",
+  "ha come vettore di dispersione": "vettore di dispersione di",
+  "vettore di dispersione di": "ha come vettore di dispersione",
+  uccide: "ucciso da",
+  "ucciso da": "uccide",
+  "crea habitat per": "ha come habitat",
+  "ha come habitat": "crea habitat per",
+  "ha vettore": "è vettore di",
+  "è vettore di": "ha vettore",
+};
+
+// Tipi SIMMETRICI: stesso significato indipendentemente da chi è
+// source o target nel csv, nessuna rietichettatura necessaria.
+const SYMMETRIC_TYPES = new Set([
+  "interagisce con",
+  "si verifica con",
+  "adiacente a",
+]);
+
+// Dato un edge e l'id del nodo attualmente aperto (`viewpointId`),
+// restituisce la label corretta DAL SUO PUNTO DI VISTA: se il nodo è il
+// source salvato nel csv, il tipo resta quello originale (il nodo
+// compie l'azione); se è il target, viene sostituito con la forma
+// inversa quando ne esiste una nota — altrimenti resta quella
+// originale come fallback sicuro (mai un crash, solo eventualmente una
+// label non riformulata per un tipo non ancora mappato qui sopra).
+function labelForViewpoint(edge, viewpointId) {
+  const srcId =
+    typeof edge.source === "object" ? edge.source.scientific_name : edge.source;
+  if (SYMMETRIC_TYPES.has(edge.type) || srcId === viewpointId) {
+    return edge.type;
+  }
+  return INVERSE_TYPE[edge.type] || edge.type;
+}
+
 const interactionDescriptions = {
   "è vettore di":
     "A è un vettore per B se trasporta e trasmette un patogeno infettivo in un altro organismo vivente.",
@@ -279,14 +334,20 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
 
     // Rende cliccabili e mostra la freccia solo sugli edge passati (quelli
     // del nodo selezionato); con un array vuoto disattiva/nasconde tutto,
-    // com'è allo stato iniziale.
+    // com'è allo stato iniziale. Sui tipi SIMMETRICI (interagisce con,
+    // adiacente a...) non c'è un "chi agisce/chi subisce", quindi niente
+    // freccia: mostrarla vorrebbe dire indicare una direzione arbitraria
+    // (di fatto l'ordine alfabetico delle due specie, residuo della
+    // pulizia di edges.csv) che non rappresenta nessun fatto reale.
     function setActiveEdges(activeLinks) {
       const activeSet = new Set(activeLinks);
       linkHitAreas.style("pointer-events", (d) =>
         activeSet.has(d) ? "stroke" : "none"
       );
       curvedLinks.attr("marker-end", (d) =>
-        activeSet.has(d) ? "url(#arrow-end)" : "none"
+        activeSet.has(d) && !SYMMETRIC_TYPES.has(d.type)
+          ? "url(#arrow-end)"
+          : "none"
       );
     }
 
@@ -334,10 +395,10 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       <div style="display: flex; gap: 10px; margin-top: 10px;">
         <img src="${sourceNode.image}" alt="${
             sourceNode.name
-          }" style="width: 80px; height: auto" />
+          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border:1px solid #8a8a8c" />
         <img src="${targetNode.image}" alt="${
             targetNode.name
-          }" style="width: 80px; height: auto" />
+          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border:1px solid #8a8a8c" />
       </div>
       ${description ? `<p style="margin-top: 10px;">${description}</p>` : ""}
     `
@@ -350,13 +411,19 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         d3.select(`#link-path-${links.indexOf(d)}`)
           .attr("stroke", "#F4F4F4")
           .attr("stroke-width", 1.4)
-          .attr("marker-end", "url(#arrow-end-hover)");
+          .attr(
+            "marker-end",
+            SYMMETRIC_TYPES.has(d.type) ? "none" : "url(#arrow-end-hover)"
+          );
       })
       .on("mouseleave", (event, d) => {
         d3.select(`#link-path-${links.indexOf(d)}`)
           .attr("stroke", "#646466")
           .attr("stroke-width", 0.4)
-          .attr("marker-end", "url(#arrow-end)");
+          .attr(
+            "marker-end",
+            SYMMETRIC_TYPES.has(d.type) ? "none" : "url(#arrow-end)"
+          );
       })
       .on("click", (event, d) => {
         event.stopPropagation();
@@ -626,10 +693,39 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         : `M${p2.x},${p2.y} A${R},${R} 0 0,0 ${p1.x},${p1.y}`;
     }
 
+    // Tipi per cui, dopo la pulizia di edges.csv, la forma "vincente" è
+    // quella PASSIVA (source = chi subisce, target = chi agisce): senza
+    // questo elenco la freccia (che SVG piazza sempre sull'ultimo punto
+    // del path, cioè sul target salvato) finirebbe per puntare verso chi
+    // COMPIE l'azione invece che verso chi la subisce — il contrario di
+    // quanto ci si aspetta leggendo "il predatore mangia la preda".
+    // Qui dentro solo i tipi per cui la direzione azione→ricevente è
+    // inequivocabile; per gli altri (relazioni di ospite/vettore/habitat,
+    // pochissimi edge e semantica meno netta) si lascia il default.
+    const ARROW_REVERSED_TYPES = new Set([
+      "mangiato da",
+      "predato da",
+      "impollinato da",
+      "fiore visitato da",
+      "visitato da",
+      "ucciso da",
+    ]);
+
     // Path visibile e sua hit-area: stessa geometria del path-guida del
-    // testo, così l'hitbox coincide sempre col tratto disegnato.
+    // testo, così l'hitbox coincide sempre col tratto disegnato. Per i
+    // tipi in ARROW_REVERSED_TYPES il path viene percorso al contrario
+    // (stesso trucco di computeTextPathD: scambio estremi + sweep-flag
+    // invertito, forma visiva identica) in modo che marker-end — sempre
+    // applicato all'ultimo punto — finisca sull'estremo giusto: chi
+    // SUBISCE l'azione, non chi la compie. Questa direzione è FISSA,
+    // indipendente da quale nodo hai aperto — a differenza della label
+    // (che invece cambia con labelForViewpoint), la freccia racconta
+    // sempre lo stesso fatto biologico.
     function computeArcD(d) {
       const { p1, p2, R } = d.__arc || arcGeometry(d);
+      if (ARROW_REVERSED_TYPES.has(d.type)) {
+        return `M${p2.x},${p2.y} A${R},${R} 0 0,0 ${p1.x},${p1.y}`;
+      }
       return `M${p1.x},${p1.y} A${R},${R} 0 0,1 ${p2.x},${p2.y}`;
     }
 
@@ -808,14 +904,15 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         .attr("xlink:href", (d, i) => `#link-text-path-${links.indexOf(d)}`)
         .attr("startOffset", "50%")
         .attr("text-anchor", "middle")
-        .text((d) => d.type);
+        .text((d) => labelForViewpoint(d, clickedId));
 
       setActiveEdges(edgesToShow);
 
       const interactionCounts = {};
       edgesToShow.forEach((edge) => {
-        if (!interactionCounts[edge.type]) interactionCounts[edge.type] = 0;
-        interactionCounts[edge.type]++;
+        const label = labelForViewpoint(edge, clickedId);
+        if (!interactionCounts[label]) interactionCounts[label] = 0;
+        interactionCounts[label]++;
       });
 
       const interactionText = Object.entries(interactionCounts)
