@@ -1,0 +1,5 @@
+CONTROLLI
+
+const USE_ROLE_COLORS = true;
+
+const SHOW_INTERACTION_SYMBOLS = false;
