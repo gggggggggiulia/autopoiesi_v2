@@ -1,3 +1,15 @@
+/* ===== Token condivisi (stessi valori in style.css e info.css) ===== */
+:root {
+  --bg: #000;
+  --text: #f4f4f4;
+  --text-dim: #9a9a9c;
+  --line-dim: #8a8a8c;
+  --panel: #1a1a1ac1;
+  --font: "Inconsolata", monospace;
+  --fs-base: 16px;
+  --fs-small: 14px;
+  --fs-tiny: 12px;
+}
 html {
   overscroll-behavior: none;
   height: 100%; /* Force standard height boundaries */
@@ -6,12 +18,12 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background-color: #1a1a1a;
-  color: #f4f4f4;
+  background-color: var(--bg);
+  color: var(--text);
   display: flex;
   flex-direction: column;
   height: 100vh;
-  font-family: "Inconsolata", monospace;
+  font-family: var(--font);
   font-size: 16px;
   line-height: 1.4;
 }
@@ -43,7 +55,7 @@ body {
   align-items: flex-start; /* le due colonne partono allineate in alto */
   gap: 40px;
   margin-left: 220px; /* lascia spazio al menu fisso */
-  margin-top: 40px;
+  margin-top: 20px; /* alza il contenuto della stessa quantità del menu */
 }
 
 .paragrafo {
@@ -52,13 +64,19 @@ body {
   margin-bottom: 15vh;
 }
 
+/* Titoli di sezione: stessi del pannello della rete (20px, grassetto,
+   minuscolo) invece dello stile di default del browser. */
 h3 {
-  margin-top: 0px;
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
 }
 
 ::selection {
-  background: #f4f4f4;
-  color: rgb(31, 31, 31);
+  background: #595959;
+  /* color: rgb(31, 31, 31); */
+  color: #fff;
   text-shadow: none;
 }
 
@@ -67,29 +85,29 @@ h3 {
 }
 
 .cliccabile:link {
-  color: #f4f4f4;
-  /* color: #a5a5a5; */
+  color: var(--text);
+  /* color: var(--text-dim); */
   text-decoration: none;
-  border-bottom: 1px dotted #8a8a8c;
+  border-bottom: 1px dotted var(--line-dim);
 }
 
 .cliccabile:visited {
   color: inherit;
-  border-bottom: 1px dotted #8a8a8c;
+  border-bottom: 1px dotted var(--line-dim);
 }
 
 .cliccabile:hover {
-  /* color: #a5a5a5; */
+  /* color: var(--text-dim); */
   border-bottom-color: #f4f4f4;
 }
 
 /* MENU----------------------------------------------- */
 .menu-container {
   position: fixed;
-  top: 20px;
+  top: 0px; /* come nella rete (style.css) */
   left: 20px;
   z-index: 1000;
-  font-family: "Inconsolata", monospace;
+  font-family: var(--font);
 }
 
 .menu {
@@ -99,7 +117,7 @@ h3 {
 }
 
 .menu a {
-  color: white;
+  color: var(--text);
   text-decoration: none;
   font-size: 14px;
   margin: 4px 0;
@@ -113,7 +131,7 @@ h3 {
    prima con l'aspect-ratio fissato sull'intera cornice. */
 .media-frame {
   position: sticky;
-  top: 40px;
+  top: 20px;
   flex: 1 1 320px; /* si allarga per riempire tutto lo spazio rimasto, min 320px */
   min-width: 0; /* senza questa riga, un'immagine "grande" (nella sua risoluzione
                            reale) o l'iframe possono forzare .media-frame a una larghezza
@@ -153,7 +171,7 @@ h3 {
   margin-top: 10px;
   font-size: 14px;
   line-height: 1.4;
-  color: #8a8a8c;
+  color: var(--text-dim);
 }
 
 /* Layer di solo testo (nessuna immagine/video): stessa larghezza della
@@ -161,7 +179,7 @@ h3 {
 .media-layer .media-text {
   font-size: 16px;
   line-height: 1.4;
-  color: #f4f4f4;
+  color: var(--text);
 }
 
 /* Layer video (tag <video>): come un'immagine, il browser legge da solo
@@ -175,25 +193,41 @@ h3 {
   aspect-ratio: var(--video-ratio, auto);
 }
 
-/* Parole nel testo che attivano un layer. Il trattino sotto, sottile e
-   puntinato, segnala che sono interattive senza somigliare a un link
-   vero e proprio (quello stile è già preso da .cliccabile). Nessuna
-   transition: il cambio colore è istantaneo, coerente con lo scambio
-   istantaneo dei media qui sopra. */
+/* Parole nel testo che attivano un layer. Stesso stile dei numerini nel
+   pannello del nodo della rete (.ni-count-badge): riquadro grigio, angoli
+   quasi vivi, un po' più chiaro all'hover. Regola unica per tutto il sito:
+   riquadro grigio = passa il mouse e compare qualcosa. Si distingue dai
+   link veri (.cliccabile: puntini e freccia ↗). Il testo non cambia mai
+   colore. box-decoration-break: clone ripete il riquadro su ogni riga se
+   la parola va a capo. Nessuna transition: cambio istantaneo, come lo
+   scambio dei media. */
 .trigger {
-  cursor: url("img/inspect.svg") 8 8, help;
-  /* color: #8a8a8c; */
-  color: #1a1a1a;
-  background-color: #ffffffd9;
-  /* border-bottom: 1px dotted #8a8a8c; */
+  cursor: url("img/chevron.svg") 12 12, pointer;
+  color: var(--text);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  padding: 2px 4px; /* il 2px verticale rende il riquadro più alto senza cambiare l'interlinea */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
-.trigger:hover {
-  color: #8a8a8c;
-  background-color: #ffffffd9;
-  /* border-bottom-color: #f4f4f4; */
-}
+.trigger:hover,
 .trigger.is-pinned {
-  color: #8a8a8c;
-  background-color: #ffffffd9;
-  /* border-bottom-color: #f4f4f4; */
+  background-color: rgba(255, 255, 255, 0.35);
 }
+
+/* Versione precedente (pillola con contorno), per tornare indietro:
+.trigger {
+  cursor: url("img/chevron.svg") 12 12, pointer;
+  color: var(--text);
+  border: 1px solid rgba(244, 244, 244, 0.55);
+  border-radius: 40px;
+  padding: 0 0.5em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.trigger:hover,
+.trigger.is-pinned {
+  border-color: var(--text);
+  background-color: rgba(244, 244, 244, 0.16);
+}
+*/
