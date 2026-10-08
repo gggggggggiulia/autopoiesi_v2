@@ -30,6 +30,33 @@ if (infoBox.empty()) {
   infoBox = d3.select("body").append("div").attr("id", "info-box");
 }
 
+// ---- Effetto blur ----
+// 1) Alone sfocato "progressivo" lungo i bordi dello schermo (più sfocato
+//    verso il bordo, nitido verso il centro): un overlay fisso, non
+//    cliccabile, fatto di 2 strati con backdrop-filter e maschera a
+//    gradiente (vedi #edge-blur in style.css). Mettere false per toglierlo.
+const EDGE_BLUR_ENABLED = true;
+// 2) Quando si apre un nodo, le specie non collegate perdono opacità E
+//    vengono sfocate di questi pixel. 0 = solo opacità, come prima.
+const FOCUS_BLUR_PX = 2;
+// 3) Opacità a cui scendono nodi, collegamenti e cerchi di sfondo NON
+//    collegati al nodo aperto (0 = spariscono, 1 = nessun calo). Era 0.1.
+const FOCUS_DIM_OPACITY = 0.15;
+// 4) Hover su un numero di interazioni nel pannello del nodo (es. il "33"
+//    di "mangia"): le specie di quel tipo restano accese, le altre specie
+//    COLLEGATE al nodo scendono a questa opacità (0 = spariscono, 1 =
+//    nessun calo). Le non collegate restano a FOCUS_DIM_OPACITY.
+const INTERACTION_HOVER_DIM = 0.25;
+
+if (EDGE_BLUR_ENABLED && d3.select("body").select("#edge-blur").empty()) {
+  const edgeBlur = d3.select("body").append("div").attr("id", "edge-blur");
+  [1, 2].forEach((i) =>
+    edgeBlur
+      .append("div")
+      .attr("class", `edge-blur-layer edge-blur-layer--${i}`)
+  );
+}
+
 // Anteprima al volo del tipo di interazione, mostrata solo sugli edge
 // "attivi" (collegati al nodo attualmente selezionato) — sugli altri il
 // hover resta muto, per non distrarre da ciò che l'utente ha scelto di
@@ -67,9 +94,41 @@ function closeLightbox() {
   lightboxImg.attr("src", null);
 }
 
+// Inspector chiuso = non cliccabile. Il pannello sparisce solo con
+// opacity:0 (resta nel DOM con il suo contenuto) e le immagini hanno
+// pointer-events:auto, che vince su quello "none" del contenitore: senza
+// questo, una foto "fantasma" intercettava click e drag sul grafo dopo
+// la chiusura. Si osserva lo style inline (dove d3 scrive l'opacità
+// di destinazione) e si tiene la classe .is-closed allineata.
+function syncInfoBoxClosed() {
+  const el = infoBox.node();
+  const o = el.style.opacity;
+  const closed = o === "" || Number(o) === 0;
+  el.classList.toggle("is-closed", closed);
+  // Se il pannello aperto è così alto da arrivare sotto il contatore in
+  // alto a destra (schermi bassi), il contatore si fa da parte invece di
+  // restare sovrapposto.
+  requestAnimationFrame(() => {
+    const counter = document.getElementById("top-species-counter");
+    if (!counter) return;
+    const overlaps =
+      !closed &&
+      el.getBoundingClientRect().top <
+        counter.getBoundingClientRect().bottom + 12;
+    counter.classList.toggle("is-covered", overlaps);
+  });
+}
+window.addEventListener("resize", syncInfoBoxClosed);
+new MutationObserver(syncInfoBoxClosed).observe(infoBox.node(), {
+  attributes: true,
+  attributeFilter: ["style"],
+});
+syncInfoBoxClosed();
+
 infoBox.node().addEventListener("click", (event) => {
   const img = event.target.closest("img");
   if (!img) return;
+  if (infoBox.node().classList.contains("is-closed")) return;
   // Ferma la propagazione QUI, non su document: altrimenti lo stesso click
   // arriverebbe anche al listener "click fuori dalla ricerca" (che
   // svuoterebbe la barra di ricerca) e a quello sull'svg (che chiuderebbe
@@ -88,8 +147,37 @@ document.addEventListener("keydown", (event) => {
 });
 
 let simulation, node, curvedLinks, linkTextPaths, edgeLabels, zoom;
+let nodeChevrons; // piccoli chevron direzionali intorno al nodo selezionato (uno per edge collegato)
+let nodeFarChevrons; // stessi chevron, grigi, vicino al vicino (l'altro estremo di ogni edge)
+let nodeNeutralDots; // pallini per le interazioni SIMMETRICHE (senza verso) intorno al nodo selezionato
+let nodeFarNeutralDots; // stessi pallini, grigi, vicino al vicino
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
-let selectedNodeId = null; // id del nodo attualmente aperto, per tenere l'anello di selezione agganciato
+let selectedNodeId = null; // id del nodo attualmente aperto, per tenere il bordo/i chevron agganciati
+let selectedEdgeDatum = null; // edge il cui inspector è aperto in questo momento: resta bianco anche fuori hover
+
+// Blocco delle interazioni mentre la guida è aperta: ogni step mostra
+// uno stato preciso (nodo aperto, collegamento evidenziato, zoom) che non
+// deve essere alterato da hover, click sullo sfondo, ricerca o trascinamenti.
+// Resta libero solo muoversi nello spazio (pan/zoom) e, dove lo step lo
+// prevede, cliccare i nodi indicati.
+//   null                       -> nessun blocco (guida chiusa)
+//   { nodes: "none" }          -> nessun nodo cliccabile
+//   { nodes: "all" }           -> tutti i nodi cliccabili
+//   { nodes: "pair", ids: [] } -> solo i nodi con questi scientific_name
+let tourLockPolicy = null;
+function tourAllowsNodeClick(d) {
+  const p = tourLockPolicy;
+  if (!p) return true;
+  if (p.nodes === "all") return true;
+  if (p.nodes === "pair") return p.ids.includes(d.scientific_name);
+  return false;
+}
+
+// Distanza dei chevron dal bordo del nodo selezionato: sensazione di un
+// "anello" separato invece che chevron attaccati al cerchio. Un solo
+// numero da cambiare se in futuro si preferisce un'altra distanza (0 =
+// attaccati al bordo).
+const NODE_CHEVRON_GAP = 5;
 
 // Coppie di tipi che raccontano lo STESSO fatto da due punti di vista
 // opposti (es. "mangia" / "mangiato da"): edges.csv contiene solo UNA
@@ -122,13 +210,356 @@ const INVERSE_TYPE = {
   "è vettore di": "ha vettore",
 };
 
-// Tipi SIMMETRICI: stesso significato indipendentemente da chi è
-// source o target nel csv, nessuna rietichettatura necessaria.
-const SYMMETRIC_TYPES = new Set([
-  "interagisce con",
-  "si verifica con",
-  "adiacente a",
-]);
+// Tassonomia completa delle interazioni (dataset fornito): per ciascun
+// tipo, il verso ("A" = attivo/A→B, "B" = passivo/B→A, "N" = nessun
+// verso) e la didascalia estesa mostrata nell'Edge-Inspector. Alcuni
+// tipi hanno più nomi equivalenti nel dataset (separati da "/" nella
+// colonna originale): li registriamo come alias, sotto ciascuno dei
+// quali compare la STESSA voce, così qualunque stringa compaia nel csv
+// viene riconosciuta allo stesso modo.
+const INTERACTION_TAXONOMY = [
+  {
+    names: ["acquisisce nutrienti da"],
+    dir: "A",
+    desc: "Un'interazione biotica in cui un'entità materiale fornisce nutrimento a un organismo.",
+  },
+  {
+    names: ["adiacente a"],
+    dir: "A",
+    desc: "A è adiacente a B se e solo se esiste una distanza piccola, ma diversa da zero, tra A e B.",
+  },
+  {
+    names: ["specie allelopatica nei confronti di"],
+    dir: "A",
+    desc: "Una relazione tra organismi in cui un organismo è influenzato dalle sostanze biochimiche prodotte da un altro. L'allelopatia è un fenomeno in cui un organismo rilascia sostanze chimiche per influenzare positivamente o negativamente la crescita, la sopravvivenza o la riproduzione di altri organismi nelle sue vicinanze.",
+  },
+  {
+    names: ["ospite di micorrize arbuscolari per"],
+    dir: "B",
+    desc: "La micorriza arbuscolare (AM) (plurale micorrize) è un tipo di micorriza in cui il fungo simbionte (funghi micorrizici arbuscolari, o AMF) penetra nelle cellule corticali delle radici di una pianta vascolare formando degli arbuscoli. La micorriza arbuscolare è un tipo di endomicorriza, insieme alla micorriza ericoide e alla micorriza delle orchidee (da non confondere con l'ectomicorriza).",
+  },
+  {
+    names: ["si trova in associazione con", "coesiste con"],
+    dir: "N",
+    desc: "Una relazione di interazione che descrive organismi che spesso coesistono nello stesso tempo e nello stesso spazio o nello stesso ambiente.",
+  },
+  {
+    names: ["condivide il sito di rifugio con"],
+    dir: "N",
+    desc: "Si riferisce a organismi di specie diverse che condividono lo stesso rifugio o riparo.",
+  },
+  {
+    names: ["commensale di"],
+    dir: "N",
+    desc: "Relazione ecologica in cui un organismo trae beneficio da un altro (l'ospite) senza causargli alcun danno o beneficio significativo.",
+  },
+  {
+    names: ["crea habitat per", "fornisce habitat a"],
+    dir: "A",
+    desc: "Una relazione di interazione in cui un organismo crea una struttura o un ambiente in cui vive un altro organismo.",
+  },
+  {
+    names: ["vettore di dispersione di"],
+    dir: "A",
+    desc: "Un processo ecologico durante il quale semi o altri propaguli vegetali vengono trasportati lontano dalla pianta madre da vettori biotici o abiotici, riducendo la competizione tra piante sorelle e consentendo la colonizzazione di nuovi siti.",
+  },
+  {
+    names: ["predato da", "consumato da"],
+    dir: "B",
+    desc: "Il soggetto viene consumato da un altro organismo attraverso la bocca o un'altra apertura orale di quest'ultimo.",
+  },
+  {
+    names: ["si nutre di", "preda"],
+    dir: "A",
+    desc: "Un'interazione biotica in cui un organismo consuma un'entità materiale attraverso una sorta di bocca o altra apertura orale.",
+  },
+  {
+    names: ["ecologicamente correlato a"],
+    dir: "N",
+    desc: "Una relazione che è in qualche modo mediata dall'ambiente o da una caratteristica ambientale.",
+  },
+  {
+    names: ["ospite di ectomicorrize di"],
+    dir: "A",
+    desc: "Le ectomicorrize si formano sulle radici di circa il 2% delle specie vegetali, solitamente piante legnose. A differenza di altre relazioni micorriziche, i funghi ectomicorrizici non penetrano la parete cellulare dell'ospite. Formano invece un'interfaccia interamente intercellulare nota come rete di Hartig, costituita da ife altamente ramificate che formano un reticolo tra le cellule epidermiche e corticali della radice.",
+  },
+  {
+    names: ["ectoparassita di"],
+    dir: "A",
+    desc: "Una sottorelazione di parassita in cui il parassita vive sul o all'interno del sistema tegumentario dell'ospite.",
+  },
+  {
+    names: ["endoparassita di"],
+    dir: "A",
+    desc: "Una sottorelazione di endoparassiti in cui il parassita abita gli spazi tra le cellule dell'ospite.",
+  },
+  {
+    names: ["epifita di"],
+    dir: "A",
+    desc: "Un rapporto di interazione in cui una pianta o un'alga vive sulla superficie esterna di un'altra pianta.",
+  },
+  {
+    names: ["fiori visitati da"],
+    dir: "B",
+    desc: "Un'interazione in cui un organismo visita i fiori di una pianta.",
+  },
+  {
+    names: ["ha come ospite una specie micorrizata arbuscolarmente"],
+    dir: "B",
+    desc: "Il soggetto, un fungo micorrizico arbuscolare (AMF), penetra le cellule corticali delle radici di questa pianta ospite formando degli arbuscoli: una forma di endomicorriza, distinta dalla micorriza ericoide e da quella delle orchidee (da non confondere con l'ectomicorriza).",
+  },
+  {
+    names: ["ha come vettore di dispersione"],
+    dir: "B",
+    desc: "Il soggetto (una pianta, o i suoi semi e propaguli) viene trasportato lontano dalla pianta madre da questo vettore di dispersione, biotico o abiotico, riducendo la competizione tra piante sorelle e favorendo la colonizzazione di nuovi siti.",
+  },
+  {
+    names: ["ha come ospite ectomicorrizico"],
+    dir: "B",
+    desc: "Il fungo ectomicorrizico forma con le radici di questa pianta ospite un'interfaccia intercellulare nota come rete di Hartig: a differenza di altre relazioni micorriziche, non ne penetra le cellule, ma si dispone a reticolo tra quelle epidermiche e corticali della radice. Le ectomicorrize coinvolgono circa il 2% delle specie vegetali, perlopiù legnose.",
+  },
+  {
+    names: ["ha come ectoparassita"],
+    dir: "B",
+    desc: "Il soggetto ospita un ectoparassita, che vive sul suo sistema tegumentario o al suo interno.",
+  },
+  {
+    names: ["ha come endoparassita"],
+    dir: "B",
+    desc: "Il soggetto ospita un endoparassita, che abita gli spazi tra le sue cellule.",
+  },
+  {
+    names: ["ha come epifita"],
+    dir: "B",
+    desc: "Il soggetto ospita sulla propria superficie esterna un'epifita: una pianta o un'alga che vive appoggiata su di esso, senza radicarsi nel suolo.",
+  },
+  {
+    names: ["ha come habitat", "occupa l'habitat di"],
+    dir: "B",
+    desc: 'x "ha un habitat" y se e solo se: x è un organismo, y è un habitat e y può sostenere e consentire la crescita di una popolazione di x.',
+  },
+  {
+    names: ["ha come parassita"],
+    dir: "B",
+    desc: "Il soggetto ospita un parassita, che trae beneficio a sue spese.",
+  },
+  {
+    names: ["ha come parassitoide"],
+    dir: "B",
+    desc: "Il soggetto è ospite di un parassitoide, che lo ucciderà o lo sterilizzerà.",
+  },
+  {
+    names: ["ha come patogeno"],
+    dir: "B",
+    desc: "Un'interazione tra ospiti in cui il membro più piccolo di una simbiosi causa una malattia nel membro più grande.",
+  },
+  {
+    names: ["ha come vettore"],
+    dir: "B",
+    desc: "Il soggetto viene infettato tramite un vettore: un organismo che trasmette agenti infettivi da un ospite all'altro.",
+  },
+  {
+    names: ["emiparassita di"],
+    dir: "A",
+    desc: "Una sottorelazione di parassita-di in cui il parassita è una pianta, ed è parassitario in condizioni naturali ed è anche fotosintetico in una certa misura.",
+  },
+  {
+    names: ["ospite di"],
+    dir: "A",
+    desc: "L'organismo più grande o di supporto che ospita, nutre o fornisce un habitat a un altro organismo più piccolo o dipendente.",
+  },
+  {
+    names: ["interagisce con"],
+    dir: "A",
+    desc: "Una relazione che intercorre tra due entità in cui i processi eseguiti dalle due entità sono causalmente connessi.",
+  },
+  {
+    names: ["ucciso da", "causa di mortalità per"],
+    dir: "B",
+    desc: "Il soggetto viene ucciso da un altro organismo, senza che vi sia un trasferimento di energia trofica (alimentazione) come nella predazione.",
+  },
+  {
+    names: ["uccide", "causa la morte di"],
+    dir: "A",
+    desc: "Una specifica relazione ecologica in cui un organismo causa la morte di un altro senza trasferimento di energia trofica (alimentazione).",
+  },
+  {
+    names: ["mutualista di"],
+    dir: "N",
+    desc: "Una specie che partecipa a una relazione mutualistica, un tipo di interazione biotica in cui entrambi gli organismi coinvolti traggono beneficio l'uno dall'altro.",
+  },
+  {
+    names: ["parassita di"],
+    dir: "A",
+    desc: "Un'interazione in cui un organismo trae beneficio a spese di un altro.",
+  },
+  {
+    names: ["parassitoide di"],
+    dir: "A",
+    desc: "Un parassita che uccide o sterilizza il suo ospite.",
+  },
+  {
+    names: ["patogeno di"],
+    dir: "A",
+    desc: "Il soggetto è un patogeno: un organismo di dimensioni minori che, in una relazione simbiotica, causa una malattia nell'organismo di dimensioni maggiori che lo ospita.",
+  },
+  {
+    names: ["impollinato da"],
+    dir: "B",
+    desc: "Il soggetto, una pianta, viene impollinato da un organismo che ne trasporta il polline dalle strutture riproduttive maschili a quelle femminili, facilitandone la riproduzione.",
+  },
+  {
+    names: ["impollina"],
+    dir: "A",
+    desc: "Un'interazione in cui l'organismo trasporta il polline dalle strutture riproduttive maschili a quelle femminili di una pianta, facilitando la riproduzione.",
+  },
+  {
+    names: ["predato da"],
+    dir: "B",
+    desc: "Il soggetto viene ucciso da un predatore per esserne cibo, anche a beneficio dei fratelli, della prole o di altri membri del gruppo del predatore.",
+  },
+  {
+    names: ["preda"],
+    dir: "A",
+    desc: "Una relazione di interazione che implica un processo di predazione, in cui il soggetto uccide la preda per cibarsene o per nutrire fratelli, prole o membri del gruppo.",
+  },
+  {
+    names: ["fornisce nutrienti a"],
+    dir: "A",
+    desc: "Un'interazione biotica in cui un'entità materiale fornisce nutrimento a un organismo.",
+  },
+  {
+    names: ["parassita radicale di"],
+    dir: "A",
+    desc: "Una forma specializzata di parassitismo in cui un organismo parassita si attacca direttamente alla radice di una pianta ospite per rubare acqua, minerali o sostanze nutritive.",
+  },
+  {
+    names: ["simbionte di"],
+    dir: "A",
+    desc: "Un tipo di interazione biotica che descrive un'associazione stretta e a lungo termine in cui un organismo agisce come simbionte (il partner più piccolo o dipendente) vivendo all'interno o con un organismo ospite.",
+  },
+  {
+    names: ["vettore di"],
+    dir: "A",
+    desc: "Interazione in cui un organismo trasmette agenti infettivi da un ospite all'altro.",
+  },
+  {
+    names: ["visitato da"],
+    dir: "B",
+    desc: "Il soggetto viene visitato da un altro organismo, senza che questo implichi necessariamente un danno immediato o il consumo totale della risorsa.",
+  },
+  {
+    names: ["visita"],
+    dir: "A",
+    desc: "Relazione in cui un organismo visita un altro organismo o una specifica posizione geografica/struttura biologica, senza necessariamente implicare danni immediati o il consumo totale della risorsa.",
+  },
+  {
+    names: ["visita i fiori di"],
+    dir: "A",
+    desc: "Il soggetto visita i fiori di una pianta, ad esempio per nutrirsi di nettare o polline.",
+  },
+];
+
+// Tipi SIMMETRICI: stesso significato indipendentemente da chi è source
+// o target nel csv, nessuna rietichettatura necessaria.
+const SYMMETRIC_TYPES = new Set();
+
+// Tipi per cui, dopo la pulizia di edges.csv, la forma "vincente" è
+// quella PASSIVA (source = chi subisce, target = chi agisce): senza
+// questo elenco la freccia (che SVG piazza sempre sull'ultimo punto del
+// path, cioè sul target salvato) finirebbe per puntare verso chi COMPIE
+// l'azione invece che verso chi la subisce — il contrario di quanto ci
+// si aspetta leggendo "il predatore mangia la preda". Qui dentro solo i
+// tipi per cui la direzione azione→ricevente è inequivocabile.
+const ARROW_REVERSED_TYPES = new Set();
+
+const interactionDescriptions = {};
+
+INTERACTION_TAXONOMY.forEach(({ names, dir, desc }) => {
+  names.forEach((name) => {
+    interactionDescriptions[name] = desc;
+    if (dir === "N") SYMMETRIC_TYPES.add(name);
+    else if (dir === "B") ARROW_REVERSED_TYPES.add(name);
+    // dir === "A": resta "attivo" di default, non va in nessun Set.
+  });
+});
+
+// Aggiunte manuali: terminologia già in uso in edges.csv ma non presente
+// nel dataset fornito (il csv usa "mangia"/"mangiato da", il dataset usa
+// "preda"/"predato da" come forma canonica dello stesso fatto).
+SYMMETRIC_TYPES.add("si verifica con");
+ARROW_REVERSED_TYPES.add("mangiato da");
+// "mangia" resta implicitamente attivo: non va aggiunto a nessun Set.
+interactionDescriptions["mangia"] =
+  "Notare che questa interazione può riferirsi anche a individui cuccioli della specie, o a individui che devono ancora nascere, come ad esempio nel caso delle uova.";
+interactionDescriptions["mangiato da"] =
+  "Il soggetto viene mangiato dall'altro organismo, eventualmente anche allo stadio di cucciolo o di uovo.";
+interactionDescriptions["si verifica con"] =
+  "Una relazione neutra che indica che le due specie sono state osservate verificarsi insieme, senza un verso definito tra le due.";
+
+// Altre forme "corte" già in uso nel csv ma assenti dal dataset (che usa
+// la forma estesa): senza questi alias restavano fuori da ARROW_REVERSED_
+// TYPES e finivano classificate come attive per difetto — il bug
+// segnalato ("ha vettore" verde invece che arancio) più altri casi dello
+// stesso tipo, trovati controllando ogni coppia attivo/passivo del
+// vecchio INVERSE_TYPE una per una.
+ARROW_REVERSED_TYPES.add("ha vettore"); // alias di "ha come vettore"
+interactionDescriptions["ha vettore"] =
+  interactionDescriptions["ha come vettore"];
+
+ARROW_REVERSED_TYPES.add("fiore visitato da"); // forma singolare, il dataset ha solo "fiori visitati da" (plurale)
+interactionDescriptions["fiore visitato da"] =
+  interactionDescriptions["fiori visitati da"];
+
+ARROW_REVERSED_TYPES.add("impollinato"); // forma breve, oltre a "impollinato da"
+interactionDescriptions["impollinato"] =
+  interactionDescriptions["impollinato da"];
+
+ARROW_REVERSED_TYPES.add("ha ospite"); // inverso di "ospite di" (attivo): manca dal dataset, ma per coerenza va passivo
+interactionDescriptions["ha ospite"] = interactionDescriptions["ospite di"];
+
+// Descrizioni per le forme attive gemelle di quelle sopra: già corrette
+// come verso (attivo è il default), mancava solo la didascalia.
+interactionDescriptions["visita il fiore di"] =
+  interactionDescriptions["visita i fiori di"];
+interactionDescriptions["è vettore di"] = interactionDescriptions["vettore di"];
+
+// ATTENZIONE — scelta in sospeso: il dataset classifica "interagisce
+// con" e "adiacente a" come "A → B" (quindi direzionali), ma qui erano
+// stati scelti di proposito come NEUTRI (pallino anziché chevron),
+// decisione presa a inizio sessione. Finché non mi confermi come
+// procedere, mantengo il trattamento neutro già in uso.
+SYMMETRIC_TYPES.add("interagisce con");
+SYMMETRIC_TYPES.add("adiacente a");
+
+// INTERRUTTORE RAPIDO: a false, tutto quello che oggi è colorato
+// (marker, label curve, righe degli inspector) torna bianco come prima
+// — un solo valore da cambiare per confrontare le due versioni.
+const USE_ROLE_COLORS = false;
+
+// Colori semantici per leggere a colpo d'occhio chi agisce e chi subisce
+// in un'interazione, senza dover interpretare l'angolo di un chevron in
+// mezzo a decine di edge che si incrociano: il verde è sempre "questo
+// nodo/questa label sta agendo", l'arancio "lo sta subendo". I tipi
+// SIMMETRICI restano neutri (bianco), non hanno un verso da segnalare.
+// Usati sia per i marker sul grafo (vedi <defs> più sotto) sia per le
+// label curve e per le righe degli inspector.
+const INTERACTION_COLOR = USE_ROLE_COLORS
+  ? { active: "#00FF9D", passive: "#FF7B00", neutral: "#F4F4F4" }
+  : { active: "#F4F4F4", passive: "#F4F4F4", neutral: "#F4F4F4" };
+function interactionRole(typeLabel) {
+  if (SYMMETRIC_TYPES.has(typeLabel)) return "neutral";
+  return ARROW_REVERSED_TYPES.has(typeLabel) ? "passive" : "active";
+}
+function interactionColor(typeLabel) {
+  return INTERACTION_COLOR[interactionRole(typeLabel)];
+}
+
+// INTERRUTTORE TEMPORANEO (test "solo colore"): a false, nessun
+// chevron/pallino viene disegnato — né sul grafo né negli inspector —
+// resta solo il colore su label ed etichette di tipo. Rimettere a true
+// per tornare ad avere anche i simboli direzionali.
+const SHOW_INTERACTION_SYMBOLS = true;
 
 // Dato un edge e l'id del nodo attualmente aperto (`viewpointId`),
 // restituisce la label corretta DAL SUO PUNTO DI VISTA: se il nodo è il
@@ -146,25 +577,6 @@ function labelForViewpoint(edge, viewpointId) {
   return INVERSE_TYPE[edge.type] || edge.type;
 }
 
-const interactionDescriptions = {
-  "è vettore di":
-    "A è un vettore per B se trasporta e trasmette un patogeno infettivo in un altro organismo vivente.",
-  "ha come vettore di dispersione":
-    "A ha come vettore di dispersione B se B trasporta e trasmette un patogeno infettivo in un altro organismo vivente.",
-  "interagisce con":
-    "Questa relazione e tutte le sotto-relazioni possono essere applicate a (1) coppie di entità che interagiscono in qualsiasi momento del tempo (2) popolazioni o specie di entità i cui membri hanno la tendenza ad interagire (3) classi i cui membri hanno la tendenza ad interagire.",
-  mangia:
-    "Notare che questa interazione può riferirsi anche a individui cuccioli della specie, o a individui che devono ancora nascere, come ad esempio nel caso delle uova.",
-  preda:
-    "Interazione che coinvolge un processo di predazione, in cui il soggetto uccide il bersaglio per mangiarlo o per nutrire fratelli, figli o membri del gruppo.",
-  "predato da":
-    "Il soggetto subisce un processo di predazione, in cui viene ucciso per essere mangiato o per nutrire fratelli, figli o membri del gruppo del predatore.",
-  "fiore visitato da":
-    "Un animale o un insetto interagisce con il fiore, in genere allo scopo di ottenere cibo o risorse come nettare e polline.",
-  "ospite di":
-    "Si riferisce all'organismo più grande o dominante in una relazione simbiotica. Questo organismo fornisce l'habitat o l'ambiente per un altro organismo, spesso indicato come il simbionte o parassita.",
-};
-
 Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
   ([nodes, links]) => {
     const adjacency = {};
@@ -176,8 +588,19 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     });
 
     nodes.forEach((d) => {
-      d.observations = d.observations === "Nessuna" ? 0 : +d.observations;
-      d.notObserved = d.observations === 0; // specie non ancora osservata nel territorio
+      // colonna "observed" (si/no) se presente, altrimenti vecchia logica sul conteggio
+      const hasObsCol =
+        d.observed !== undefined && String(d.observed).trim() !== "";
+      d.observations =
+        d.observations === "Nessuna"
+          ? 0
+          : d.observations === undefined || d.observations === ""
+          ? NaN
+          : +d.observations;
+      d.notObserved = hasObsCol
+        ? String(d.observed).trim().toLowerCase() === "no"
+        : d.observations === 0; // specie non ancora osservata nel territorio
+      if (d.notObserved && !Number.isFinite(d.observations)) d.observations = 0;
       d.color = "#000000";
       d.degree = adjacency[d.scientific_name]?.size || 0;
     });
@@ -227,33 +650,124 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       nodes[0]
     );
 
-    // Aggiungi un contatore in alto a destra
-    d3.select("body")
+    // Contatore in alto a destra: stessa struttura della scheda del nodo
+    // (etichetta, nome, separatore, riga con il numero) e cliccabile, come
+    // un risultato di ricerca: porta alla specie e la apre. Lo stile sta
+    // in style.css (#top-species-counter).
+    const topSpeciesCounter = d3
+      .select("body")
       .append("div")
       .attr("id", "top-species-counter")
-      .style("position", "absolute")
-      .style("width", "22vw")
-      .style("top", "20px")
-      .style("right", "10px")
-      .style("padding", "10px 10px")
-      .style("background", "rgba(0, 0, 0, 0.75)")
-      /* .style("backdrop-filter", "blur(5px)")
-      .style("-webkit-backdrop-filter", "blur(20px)") */
-      .style("color", "white")
-      .style("font-family", "Inconsolata, monospace")
-      .style("font-size", "14px")
-      .style("line-height", "1.2")
-      /* .style("border-radius", "6px") */
-      /* .style("box-shadow", "0 2px 6px rgba(0, 0, 0, 0)") */
-      .style("pointer-events", "none") // pannello puramente informativo: lascia passare drag/zoom verso l'svg
+      .attr("role", "button")
+      .attr("tabindex", 0)
+      .attr("aria-label", `Apri ${maxDegreeNode.name}, la specie più connessa`)
       .html(
-        `Specie che interagisce con il maggior numero di altre specie: <b> ${maxDegreeNode.name} <i>(${maxDegreeNode.scientific_name})</i>`
+        `<div class="tsc-eyebrow">Specie più connessa</div>
+        <div class="tsc-name">${maxDegreeNode.name}</div>
+        <div class="tsc-sci">${maxDegreeNode.scientific_name}</div>
+        <div class="tsc-count">
+          <span class="ni-count-badge">${maxDegreeNode.degree}</span>
+          <span>specie</span>
+        </div>`
       );
+    function openTopSpecies() {
+      if (!tourAllowsNodeClick(maxDegreeNode)) return;
+      closeSearchResults();
+      selectNode(maxDegreeNode);
+      focusOnNode(maxDegreeNode);
+    }
+    topSpeciesCounter.on("click", (event) => {
+      event.stopPropagation();
+      openTopSpecies();
+    });
+    topSpeciesCounter.on("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openTopSpecies();
+      }
+    });
 
     const sizeScale = d3
       .scaleLinear()
       .domain(d3.extent(nodes, (d) => d.degree))
       .range([15, 45]);
+
+    // A questo punto i link hanno ancora source/target come STRINGHE
+    // (sarà d3.forceLink, fra un attimo, a sostituirle con gli oggetti
+    // nodo veri): per risalire al raggio di un nodo dato il suo id serve
+    // quindi una mappa esplicita.
+    const nodeByName = new Map(nodes.map((n) => [n.scientific_name, n]));
+
+    // Distanza minima "di respiro" fra due nodi, SOLO dove serve a non
+    // far diventare illeggibile la label del loro edge. L'idea: la
+    // distanza fra nodi resta governata come sempre da forceLink/charge/
+    // collide, MA se in un caso estremo il layout li vorrebbe più vicini
+    // di quanto la label richieda per stare leggibile lungo la curva,
+    // qui sotto interviene una regola con priorità più alta che li
+    // separa quel tanto che basta — mai il contrario (non avvicina mai
+    // nodi che il layout normale terrebbe più lontani).
+    //
+    // La larghezza del testo è misurata con un vero elemento <text>
+    // (stesso font-size delle label reali, e appeso dentro l'SVG vero
+    // così eredita lo stesso font della pagina) invece di stimarla a
+    // occhio: numero di caratteri e larghezze non sono uniformi, e così
+    // la misura è esatta indipendentemente dal font usato. Un edge può
+    // leggersi in due modi diversi a seconda di quale nodo è selezionato
+    // (es. "mangia" / "mangiato da"): si misurano entrambe le forme e si
+    // tiene la più lunga, così il vincolo vale a prescindere da quale
+    // nodo verrà aperto in seguito.
+    const LABEL_BREATHING_ROOM = 24; // px extra oltre al testo misurato
+    const labelMeasureText = container
+      .append("text")
+      .attr("font-size", 8)
+      .style("opacity", 0)
+      .style("pointer-events", "none");
+    function measureLabelWidth(str) {
+      labelMeasureText.text(str);
+      return labelMeasureText.node().getComputedTextLength();
+    }
+    links.forEach((l) => {
+      const altType = INVERSE_TYPE[l.type] || l.type;
+      const textWidth = Math.max(
+        measureLabelWidth(l.type),
+        measureLabelWidth(altType)
+      );
+      const r1 = sizeScale(nodeByName.get(l.source)?.degree || 0);
+      const r2 = sizeScale(nodeByName.get(l.target)?.degree || 0);
+      l.minCenterDistance = r1 + r2 + textWidth + LABEL_BREATHING_ROOM;
+    });
+    labelMeasureText.remove();
+
+    // Forza "custom" nello stile di forceCollide: ad ogni tick controlla
+    // solo le coppie il cui edge è più corto del minimo richiesto dalla
+    // sua label, e le allontana quel poco che serve. Le coppie già più
+    // larghe del necessario non vengono toccate: strength()/distance()
+    // di forceLink restano l'unico regolatore in tutti i casi normali.
+    function forceLabelGap() {
+      return function () {
+        links.forEach((l) => {
+          const minDist = l.minCenterDistance;
+          const s = l.source;
+          const t = l.target;
+          if (!minDist || !s || !t) return;
+          const dx = t.x - s.x;
+          const dy = t.y - s.y;
+          const dist = Math.hypot(dx, dy) || 0.01;
+          if (dist >= minDist) return;
+          const push = ((minDist - dist) / dist) * 0.5;
+          const ox = dx * push;
+          const oy = dy * push;
+          if (t.fx == null) {
+            t.vx = (t.vx || 0) + ox;
+            t.vy = (t.vy || 0) + oy;
+          }
+          if (s.fx == null) {
+            s.vx = (s.vx || 0) - ox;
+            s.vy = (s.vy || 0) - oy;
+          }
+        });
+      };
+    }
 
     simulation = d3
       .forceSimulation(nodes)
@@ -274,13 +788,23 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       // Coesione leggera e uniforme per tutti i nodi (aiuta il layout
       // generale, non basta da sola a "salvare" i nodi isolati)
       .force("x", d3.forceX(width / 2).strength(0.02))
-      .force("y", d3.forceY(height / 2).strength(0.02));
+      .force("y", d3.forceY(height / 2).strength(0.02))
+      .force("labelGap", forceLabelGap());
 
     // d3.forceLink ha già sostituito le stringhe con i veri oggetti-nodo,
     // ma in alcuni punti del codice gli edge vengono letti prima: questo
     // helper normalizza i due casi.
     function nodeIdOf(v) {
       return typeof v === "object" && v !== null ? v.scientific_name : v;
+    }
+
+    // Dato un edge e uno dei suoi due nodi, restituisce l'ALTRO. Serve
+    // per il chevron/pallino "lontano": lo stesso calcolo del chevron
+    // vicino, applicato all'estremo opposto del nodo selezionato.
+    function otherNodeIdOf(d, nodeId) {
+      return nodeIdOf(d.source) === nodeId
+        ? nodeIdOf(d.target)
+        : nodeIdOf(d.source);
     }
 
     // Precalcolo, UNA VOLTA SOLA, quanti edge paralleli collegano la stessa
@@ -332,22 +856,15 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .attr("fill", "none")
       .style("pointer-events", "none");
 
-    // Rende cliccabili e mostra la freccia solo sugli edge passati (quelli
-    // del nodo selezionato); con un array vuoto disattiva/nasconde tutto,
-    // com'è allo stato iniziale. Sui tipi SIMMETRICI (interagisce con,
-    // adiacente a...) non c'è un "chi agisce/chi subisce", quindi niente
-    // freccia: mostrarla vorrebbe dire indicare una direzione arbitraria
-    // (di fatto l'ordine alfabetico delle due specie, residuo della
-    // pulizia di edges.csv) che non rappresenta nessun fatto reale.
+    // Rende cliccabili gli edge passati (quelli del nodo selezionato); con
+    // un array vuoto disattiva tutto, com'è allo stato iniziale. La
+    // direzione non si legge più da un marker sul path visibile: è tutta
+    // affidata ai due chevron ad anello (vicino al nodo aperto e vicino
+    // al vicino), vedi updateNodeChevrons.
     function setActiveEdges(activeLinks) {
       const activeSet = new Set(activeLinks);
       linkHitAreas.style("pointer-events", (d) =>
         activeSet.has(d) ? "stroke" : "none"
-      );
-      curvedLinks.attr("marker-end", (d) =>
-        activeSet.has(d) && !SYMMETRIC_TYPES.has(d.type)
-          ? "url(#arrow-end)"
-          : "none"
       );
     }
 
@@ -369,38 +886,109 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .attr("fill", "none")
       .attr("stroke", "none");
 
+    // Colore/spessore di base (fuori hover) di un edge: bianco e spesso
+    // come l'hover se è quello il cui inspector è aperto in questo
+    // momento, grigio e sottile altrimenti. Per l'edge selezionato lo
+    // spessore resta quello "acceso" anche fuori hover — è proprio
+    // quello il segnale — mentre per tutti gli altri l'ispessimento
+    // resta un segnale esclusivo dell'hover.
+    function edgeRestStroke(d) {
+      return d === selectedEdgeDatum ? "#F4F4F4" : "#646466";
+    }
+    function edgeRestWidth(d) {
+      return d === selectedEdgeDatum ? 1.4 : 0.4;
+    }
+
+    // Marker (chevron) vicino al nodo aperto O al suo vicino: sceglie fra
+    // i 4 marker attivo/passivo × vicino/lontano in base al ruolo
+    // dell'interazione vista dal nodo aperto (chi agisce/chi subisce) e a
+    // se quell'edge è quello "acceso" (selezionato o in hover) — in quel
+    // caso usa la variante vicino (piena opacità) anche per il capo
+    // lontano, esattamente come prima faceva passando dal grigio al
+    // bianco.
+    function roleMarkerId(d, emphasized) {
+      if (!SHOW_INTERACTION_SYMBOLS) return "none";
+      const role = interactionRole(labelForViewpoint(d, selectedNodeId));
+      return `url(#node-chevron-marker-${role}${emphasized ? "" : "-far"})`;
+    }
+    function nearChevronMarker(d) {
+      return roleMarkerId(d, true);
+    }
+    function farChevronMarker(d) {
+      return roleMarkerId(d, d === selectedEdgeDatum);
+    }
+    function farDotFill(d) {
+      return d === selectedEdgeDatum ? "#F4F4F4" : "#646466";
+    }
+    // Va richiamata ogni volta che selectedEdgeDatum cambia: i marker
+    // lontani sono elementi già presenti nel DOM (creati una volta da
+    // selectNode), quindi il loro colore va ri-applicato esplicitamente,
+    // non si aggiorna da solo.
+    function updateFarMarkerHighlight() {
+      nodeFarChevrons.selectAll("path").attr("marker-end", farChevronMarker);
+      nodeFarNeutralDots.selectAll("circle").attr("fill", farDotFill);
+    }
+
     // Apre il pannello informativo dedicato a un singolo edge (l'interazione
     // fra le due specie), nello stesso "inspector" in basso a destra usato
     // per i nodi. Non tocca la selezione del nodo: rimani nella vista
-    // filtrata su di esso, cambia solo il contenuto del pannello.
+    // filtrata su di esso, cambia solo il contenuto del pannello. Marca
+    // anche l'edge come "quello aperto": resta bianco e spesso finché
+    // non se ne apre un altro o non si cambia/deseleziona il nodo, e
+    // accende in bianco anche il marker vicino al vicino.
     function openEdgeInfo(d) {
-      const sourceNode =
-        typeof d.source === "object"
-          ? d.source
-          : nodes.find((n) => n.scientific_name === d.source);
-      const targetNode =
-        typeof d.target === "object"
-          ? d.target
-          : nodes.find((n) => n.scientific_name === d.target);
+      if (selectedEdgeDatum && selectedEdgeDatum !== d) {
+        d3.select(`#link-path-${links.indexOf(selectedEdgeDatum)}`)
+          .attr("stroke", "#646466")
+          .attr("stroke-width", 0.4);
+      }
+      selectedEdgeDatum = d;
+      d3.select(`#link-path-${links.indexOf(d)}`)
+        .attr("stroke", "#F4F4F4")
+        .attr("stroke-width", 1.4);
+      updateFarMarkerHighlight();
 
-      const interaction = d.type;
+      // Il pannello dell'edge non mostra più il tipo "grezzo" del csv, ma
+      // quello visto dal nodo attualmente selezionato (stessa logica usata
+      // per le label e i marker): se il nodo aperto è il "soggetto"
+      // dell'interazione resta com'è, altrimenti viene invertito. Di
+      // conseguenza anche l'ordine soggetto/oggetto nell'header e nelle
+      // foto segue il punto di vista corrente, non l'ordine del csv.
+      const viewpointId =
+        selectedNodeId != null ? selectedNodeId : nodeIdOf(d.source);
+      const otherId = otherNodeIdOf(d, viewpointId);
+      const viewpointNode =
+        nodes.find((n) => n.scientific_name === viewpointId) ||
+        (typeof d.source === "object" ? d.source : undefined);
+      const otherNode =
+        nodes.find((n) => n.scientific_name === otherId) ||
+        (typeof d.target === "object" ? d.target : undefined);
+
+      const interaction = labelForViewpoint(d, viewpointId);
       const description = interactionDescriptions[interaction] || "";
 
       infoBox
         .html(
           `
-      <h3><i>${sourceNode.name}</i> → <em>${interaction}</em> → <i>${
-            targetNode.name
-          }</i></h3>
-      <div style="display: flex; gap: 10px; margin-top: 10px;">
-        <img src="${sourceNode.image}" alt="${
-            sourceNode.name
-          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border-radius: 4px;" />
-        <img src="${targetNode.image}" alt="${
-            targetNode.name
-          }" style="width: 90px; height: 90px; object-fit: cover; flex-shrink: 0; border-radius: 4px;" />
+      <div class="ei-root">
+        <div class="ei-header">
+          <div class="ei-name">${viewpointNode.name}</div>
+          <div class="ei-type" style="color:${interactionColor(
+            interaction
+          )}">${interaction}</div>
+          <div class="ei-name">${otherNode.name}</div>
+        </div>
+        <div class="ei-photos">
+          <img class="ei-photo" src="${viewpointNode.image}" alt="${
+            viewpointNode.name
+          }" />
+          <span class="ei-icon-slot">${interactionIconHTML(interaction)}</span>
+          <img class="ei-photo" src="${otherNode.image}" alt="${
+            otherNode.name
+          }" />
+        </div>
+        ${description ? `<div class="ei-description">${description}</div>` : ""}
       </div>
-      ${description ? `<p style="margin-top: 10px;">${description}</p>` : ""}
     `
         )
         .style("opacity", 1);
@@ -408,49 +996,134 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
 
     linkHitAreas
       .on("mouseenter", (event, d) => {
+        if (tourLockPolicy) return; // guida aperta: l'evidenziazione dello step non si tocca
         d3.select(`#link-path-${links.indexOf(d)}`)
           .attr("stroke", "#F4F4F4")
-          .attr("stroke-width", 1.4)
-          .attr(
-            "marker-end",
-            SYMMETRIC_TYPES.has(d.type) ? "none" : "url(#arrow-end-hover)"
-          );
+          .attr("stroke-width", 1.4);
+        // Anche il marker lontano di QUESTO edge (non tutti) passa a piena
+        // opacità durante l'hover, stesso trattamento della selezione.
+        nodeFarChevrons
+          .selectAll("path")
+          .filter((p) => p === d)
+          .attr("marker-end", (p) => roleMarkerId(p, true));
+        nodeFarNeutralDots
+          .selectAll("circle")
+          .filter((p) => p === d)
+          .attr("fill", "#F4F4F4");
       })
       .on("mouseleave", (event, d) => {
+        if (tourLockPolicy) return;
         d3.select(`#link-path-${links.indexOf(d)}`)
-          .attr("stroke", "#646466")
-          .attr("stroke-width", 0.4)
-          .attr(
-            "marker-end",
-            SYMMETRIC_TYPES.has(d.type) ? "none" : "url(#arrow-end)"
-          );
+          .attr("stroke", edgeRestStroke(d))
+          .attr("stroke-width", edgeRestWidth(d));
+        // Torna al colore di riposo — bianco se questo edge è comunque
+        // quello selezionato, altrimenti grigio (farChevronMarker/
+        // farDotFill guardano già selectedEdgeDatum).
+        nodeFarChevrons
+          .selectAll("path")
+          .filter((p) => p === d)
+          .attr("marker-end", farChevronMarker(d));
+        nodeFarNeutralDots
+          .selectAll("circle")
+          .filter((p) => p === d)
+          .attr("fill", farDotFill(d));
       })
       .on("click", (event, d) => {
         event.stopPropagation();
+        if (tourLockPolicy) return;
         openEdgeInfo(d);
       });
 
     edgeLabels = container.append("g").attr("class", "edge-labels");
 
+    // Gruppo per i chevron direzionali vicino al nodo selezionato: la
+    // sua unica funzione è portare il chevron direzionale bianco vicino a
+    // ciascun edge collegato al nodo aperto (uno per edge, entrante o
+    // uscente). Vedi computeNodeChevronD/updateNodeChevrons più sotto.
+    nodeChevrons = container.append("g").attr("class", "node-chevrons");
+
+    // Stesso identico chevron, ma grigio (stesso colore degli edge) e
+    // vicino all'estremo OPPOSTO — cioè al vicino B, non al nodo aperto
+    // A. Racconta lo stesso edge dal suo punto di vista, con lo stesso
+    // linguaggio visivo, così non serve più nessun marker sul path
+    // dell'edge stesso. Vedi computeNodeChevronD/updateNodeChevrons.
+    nodeFarChevrons = container.append("g").attr("class", "node-far-chevrons");
+
+    // Gruppo per i pallini delle interazioni SIMMETRICHE (interagisce
+    // con, si verifica con, adiacente a...) vicino al nodo selezionato:
+    // niente verso da mostrare, quindi solo un piccolo indicatore neutro
+    // invece del chevron direzionale. Stesso punto di ancoraggio dei
+    // chevron (vedi computeNearNodeAnchor), disegnato con un cerchio.
+    nodeNeutralDots = container.append("g").attr("class", "node-neutral-dots");
+
+    // Equivalente "lontano" (vicino a B, grigio) dei pallini neutri, per
+    // coerenza con i chevron: stesso trattamento su entrambi gli estremi
+    // dell'edge, cambia solo colore/posizione.
+    nodeFarNeutralDots = container
+      .append("g")
+      .attr("class", "node-far-neutral-dots");
+
     const defs = svg.select("defs").empty()
       ? svg.append("defs")
       : svg.select("defs");
 
-    // Frecce di direzione sugli edge: agganciate al nodo target, mostrano
-    // subito, guardando un nodo selezionato, quali interazioni partono da
-    // lui (freccia lontana, vicino all'altro nodo) e quali lo hanno come
-    // destinatario (freccia proprio accanto a lui). Due varianti invece di
-    // "fill: context-stroke" per non dipendere dal supporto browser.
+    // Un solo linguaggio visivo per la direzione, invece di due: niente
+    // più freccia "lontana" sul path visibile (duplicava, per la
+    // maggioranza degli edge, la stessa informazione già data dal
+    // chevron vicino al nodo aperto — la stessa cosa raccontata due
+    // volte, in due punti diversi dello schermo). Restano solo i chevron
+    // "ad anello": uno bianco vicino al nodo selezionato (A), e uno
+    // grigio — stesso trattamento, stessa distanza, stessa forma, solo
+    // colore diverso — vicino a ciascun vicino (B) collegato, per lo
+    // stesso edge letto dal suo punto di vista. Vedi
+    // computeNodeChevronD/updateNodeChevrons più sotto: la funzione è
+    // generica sul nodo, quindi il chevron "lontano" è semplicemente lo
+    // stesso calcolo applicato all'altro estremo dell'edge.
+    //
+    // refX qui è 4.5 (il CENTRO della sagoma, che va da x=2 a x=7), non
+    // 7 (la punta): l'SVG piazza sempre il punto refX/refY esattamente
+    // sul punto finale del path e ruota attorno a quello. Con refX=7 (la
+    // punta) la sagoma peserebbe quasi tutta verso il nodo quando il
+    // chevron punta in fuori (uscita), e quasi tutta lontano dal nodo
+    // quando punta in dentro (entrata) — stessa distanza esatta del
+    // punto-ancora, ma il disegno vero e proprio finirebbe sbilanciato in
+    // direzioni opposte. Centrando il punto di rotazione, la sagoma resta
+    // centrata sulla stessa distanza in entrambi i versi.
+    // Un marker per ruolo (attivo/passivo) e per distanza (vicino al nodo
+    // aperto/vicino al vicino): stessa identica sagoma e dimensione di
+    // prima, cambia solo colore e opacità. Il "lontano" resta più
+    // discreto (stroke-opacity ridotta) esattamente come prima faceva col
+    // grigio — qui però la tinta è quella del ruolo, non più un grigio
+    // neutro, così i due capi dello stesso edge raccontano insieme chi
+    // agisce e chi subisce senza dover decifrare l'angolo della freccia.
     [
-      { id: "arrow-end", stroke: "#646466" },
-      { id: "arrow-end-hover", stroke: "#F4F4F4" },
-    ].forEach(({ id, stroke }) => {
+      {
+        id: "node-chevron-marker-active",
+        stroke: INTERACTION_COLOR.active,
+        opacity: 1,
+      },
+      {
+        id: "node-chevron-marker-passive",
+        stroke: INTERACTION_COLOR.passive,
+        opacity: 1,
+      },
+      {
+        id: "node-chevron-marker-active-far",
+        stroke: INTERACTION_COLOR.active,
+        opacity: 0.45,
+      },
+      {
+        id: "node-chevron-marker-passive-far",
+        stroke: INTERACTION_COLOR.passive,
+        opacity: 0.45,
+      },
+    ].forEach(({ id, stroke, opacity }) => {
       if (defs.select(`#${id}`).empty()) {
         defs
           .append("marker")
           .attr("id", id)
           .attr("viewBox", "0 0 10 10")
-          .attr("refX", 7)
+          .attr("refX", 4.5)
           .attr("refY", 5)
           .attr("markerWidth", 6)
           .attr("markerHeight", 6)
@@ -460,6 +1133,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
           .attr("d", "M2,1.5 L7,5 L2,8.5") // chevron aperto ">" invece di triangolo pieno, più leggero
           .attr("fill", "none")
           .attr("stroke", stroke)
+          .attr("stroke-opacity", opacity)
           .attr("stroke-width", 1.5)
           .attr("stroke-linecap", "round")
           .attr("stroke-linejoin", "round");
@@ -679,7 +1353,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         p2 = shortenToRadius(x1, y1, x2, y2, m2);
       }
 
-      return { p1, p2, R };
+      return { p1, p2, R, ox, oy };
     }
 
     // Path-guida per il testo: stessa identica curva del path visibile,
@@ -693,23 +1367,10 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         : `M${p2.x},${p2.y} A${R},${R} 0 0,0 ${p1.x},${p1.y}`;
     }
 
-    // Tipi per cui, dopo la pulizia di edges.csv, la forma "vincente" è
-    // quella PASSIVA (source = chi subisce, target = chi agisce): senza
-    // questo elenco la freccia (che SVG piazza sempre sull'ultimo punto
-    // del path, cioè sul target salvato) finirebbe per puntare verso chi
-    // COMPIE l'azione invece che verso chi la subisce — il contrario di
-    // quanto ci si aspetta leggendo "il predatore mangia la preda".
-    // Qui dentro solo i tipi per cui la direzione azione→ricevente è
-    // inequivocabile; per gli altri (relazioni di ospite/vettore/habitat,
-    // pochissimi edge e semantica meno netta) si lascia il default.
-    const ARROW_REVERSED_TYPES = new Set([
-      "mangiato da",
-      "predato da",
-      "impollinato da",
-      "fiore visitato da",
-      "visitato da",
-      "ucciso da",
-    ]);
+    // ARROW_REVERSED_TYPES, INTERACTION_COLOR e gli helper di ruolo sono
+    // dichiarati a livello di modulo (vedi sopra, vicino a SYMMETRIC_TYPES):
+    // servono sia qui sia nel blocco <defs> più sopra nel file, quindi
+    // devono esistere PRIMA di entrambi, non in mezzo.
 
     // Path visibile e sua hit-area: stessa geometria del path-guida del
     // testo, così l'hitbox coincide sempre col tratto disegnato. Per i
@@ -727,6 +1388,159 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         return `M${p2.x},${p2.y} A${R},${R} 0 0,0 ${p1.x},${p1.y}`;
       }
       return `M${p1.x},${p1.y} A${R},${R} 0 0,1 ${p2.x},${p2.y}`;
+    }
+
+    // Vettore tangente all'arco nel punto `point`, sul cerchio di centro
+    // `center`. Ci sono sempre due tangenti possibili (opposte): quella
+    // giusta è disambiguata col prodotto scalare rispetto alla corda
+    // dell'edge, cioè scegliamo il verso che "punta" nella direzione in
+    // cui l'arco sta effettivamente andando in quel punto.
+    function tangentAtPoint(point, center, chordX, chordY) {
+      const rx = point.x - center.x;
+      const ry = point.y - center.y;
+      let tx = -ry;
+      let ty = rx;
+      if (tx * chordX + ty * chordY < 0) {
+        tx = -tx;
+        ty = -ty;
+      }
+      const len = Math.hypot(tx, ty) || 1;
+      return { x: tx / len, y: ty / len };
+    }
+
+    // Punto di ancoraggio vicino al nodo `nodeId`, per l'edge `d`: parte
+    // dal punto in cui l'arco esce dal disco del nodo (già calcolato in
+    // arcGeometry) e si sposta di NODE_CHEVRON_GAP px lungo la VERA
+    // circonferenza dell'arco (centro ox,oy) — NON in linea retta dal
+    // centro del nodo (radiale): un arco non esce quasi mai in direzione
+    // radiale, quindi quello spostamento portava il marker leggermente
+    // FUORI dalla curva vera, sbandato di lato. Ruotando nearPoint di un
+    // angolo pari allo spostamento d'arco, il risultato resta invece
+    // esattamente SOPRA al tratto disegnato, qualunque sia l'angolo con
+    // cui l'arco stacca dal nodo. Condiviso da chevron (direzionali) e
+    // pallini (interazioni neutre): entrambi vanno nello stesso punto,
+    // cambia solo cosa ci si disegna sopra.
+    //
+    // Il verso della rotazione è SEMPRE "verso l'altro nodo lungo la
+    // curva" (l'unico per cui ci si allontana dal nodo selezionato
+    // restando sul tratto disegnato) — un dettaglio puramente
+    // geometrico, indipendente dal verso semantico del flusso (quello
+    // usato invece per orientare la PUNTA del chevron, vedi
+    // computeNodeChevronD).
+    function computeNearNodeAnchor(d, nodeId) {
+      const arc = d.__arc;
+      if (!arc) return null;
+      const { p1, p2, ox, oy } = arc;
+      const isOutgoing = nodeIdOf(d.source) === nodeId;
+      const nearPoint = isOutgoing ? p1 : p2;
+      const otherPoint = isOutgoing ? p2 : p1;
+
+      const geomChordX = otherPoint.x - nearPoint.x;
+      const geomChordY = otherPoint.y - nearPoint.y;
+      const geomTangent = tangentAtPoint(
+        nearPoint,
+        { x: ox, y: oy },
+        geomChordX,
+        geomChordY
+      );
+
+      const rx = nearPoint.x - ox;
+      const ry = nearPoint.y - oy;
+      const radius = Math.hypot(rx, ry) || 1;
+      const ccwSign = geomTangent.x * -ry + geomTangent.y * rx >= 0 ? 1 : -1;
+      const dtheta = (ccwSign * NODE_CHEVRON_GAP) / radius;
+      const cosT = Math.cos(dtheta);
+      const sinT = Math.sin(dtheta);
+
+      return {
+        x: ox + rx * cosT - ry * sinT,
+        y: oy + rx * sinT + ry * cosT,
+        nearPoint,
+        ox,
+        oy,
+        p1,
+        p2,
+      };
+    }
+
+    // Calcola il segmento del chevron vicino al nodo `nodeId`, per l'edge
+    // `d`: usa il punto di ancoraggio comune (sopra), orientato nella
+    // direzione tangente all'arco in quel punto — cioè nella direzione
+    // reale in cui quell'edge sta "partendo" o "arrivando".
+    function computeNodeChevronD(d, nodeId) {
+      const anchor = computeNearNodeAnchor(d, nodeId);
+      if (!anchor) return null;
+      const { p1, p2, ox, oy, nearPoint } = anchor;
+
+      // Stesso verso usato dal marker-end sul path visibile (computeArcD):
+      // normalmente da p1 a p2, ma invertito per i tipi in
+      // ARROW_REVERSED_TYPES, dove il csv salva come "source" chi SUBISCE
+      // l'azione e come "target" chi la compie — il flusso reale va
+      // quindi da p2 a p1, non da p1 a p2. Senza questo, il chevron di
+      // quei tipi puntava esattamente al contrario.
+      const flowReversed = ARROW_REVERSED_TYPES.has(d.type);
+      const chordX = flowReversed ? p1.x - p2.x : p2.x - p1.x;
+      const chordY = flowReversed ? p1.y - p2.y : p2.y - p1.y;
+
+      // Tangente al cerchio DELL'ARCO (non a quello del nodo): è la vera
+      // direzione lungo cui quell'edge sta viaggiando in quel punto — la
+      // stessa cosa che SVG usa per orientare la freccia lontana sul path
+      // visibile (orient=auto segue sempre la curva vera, non il nodo).
+      // Un tentativo precedente orientava invece perpendicolarmente al
+      // raggio del NODO: sembra una scelta innocua ("più liscia sulla
+      // circonferenza") ma è concettualmente sbagliata — indica "di lato,
+      // intorno al nodo", non "verso dove va l'edge". Quando molti vicini
+      // sono raggruppati in una zona angolare simile, quella direzione
+      // "di lato" risultava quasi identica per edge diversi: da lì i
+      // chevron che sembravano puntare tutti nella stessa direzione senza
+      // ragione. Con la tangente dell'arco, ogni chevron punta davvero
+      // dove va la SUA curva.
+      const tangent = tangentAtPoint(
+        nearPoint,
+        { x: ox, y: oy },
+        chordX,
+        chordY
+      );
+
+      // L'orientamento della sagoma è quello SEMANTICO (`tangent`): è
+      // quello che decide se la chevron punta in fuori o in dentro,
+      // indipendentemente da dove sta il punto di ancoraggio.
+      const backX = anchor.x - tangent.x * 4;
+      const backY = anchor.y - tangent.y * 4;
+
+      return `M${backX},${backY} L${anchor.x},${anchor.y}`;
+    }
+
+    // Ricalcola posizione/orientamento di tutti i chevron intorno al nodo
+    // attualmente selezionato. Va richiamata ad ogni tick (i nodi si
+    // muovono) e ogni volta che cambia il nodo selezionato.
+    function updateNodeChevrons() {
+      nodeChevrons
+        .selectAll("path")
+        .attr("d", (d) => computeNodeChevronD(d, selectedNodeId));
+      nodeFarChevrons
+        .selectAll("path")
+        .attr("d", (d) =>
+          computeNodeChevronD(d, otherNodeIdOf(d, selectedNodeId))
+        );
+      nodeNeutralDots
+        .selectAll("circle")
+        .attr("cx", (d) => computeNearNodeAnchor(d, selectedNodeId)?.x ?? null)
+        .attr("cy", (d) => computeNearNodeAnchor(d, selectedNodeId)?.y ?? null);
+      nodeFarNeutralDots
+        .selectAll("circle")
+        .attr(
+          "cx",
+          (d) =>
+            computeNearNodeAnchor(d, otherNodeIdOf(d, selectedNodeId))?.x ??
+            null
+        )
+        .attr(
+          "cy",
+          (d) =>
+            computeNearNodeAnchor(d, otherNodeIdOf(d, selectedNodeId))?.y ??
+            null
+        );
     }
 
     simulation.on("tick", () => {
@@ -793,24 +1607,28 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         .attr("cy", (d) => d.y);
 
       if (selectedNodeId) {
-        const selectedNode = nodes.find(
-          (n) => n.scientific_name === selectedNodeId
-        );
-        if (selectedNode) {
-          selectionRing.attr("cx", selectedNode.x).attr("cy", selectedNode.y);
-        }
+        updateNodeChevrons();
       }
 
       updateBoundary();
     });
 
+    // Temporaneamente disattivato su richiesta: il bottone reset è
+    // nascosto (vedi CSS) e la barra spaziatrice non deve più richiamarlo.
+    // La funzione resta cablata, solo spenta da questo flag: per
+    // riattivarla basta rimettere RESET_BUTTON_ENABLED a true e togliere
+    // il display:none su button#reset in style.css.
+    const RESET_BUTTON_ENABLED = false;
+
     d3.select("#reset").on("click", () => {
+      if (!RESET_BUTTON_ENABLED) return;
       simulation.alpha(1).restart();
       resetHighlightAndLabels();
       infoBox.style("opacity", 0);
     });
 
     d3.select("body").on("keydown", (event) => {
+      if (!RESET_BUTTON_ENABLED) return;
       // Se si sta scrivendo in un campo di testo (la barra di ricerca), lo
       // spazio deve restare uno spazio: senza questo controllo ogni parola
       // composta digitata nella ricerca faceva ripartire la simulazione.
@@ -828,40 +1646,82 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       }
     });
 
-    let selectionRing = container
-      .selectAll("circle.selection-ring")
-      .data([null]);
-    selectionRing = selectionRing
-      .enter()
-      .append("circle")
-      .attr("class", "selection-ring")
-      .attr("fill", "none")
-      .attr("stroke", "#F4F4F4")
-      .attr("stroke-width", 1)
-      .attr("stroke-dasharray", "4 6")
-      .style("opacity", 0)
-      .style("pointer-events", "none")
-      .merge(selectionRing);
-
     // Tutto ciò che accade quando una specie viene "aperta": evidenziazione,
     // anello di selezione, etichette sugli edge, pannello informativo.
     // Estratto dall'handler del click perché ora ci si arriva da due strade
     // diverse — il click sul nodo e la selezione dalla barra di ricerca —
     // e devono comportarsi in modo identico.
+    // Annulla l'edge "aperto nell'inspector" (lo riporta al grigio di
+    // riposo) e pulisce lo stato. Va richiamata ogni volta che cambia il
+    // contesto — nodo diverso selezionato, o deselezione — perché
+    // altrimenti il bianco resterebbe appeso a un edge che non ha più
+    // niente a che fare con quello che si sta guardando ora.
+    function clearSelectedEdge() {
+      if (selectedEdgeDatum) {
+        d3.select(`#link-path-${links.indexOf(selectedEdgeDatum)}`)
+          .attr("stroke", "#646466")
+          .attr("stroke-width", 0.4);
+      }
+      selectedEdgeDatum = null;
+      updateFarMarkerHighlight();
+    }
+
+    // Icona di ogni riga "Interazioni" nel Node-Inspector (e dell'Edge-
+    // Inspector): stesso linguaggio visivo dei marker sul grafo (chevron a
+    // punta per i tipi direzionali, pallino per quelli simmetrici), ora
+    // colorato secondo lo stesso ruolo attivo/passivo/neutro.
+    function interactionIconHTML(typeLabel) {
+      if (!SHOW_INTERACTION_SYMBOLS) return "";
+      const role = interactionRole(typeLabel);
+      if (role === "neutral") {
+        return `<span class="ni-dot"></span>`;
+      }
+      const color = INTERACTION_COLOR[role];
+      // Niente <svg>: la regola globale "svg { width:100vw; height:100vh }"
+      // (per il grafo principale) si applicherebbe a QUALSIASI tag svg
+      // nella pagina, icona compresa, rendendola invisibile. Lo stesso
+      // chevron ">"/"<" si ottiene con un quadratino ruotato 45° con
+      // bordo solo su due lati — nessun conflitto possibile. Il colore è
+      // inline (non in classe) perché cambia per singola riga, non per
+      // tipo di inspector.
+      return `<span class="ni-chevron${
+        role === "passive" ? " ni-chevron--in" : ""
+      }" style="border-top-color:${color}; border-right-color:${color};"></span>`;
+    }
+
+    // Stato del filtro "Solo non osservate" e del suo bottone. Vive qui,
+    // prima di selectNode, perché qualunque altra azione che ridisegna la
+    // rete (click sullo sfondo, apertura di un nodo, reset) esce di fatto
+    // dalla modalità e deve spegnere anche il bottone: prima restava
+    // "premuto" a vista pur non essendo più attivo.
+    let notObservedSpotlightActive = false;
+    const NOT_OBSERVED_TOOLTIP = {
+      off: "Evidenzia le specie senza osservazioni su iNaturalist",
+      on: "Torna alla vista completa",
+    };
+    function syncNotObservedToggle(active) {
+      notObservedSpotlightActive = active;
+      d3.select("#not-observed-toggle")
+        .classed("active", active)
+        .attr("data-tooltip", NOT_OBSERVED_TOOLTIP[active ? "on" : "off"]);
+    }
+
     function selectNode(d) {
+      syncNotObservedToggle(false);
+      clearSelectedEdge();
       const clickedId = d.scientific_name;
       const connected = adjacency[clickedId] || new Set();
 
       node.style("opacity", (nd) =>
         nd.scientific_name === clickedId || connected.has(nd.scientific_name)
           ? 1
-          : 0.1
+          : FOCUS_DIM_OPACITY
       );
       curvedLinks.style("opacity", (lk) =>
         lk.source.scientific_name === clickedId ||
         lk.target.scientific_name === clickedId
           ? 1
-          : 0.1
+          : FOCUS_DIM_OPACITY
       );
       container
         .selectAll("circle.bg")
@@ -869,19 +1729,40 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
           bgd.scientific_name === clickedId ||
           connected.has(bgd.scientific_name)
             ? 1
-            : 0.1
+            : FOCUS_DIM_OPACITY
         );
+
+      // Oltre all'opacità, le specie non collegate si sfocano (stesso
+      // criterio di sopra): aiuta a staccare il nodo aperto dal resto.
+      if (FOCUS_BLUR_PX > 0) {
+        const blurIfUnrelated = (nd) =>
+          nd.scientific_name === clickedId || connected.has(nd.scientific_name)
+            ? null
+            : `blur(${FOCUS_BLUR_PX}px)`;
+        node.style("filter", blurIfUnrelated);
+        container.selectAll("circle.bg").style("filter", blurIfUnrelated);
+      }
 
       edgeLabels.selectAll("*").remove();
 
       selectedNodeId = clickedId;
-      const selectionRadius = sizeScale(d.degree) + 8;
-      selectionRing
-        .attr("cx", d.x)
-        .attr("cy", d.y)
-        .attr("r", selectionRadius)
-        .attr("stroke-dasharray", computeEvenDashArray(selectionRadius, 4, 6))
-        .style("opacity", 1);
+
+      // Bordo solido bianco direttamente sul cerchio del nodo selezionato,
+      // al posto del vecchio anello tratteggiato separato.
+      node
+        .attr("stroke", (nd) =>
+          nd.scientific_name === clickedId ? "#F4F4F4" : "#646466"
+        )
+        .attr("stroke-width", (nd) =>
+          nd.scientific_name === clickedId ? 1.2 : 0.4
+        )
+        .attr("stroke-dasharray", (nd) =>
+          nd.scientific_name === clickedId
+            ? null
+            : nd.notObserved
+            ? "4 3"
+            : null
+        );
 
       const edgesToShow = links.filter((lk) => {
         const src =
@@ -891,6 +1772,77 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         return src === clickedId || tgt === clickedId;
       });
 
+      // Un chevron bianco per ogni edge collegato (entrante o uscente),
+      // posizionato appena fuori dal bordo del nodo selezionato e
+      // orientato secondo la direzione reale di quell'edge. I tipi
+      // SIMMETRICI (interagisce con, adiacente a...) non hanno una
+      // direzione da mostrare: prendono un pallino neutro invece del
+      // chevron (vedi subito sotto).
+      const chevronEdges = edgesToShow.filter(
+        (lk) => !SYMMETRIC_TYPES.has(lk.type)
+      );
+      nodeChevrons.selectAll("path").remove();
+      nodeChevrons
+        .selectAll("path")
+        .data(chevronEdges)
+        .enter()
+        .append("path")
+        .attr("class", "node-chevron")
+        .attr("fill", "none")
+        .attr("stroke", "none")
+        .attr("marker-end", nearChevronMarker)
+        .style("pointer-events", "none");
+
+      // Lo stesso chevron, grigio, vicino al VICINO (l'altro estremo di
+      // ogni edge): stesso edge, stesso linguaggio visivo, letto dal suo
+      // punto di vista invece che da quello del nodo aperto.
+      nodeFarChevrons.selectAll("path").remove();
+      nodeFarChevrons
+        .selectAll("path")
+        .data(chevronEdges)
+        .enter()
+        .append("path")
+        .attr("class", "node-chevron-far")
+        .attr("fill", "none")
+        .attr("stroke", "none")
+        .attr("marker-end", farChevronMarker)
+        .style("pointer-events", "none");
+
+      // Pallino neutro per gli edge SIMMETRICI: stesso punto di
+      // ancoraggio dei chevron (nessuno spostamento diverso da
+      // imparare), ma senza freccia/verso, dato che questi tipi non ne
+      // hanno uno da comunicare.
+      const neutralDotEdges = edgesToShow.filter((lk) =>
+        SYMMETRIC_TYPES.has(lk.type)
+      );
+      nodeNeutralDots.selectAll("circle").remove();
+      nodeNeutralDots
+        .selectAll("circle")
+        .data(neutralDotEdges)
+        .enter()
+        .append("circle")
+        .attr("class", "node-neutral-dot")
+        .attr("r", SHOW_INTERACTION_SYMBOLS ? 2 : 0)
+        .attr("fill", "#F4F4F4")
+        .attr("stroke", "none")
+        .style("pointer-events", "none");
+
+      // Stesso pallino, grigio, vicino al vicino — coerente col
+      // trattamento dei chevron sopra.
+      nodeFarNeutralDots.selectAll("circle").remove();
+      nodeFarNeutralDots
+        .selectAll("circle")
+        .data(neutralDotEdges)
+        .enter()
+        .append("circle")
+        .attr("class", "node-neutral-dot-far")
+        .attr("r", SHOW_INTERACTION_SYMBOLS ? 2 : 0)
+        .attr("fill", farDotFill)
+        .attr("stroke", "none")
+        .style("pointer-events", "none");
+
+      updateNodeChevrons();
+
       edgeLabels
         .selectAll("text")
         .data(edgesToShow)
@@ -898,7 +1850,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         .append("text")
         .attr("class", "edge-label")
         .attr("font-size", 8)
-        .attr("fill", "white")
+        .attr("fill", (d) => interactionColor(labelForViewpoint(d, clickedId)))
         .attr("pointer-events", "none")
         .append("textPath")
         .attr("xlink:href", (d, i) => `#link-text-path-${links.indexOf(d)}`)
@@ -915,36 +1867,165 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         interactionCounts[label]++;
       });
 
-      const interactionText = Object.entries(interactionCounts)
-        .map(([type, count]) => `${type} ${count} specie`)
-        .join("<br>");
+      const interactionRows = Object.entries(interactionCounts)
+        .map(
+          ([type, count]) => `
+        <div class="ni-row" data-type="${type.replace(/"/g, "&quot;")}">
+          <span class="ni-icon-slot">${interactionIconHTML(type)}</span>
+          <span class="ni-type" style="color:${interactionColor(
+            type
+          )}">${type}</span>
+          <span class="ni-count-badge">${count}</span>
+          <span class="ni-unit">specie</span>
+        </div>`
+        )
+        .join("");
 
       infoBox
         .html(
           `
-      <h3>${d.name}</h3>
-      <h4><i>${d.scientific_name}</i></h4>
-      <img src="${d.image}" alt="${
-            d.name
-          }" style="width: 100%; height: auto; margin-top: 10px;"/>
-      <p>Specie collegata con <b>${
-        adjacency[clickedId]?.size || 0
-      }</b> specie</p>
-      <p style="margin-top: 10px;"><u>Osservazioni</u>: ${d.observations}</p>
-      <p style="margin-top: 10px;"><u>Interazioni</u>:<br>${
-        interactionText || "Nessuna"
-      }</p>
+      <div class="ni-root">
+        <div class="ni-header">
+          <div class="ni-name-block">
+            <div class="ni-name">${d.name}</div>
+            <div class="ni-sci">${d.scientific_name}</div>
+          </div>
+          <img class="ni-photo" src="${d.image}" alt="${d.name}" />
+        </div>
+        <div class="ni-stats">
+          ${
+            Number.isFinite(d.observations)
+              ? `<div class="ni-stat-row">
+            <span>Osservazioni iNaturalist</span>
+            <span class="ni-stat-value">${d.observations}</span>
+          </div>
+          <div class="ni-divider"></div>`
+              : ""
+          }
+          <div class="ni-stat-row">
+            <span>Specie con cui interagisce</span>
+            <span class="ni-stat-value">${
+              adjacency[clickedId]?.size || 0
+            }</span>
+          </div>
+          <div class="ni-divider"></div>
+          <div class="ni-interactions">
+            <div class="ni-interactions-title">Interazioni</div>
+            ${
+              interactionRows ||
+              `<div class="ni-row ni-row--empty">Nessuna</div>`
+            }
+          </div>
+        </div>
+      </div>
     `
         )
         .style("opacity", 1);
+
+      // Hover sul numero (solo il riquadro, non la parola "specie" accanto):
+      // evidenzia nella rete le specie di quel tipo di interazione.
+      infoBox.selectAll(".ni-row[data-type]").each(function () {
+        const row = this;
+        row.querySelectorAll(".ni-count-badge").forEach((hot) => {
+          hot.addEventListener("mouseenter", () =>
+            applyInteractionHover(row.dataset.type)
+          );
+          hot.addEventListener("mouseleave", () => applyInteractionHover(null));
+        });
+      });
+    }
+
+    // Evidenzia, per il nodo aperto, solo le specie legate da `type` (null =
+    // torna alla vista normale del nodo aperto). Riusa le stesse opacità e
+    // lo stesso blur di selectNode; cambia solo CHI resta acceso.
+    function applyInteractionHover(type) {
+      if (!selectedNodeId || tourLockPolicy) return;
+      const clickedId = selectedNodeId;
+      const connected = adjacency[clickedId] || new Set();
+      const endId = (e) => (typeof e === "object" ? e.scientific_name : e);
+      const touches = (lk) =>
+        endId(lk.source) === clickedId || endId(lk.target) === clickedId;
+      const isMatch = (lk) =>
+        touches(lk) && labelForViewpoint(lk, clickedId) === type;
+
+      if (type === null) {
+        const base = (nd) =>
+          nd.scientific_name === clickedId || connected.has(nd.scientific_name)
+            ? 1
+            : FOCUS_DIM_OPACITY;
+        const blurBase = (nd) =>
+          nd.scientific_name === clickedId || connected.has(nd.scientific_name)
+            ? null
+            : FOCUS_BLUR_PX > 0
+            ? `blur(${FOCUS_BLUR_PX}px)`
+            : null;
+        node.style("opacity", base).style("filter", blurBase);
+        container
+          .selectAll("circle.bg")
+          .style("opacity", base)
+          .style("filter", blurBase);
+        curvedLinks.style("opacity", (lk) =>
+          touches(lk) ? 1 : FOCUS_DIM_OPACITY
+        );
+        edgeLabels.selectAll("text").style("opacity", null);
+        [nodeChevrons, nodeFarChevrons].forEach((g) =>
+          g.selectAll("path").style("opacity", null)
+        );
+        [nodeNeutralDots, nodeFarNeutralDots].forEach((g) =>
+          g.selectAll("circle").style("opacity", null)
+        );
+        return;
+      }
+
+      const matchIds = new Set();
+      links.forEach((lk) => {
+        if (!isMatch(lk)) return;
+        const a = endId(lk.source);
+        const b = endId(lk.target);
+        matchIds.add(a === clickedId ? b : a);
+      });
+      const lit = (nd) =>
+        nd.scientific_name === clickedId || matchIds.has(nd.scientific_name);
+      const opacityFor = (nd) =>
+        lit(nd)
+          ? 1
+          : connected.has(nd.scientific_name)
+          ? INTERACTION_HOVER_DIM
+          : FOCUS_DIM_OPACITY;
+      const blurFor = (nd) =>
+        lit(nd) || FOCUS_BLUR_PX <= 0 ? null : `blur(${FOCUS_BLUR_PX}px)`;
+      node.style("opacity", opacityFor).style("filter", blurFor);
+      container
+        .selectAll("circle.bg")
+        .style("opacity", opacityFor)
+        .style("filter", blurFor);
+      curvedLinks.style("opacity", (lk) =>
+        isMatch(lk)
+          ? 1
+          : touches(lk)
+          ? INTERACTION_HOVER_DIM
+          : FOCUS_DIM_OPACITY
+      );
+      const edgeOpacity = (lk) => (isMatch(lk) ? 1 : INTERACTION_HOVER_DIM);
+      edgeLabels.selectAll("text").style("opacity", edgeOpacity);
+      [nodeChevrons, nodeFarChevrons].forEach((g) =>
+        g.selectAll("path").style("opacity", edgeOpacity)
+      );
+      [nodeNeutralDots, nodeFarNeutralDots].forEach((g) =>
+        g.selectAll("circle").style("opacity", edgeOpacity)
+      );
     }
 
     node.on("click", (event, d) => {
       event.stopPropagation();
+      if (!tourAllowsNodeClick(d)) return;
       selectNode(d);
     });
 
     svg.on("click", () => {
+      // Guida aperta: un click sullo sfondo non deve chiudere il nodo
+      // mostrato dallo step.
+      if (tourLockPolicy) return;
       resetHighlightAndLabels();
       infoBox.style("opacity", 0);
       closeSearchResults();
@@ -977,11 +2058,11 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       /* Il contatore "top-species-counter" è largo 300px e ancorato a
          right:0. Centrando la ricerca, sotto i ~960px di larghezza i due
          riquadri arriverebbero a toccarsi: qui la ricerca scende su una
-         seconda riga invece di sovrapporsi. La soglia (960px) è quella
-         a cui, con box centrato 320px e contatore 300px+20px di margine,
-         i due bordi combaciano esattamente. */
+         seconda riga (sotto il contatore) invece di sovrapporsi. La soglia
+         (960px) è quella a cui, con ricerca centrata di 320px e contatore
+         di 300px + 20px di margine, i due bordi si toccano. */
       @media (max-width: 960px) {
-        #search-box { top: 90px; }
+        #search-box { top: 110px; }
       }
       #search-box *,
       #search-box *::before,
@@ -1000,18 +2081,23 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         max-width: 14px;
         max-height: 14px;
         display: block;
+        background: none !important; /* lo svg erediterebbe lo sfondo nero della regola globale "svg { background: black }" */
       }
       #search-field {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 12px;
-        background: rgba(0, 0, 0, 0.75);
-        border-radius: 6px;
-        border: 1px solid transparent;
-        transition: border-color 0.15s ease;
+        height: 36px;
+        padding: 0 14px;
+        background: var(--panel); /* come i bottoni: stesso fondo, bordo e pillola */
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: var(--radius-pill);
+        border: 1px solid var(--border-ctrl);
+        transition: border-color var(--t), background-color var(--t);
       }
-      #search-box.is-focused #search-field { border-color: rgba(244, 244, 244, 0.35); }
+      #search-field:hover { border-color: var(--border-strong); }
+      #search-box.is-focused #search-field { border-color: var(--border-strong); }
       #search-input {
         flex: 1 1 auto;
         min-width: 0;
@@ -1019,21 +2105,21 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         background: transparent;
         border: none;
         outline: none;
-        color: #F4F4F4;
+        color: var(--text);
         font-family: inherit;
         font-size: 14px;
         line-height: 1.2;
         padding: 0;
         height: auto;
       }
-      #search-input::placeholder { color: #8a8a8c; }
+      #search-input::placeholder { color: var(--text-dim); }
       #search-clear {
         flex: 0 0 auto;
         width: auto;
         height: auto;
         background: none;
         border: none;
-        color: #8a8a8c;
+        color: var(--text-dim);
         font-family: inherit;
         font-size: 16px;
         line-height: 1;
@@ -1041,13 +2127,17 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         padding: 0 2px;
         display: none;
       }
-      #search-clear:hover { color: #F4F4F4; }
+      #search-clear:hover { color: var(--text); }
       #search-box.has-query #search-clear { display: block; }
       #search-results {
         display: none;
-        margin-top: 6px;
-        background: rgba(0, 0, 0, 0.85);
-        border-radius: 6px;
+        margin-top: 8px;
+        background: var(--panel);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid var(--border-ctrl);
+        border-radius: 20px; /* estensione della barra a pillola: angoli tondi */
+        padding: 6px;
         max-height: 46vh;
         overflow-y: auto;
         overscroll-behavior: contain;
@@ -1059,11 +2149,10 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         gap: 10px;
         padding: 8px 10px;
         cursor: pointer;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 14px;
       }
-      .search-result:last-child { border-bottom: none; }
       .search-result:hover,
-      .search-result.is-active { background: rgba(255, 255, 255, 0.12); }
+      .search-result.is-active { background: var(--hover-bg); }
       .search-result img {
         flex: 0 0 32px;
         width: 32px !important;
@@ -1077,23 +2166,23 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .search-result.not-observed img { filter: saturate(0); }
       .sr-text { flex: 1 1 auto; min-width: 0; }
       .sr-name {
-        color: #F4F4F4;
-        font-size: 13px;
+        color: var(--text);
+        font-size: 14px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
       .sr-sci {
-        color: #9a9a9c;
-        font-size: 11px;
+        color: var(--text-dim);
+        font-size: 12px;
         font-style: italic;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .sr-deg { flex: 0 0 auto; color: #9a9a9c; font-size: 11px; }
-      .search-result mark { background: none; color: #ffffff; font-weight: 700; }
-      #search-empty { padding: 12px; color: #9a9a9c; font-size: 12px; }
+      .sr-deg { flex: 0 0 auto; color: var(--text-dim); font-size: 12px; }
+      .search-result mark { background: none; color: var(--text); font-weight: 700; }
+      #search-empty { padding: 12px; color: var(--text-dim); font-size: 12px; }
     `;
       document.head.appendChild(searchStyle);
     }
@@ -1199,6 +2288,9 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .attr("id", "search-clear")
       .attr("type", "button")
       .attr("aria-label", "Cancella la ricerca")
+      .attr("data-tooltip", "Cancella la ricerca")
+      .attr("data-tooltip-pos", "bottom")
+      .attr("data-tooltip-align", "end")
       .text("\u00d7");
 
     const searchResults = searchBox.append("div").attr("id", "search-results");
@@ -1380,6 +2472,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     document.addEventListener("keydown", (event) => {
       const tag = event.target && event.target.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (tourLockPolicy) return;
       if (event.key === "/") {
         event.preventDefault();
         inputEl.focus();
@@ -1388,12 +2481,23 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     });
 
     function resetHighlightAndLabels() {
+      syncNotObservedToggle(false);
+      clearSelectedEdge();
       node.style("opacity", 1);
       curvedLinks.style("opacity", 1);
       container.selectAll("circle.bg").style("opacity", 1);
+      node.style("filter", null);
+      container.selectAll("circle.bg").style("filter", null);
       edgeLabels.selectAll("*").remove();
       selectedNodeId = null;
-      selectionRing.style("opacity", 0);
+      node
+        .attr("stroke", "#646466")
+        .attr("stroke-width", 0.4)
+        .attr("stroke-dasharray", (nd) => (nd.notObserved ? "4 3" : null));
+      nodeChevrons.selectAll("path").remove();
+      nodeFarChevrons.selectAll("path").remove();
+      nodeNeutralDots.selectAll("circle").remove();
+      nodeFarNeutralDots.selectAll("circle").remove();
       setActiveEdges([]);
     }
 
@@ -1491,25 +2595,792 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     `;
       svg.select(`#${textPathId}`).attr("d", d);
     }
+
+    // =====================================================================
+    // Tour guidato "Come leggere la rete": a differenza della vecchia guida
+    // (schemi astratti A/B dentro un pannello isolato), questo pilota il
+    // grafo VERO — illumina i nodi di cui si sta parlando, lascia che
+    // l'utente li clicchi per davvero, e il testo si aggiorna in base a
+    // cosa succede sullo schermo. Vive qui (non a livello di modulo come
+    // la vecchia versione) perché ha bisogno di nodes/links/selectNode/
+    // resetHighlightAndLabels, che esistono solo dopo il caricamento dei
+    // csv. Il pannello è una card fissa in basso, non un overlay a schermo
+    // intero: il grafo resta visibile e cliccabile dietro.
+    // =====================================================================
+
+    // Trova un nodo per nome comune o scientifico (case-insensitive):
+    // usato per l'esempio Biacco/Scoiattolo, con un fallback sotto se uno
+    // dei due non esistesse nel dataset caricato in quel momento.
+    function findNodeByName(regex) {
+      return nodes.find(
+        (n) => regex.test(n.name || "") || regex.test(n.scientific_name || "")
+      );
+    }
+
+    // Reset "di base" condiviso da tutte le funzioni del tour qui sotto.
+    function tourResetVisuals() {
+      resetHighlightAndLabels();
+      tourClearEdgeEmphasis();
+      infoBox.style("opacity", 0);
+    }
+
+    function tourClearSpotlight() {
+      tourResetVisuals();
+    }
+
+    // Apre un nodo ESATTAMENTE come farebbe un click vero (stessa
+    // funzione selectNode usata dal listener reale): bordo bianco,
+    // chevron/pallini su tutta la sua adiacenza, inspector popolato,
+    // resto del grafo spento. Il tour la usa al posto di una preview
+    // "finta" così quello che l'utente vede durante la guida è
+    // identico, pixel per pixel, a quello che vedrà dopo cliccando da
+    // solo — è stato esplicitamente richiesto di non distinguere più i
+    // due casi.
+    function tourOpenNodeReal(d) {
+      if (!d) return;
+      selectNode(d);
+    }
+
+    // Un nodo aperto per davvero può avere decine di collegamenti tutti
+    // alla stessa opacità/colore: quello di cui parla la guida si perde
+    // nella miriade. tourApplyEdgeEmphasis lo illumina (bianco, più
+    // spesso) e scurisce un po' tutti gli ALTRI collegamenti dello
+    // stesso nodo (non quelli già spenti perché non collegati, quelli
+    // restano com'erano) così l'occhio va dritto a quello giusto.
+    let tourHighlightedEdge = null;
+    let tourDimmedSiblingEdges = [];
+    // Quanto scurire tutto ciò che è collegato al nodo aperto ma non
+    // riguarda l'esempio di cui parla la card: più acceso dello sfondo
+    // (0.1, i nodi/edge del tutto scollegati) ma chiaramente secondario
+    // rispetto al collegamento in evidenza (1) — stesso valore per ogni
+    // tipo di elemento (nodi, edge, chevron/pallini, label).
+    const TOUR_SIBLING_DIM = 0.4;
+
+    function tourApplyEdgeEmphasis(edge, ownerNodeId) {
+      tourClearEdgeEmphasis();
+      if (!edge) return;
+      tourHighlightedEdge = edge;
+      d3.select(`#link-path-${links.indexOf(edge)}`)
+        .attr("stroke", "#F4F4F4")
+        .attr("stroke-width", 1.4);
+      if (!ownerNodeId) return;
+
+      const otherId =
+        nodeIdOf(edge.source) === ownerNodeId
+          ? nodeIdOf(edge.target)
+          : nodeIdOf(edge.source);
+
+      // Tutti gli ALTRI collegamenti dello stesso nodo aperto (non quello
+      // di cui si parla): vengono scuriti, e con loro anche i nodi
+      // all'altro capo, i loro chevron/pallini (vicino e lontano) e la
+      // label — altrimenti resterebbero accesi al massimo e il
+      // collegamento giusto si perderebbe comunque in mezzo a loro.
+      tourDimmedSiblingEdges = links.filter((lk) => {
+        if (lk === edge) return false;
+        const s = nodeIdOf(lk.source);
+        const t = nodeIdOf(lk.target);
+        return s === ownerNodeId || t === ownerNodeId;
+      });
+      const isSibling = (d) => tourDimmedSiblingEdges.includes(d);
+
+      tourDimmedSiblingEdges.forEach((lk) => {
+        d3.select(`#link-path-${links.indexOf(lk)}`).style(
+          "opacity",
+          TOUR_SIBLING_DIM
+        );
+      });
+
+      const siblingNeighborIds = new Set();
+      tourDimmedSiblingEdges.forEach((lk) => {
+        const s = nodeIdOf(lk.source);
+        const t = nodeIdOf(lk.target);
+        siblingNeighborIds.add(s === ownerNodeId ? t : s);
+      });
+      siblingNeighborIds.delete(otherId);
+      siblingNeighborIds.delete(ownerNodeId);
+
+      node
+        .filter((nd) => siblingNeighborIds.has(nd.scientific_name))
+        .style("opacity", TOUR_SIBLING_DIM);
+      container
+        .selectAll("circle.bg")
+        .filter((bgd) => siblingNeighborIds.has(bgd.scientific_name))
+        .style("opacity", TOUR_SIBLING_DIM);
+
+      nodeChevrons
+        .selectAll("path")
+        .filter(isSibling)
+        .style("opacity", TOUR_SIBLING_DIM);
+      nodeFarChevrons
+        .selectAll("path")
+        .filter(isSibling)
+        .style("opacity", TOUR_SIBLING_DIM);
+      nodeNeutralDots
+        .selectAll("circle")
+        .filter(isSibling)
+        .style("opacity", TOUR_SIBLING_DIM);
+      nodeFarNeutralDots
+        .selectAll("circle")
+        .filter(isSibling)
+        .style("opacity", TOUR_SIBLING_DIM);
+      edgeLabels
+        .selectAll("text")
+        .filter(isSibling)
+        .style("opacity", TOUR_SIBLING_DIM);
+
+      // I pallini delle interazioni simmetriche sono minuscoli (r:2) e,
+      // anche zoomati, rischiano di restare poco leggibili: quello
+      // dell'edge in evidenza (vicino E lontano) viene ingrandito un
+      // filo, solo durante il tour — torna alla dimensione normale da
+      // solo al prossimo giro di selectNode/resetHighlightAndLabels.
+      const isFocusEdge = (d) => d === edge;
+      nodeNeutralDots
+        .selectAll("circle")
+        .filter(isFocusEdge)
+        .attr("r", SHOW_INTERACTION_SYMBOLS ? 4 : 0);
+      nodeFarNeutralDots
+        .selectAll("circle")
+        .filter(isFocusEdge)
+        .attr("r", SHOW_INTERACTION_SYMBOLS ? 4 : 0);
+    }
+    function tourClearEdgeEmphasis() {
+      if (tourHighlightedEdge) {
+        d3.select(`#link-path-${links.indexOf(tourHighlightedEdge)}`)
+          .attr("stroke", "#646466")
+          .attr("stroke-width", 0.4);
+      }
+      tourHighlightedEdge = null;
+      tourDimmedSiblingEdges.forEach((lk) => {
+        d3.select(`#link-path-${links.indexOf(lk)}`).style("opacity", null);
+      });
+      tourDimmedSiblingEdges = [];
+    }
+
+    // Scorciatoia usata da tutti gli step dal vivo: apre il nodo per
+    // davvero E mette subito in evidenza l'unico collegamento di cui
+    // parla la card, scurendo gli altri collegamenti dello stesso nodo.
+    function tourOpenNodeWithEdgeFocus(d, edge) {
+      tourOpenNodeReal(d);
+      tourApplyEdgeEmphasis(edge, d ? d.scientific_name : null);
+    }
+
+    // Zoom/pan automatico sul soggetto dello step corrente: incornicia i
+    // punti passati (uno o più nodi) spostando il centro un po' più in
+    // alto del centro reale dello schermo, per lasciare libera l'area in
+    // basso dove sta la card del tour. Disattiva l'auto-fit iniziale
+    // della simulazione (hasAutoFitted) così non lo sovrascrive più tardi.
+    function tourFocusOnPoints(points, options) {
+      if (!points || points.length === 0) return;
+      hasAutoFitted = true;
+      const pad = options?.pad ?? 180;
+      const maxScale = options?.maxScale ?? 2.2;
+      const xs = points.map((p) => p.x);
+      const ys = points.map((p) => p.y);
+      const minX = Math.min(...xs);
+      const maxX = Math.max(...xs);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const spanX = Math.max(maxX - minX, 1);
+      const spanY = Math.max(maxY - minY, 1);
+      const usableHeight = height * 0.6; // la card occupa la fascia bassa
+      const scale = Math.min(
+        (width - pad * 2) / spanX,
+        (usableHeight - pad * 2) / spanY,
+        maxScale
+      );
+      const scaleClamped = Math.max(Math.min(scale, maxScale), 0.7);
+      const targetX = width / 2;
+      const targetY = height * 0.38;
+      svg
+        .transition()
+        .duration(700)
+        .ease(d3.easeCubicOut)
+        .call(
+          zoom.transform,
+          d3.zoomIdentity
+            .translate(targetX - scaleClamped * cx, targetY - scaleClamped * cy)
+            .scale(scaleClamped)
+        );
+    }
+
+    // Per gli step senza un soggetto puntuale (copertina, chiusura):
+    // inquadra l'intera rete, stesso fit usato all'avvio della pagina.
+    function tourFocusOnWholeGraph() {
+      hasAutoFitted = true;
+      scaleAndCenter(nodes);
+    }
+
+    // ---- Step "interazioni direzionali": Biacco/Scoiattolo dal vivo ----
+    let tourPairIds = null; // {a, b, edge} risolti all'inizio del tour (step "cover")
+
+    function resolveDirectionalExample() {
+      const biacco = findNodeByName(/biacco/i);
+      const scoiattolo = findNodeByName(/scoiattol/i);
+      let edge = null;
+      if (biacco && scoiattolo) {
+        edge = links.find((lk) => {
+          const s = nodeIdOf(lk.source);
+          const t = nodeIdOf(lk.target);
+          return (
+            (s === biacco.scientific_name &&
+              t === scoiattolo.scientific_name) ||
+            (s === scoiattolo.scientific_name && t === biacco.scientific_name)
+          );
+        });
+      }
+      // Fallback: se l'esempio Biacco/Scoiattolo non è nel dataset caricato
+      // in questo momento (es. dati di test), prende la prima interazione
+      // direzionale che trova — il tour resta sempre funzionante.
+      if (!edge || SYMMETRIC_TYPES.has(edge.type)) {
+        edge = links.find((lk) => !SYMMETRIC_TYPES.has(lk.type));
+      }
+      tourPairIds = edge
+        ? { a: nodeIdOf(edge.source), b: nodeIdOf(edge.target), edge }
+        : null;
+    }
+
+    // Testo per lo step "intro": il tour ha già aperto per davvero il
+    // primo nodo (a) prima che questa funzione sia chiamata.
+    function directionalIntroHTML() {
+      if (!tourPairIds) {
+        return `<p class="guide-step-body">Non ho trovato un'interazione direzionale nei dati per farti un esempio dal vivo — ma la regola resta questa: il chevron punta sempre verso chi subisce l'azione.</p>`;
+      }
+      const nodeA = nodeByName.get(tourPairIds.a);
+      const nodeB = nodeByName.get(tourPairIds.b);
+      const label = labelForViewpoint(tourPairIds.edge, tourPairIds.a);
+      return `<p class="guide-step-lead">Guarda l'interazione tra <strong>${nodeA.name}</strong> e <strong>${nodeB.name}</strong>. Con <strong>${nodeB.name}</strong> si legge <em>"${label}"</em>. Guarda da che parte punta il chevron sul collegamento tra i due.</p>`;
+    }
+
+    // Testo per lo step "switch": il tour stesso passa l'apertura dal
+    // primo al secondo nodo (nessun click richiesto all'utente).
+    function directionalSwitchHTML() {
+      if (!tourPairIds) {
+        return `<p class="guide-step-body">Esempio non disponibile con i dati caricati in questo momento.</p>`;
+      }
+      const nodeA = nodeByName.get(tourPairIds.a);
+      const nodeB = nodeByName.get(tourPairIds.b);
+      const label = labelForViewpoint(tourPairIds.edge, tourPairIds.b);
+      return `<p class="guide-step-lead">Dal punto di vista del <strong>${nodeB.name}</strong> l'interazione cambia: lo stesso collegamento ora diventa <em>"${label}"</em> — ma il verso dell'interazione rimane invariato, la freccia non cambia direzione.</p>`;
+    }
+
+    // ---- Step "interazioni reciproche": prima coppia neutra reale trovata ----
+    let tourNeutralPair = null;
+    function resolveNeutralExample() {
+      const edge = links.find((lk) => SYMMETRIC_TYPES.has(lk.type));
+      tourNeutralPair = edge
+        ? { a: nodeIdOf(edge.source), b: nodeIdOf(edge.target), edge }
+        : null;
+    }
+    // Anche qui il nodo è già aperto per davvero (tourOpenNodeReal) quando
+    // questa viene chiamata: essendo un'interazione simmetrica, non serve
+    // un secondo click obbligatorio — la lettura non cambierebbe comunque.
+    function neutralGuidanceHTML() {
+      if (!tourNeutralPair) {
+        return `<p class="guide-step-body">Non ci sono interazioni reciproche nei dati caricati in questo momento, ma la regola resta questa: nessuna freccia, solo un pallino.</p>`;
+      }
+      const nodeA = nodeByName.get(tourNeutralPair.a);
+      const nodeB = nodeByName.get(tourNeutralPair.b);
+      const label = labelForViewpoint(tourNeutralPair.edge, tourNeutralPair.a);
+      return `
+        <p class="guide-step-lead">Ho aperto <strong>${nodeA.name}</strong> per te: con <strong>${nodeB.name}</strong> si legge <em>"${label}"</em> — nessuna freccia, solo un pallino, perché "${tourNeutralPair.edge.type}" non ha un verso da segnalare.</p>
+        <p class="guide-step-note">Prova pure a cliccare ${nodeB.name}: qui la lettura resta identica, perché il punto di vista non cambia nulla.</p>
+      `;
+    }
+
+    // ---- Step "specie non osservate": bianco e nero = 0 osservazioni ----
+    // Condivisa con il bottone permanente "Solo non osservate" (sotto):
+    // la stessa funzione serve sia il tour sia l'uso libero a tour chiuso.
+    // (stato e syncNotObservedToggle sono dichiarati più in alto, prima di
+    // selectNode, perché anche reset e selezione devono poterlo spegnere)
+    // Durata (ms) della dissolvenza quando si accende/spegne il filtro
+    // "Solo non osservate": opacità + blur passano gradualmente invece di
+    // scattare. 0 = cambio istantaneo, come prima. Le transizioni CSS sono
+    // attive SOLO per questa durata (classe "spotlight-anim" sul body):
+    // tenerle sempre accese faceva sfarfallare i nodi cliccandone di
+    // seguito parecchi.
+    const NOT_OBSERVED_ANIM_MS = 0;
+    let spotlightAnimTimer = null;
+    function playSpotlightAnimation() {
+      const reduce =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (NOT_OBSERVED_ANIM_MS <= 0 || reduce) return;
+      document.body.style.setProperty(
+        "--spotlight-ms",
+        `${NOT_OBSERVED_ANIM_MS}ms`
+      );
+      document.body.classList.add("spotlight-anim");
+      clearTimeout(spotlightAnimTimer);
+      spotlightAnimTimer = setTimeout(
+        () => document.body.classList.remove("spotlight-anim"),
+        NOT_OBSERVED_ANIM_MS + 60
+      );
+    }
+
+    function applyNotObservedSpotlight(active) {
+      playSpotlightAnimation();
+      if (active) {
+        // Prima il reset (che azzera anche lo stato del bottone), poi lo
+        // stato "attivo": nell'ordine inverso il bottone risultava spento.
+        tourResetVisuals();
+        syncNotObservedToggle(true);
+        node.style("opacity", (nd) => (nd.notObserved ? 1 : 0.08));
+        container
+          .selectAll("circle.bg")
+          .style("opacity", (bgd) => (bgd.notObserved ? 1 : 0.08));
+        curvedLinks.style("opacity", 0.05);
+        // Stesso blur usato quando si apre un nodo: le specie osservate
+        // (spente) si sfocano, quelle non osservate restano nitide.
+        if (FOCUS_BLUR_PX > 0) {
+          const blurIfObserved = (nd) =>
+            nd.notObserved ? null : `blur(${FOCUS_BLUR_PX}px)`;
+          node.style("filter", blurIfObserved);
+          container.selectAll("circle.bg").style("filter", blurIfObserved);
+        }
+      } else {
+        syncNotObservedToggle(false);
+        node.style("opacity", 1);
+        node.style("filter", null);
+        container.selectAll("circle.bg").style("opacity", 1);
+        container.selectAll("circle.bg").style("filter", null);
+        curvedLinks.style("opacity", 1);
+      }
+    }
+    function notObservedGuidanceHTML() {
+      const count = nodes.filter((n) => n.notObserved).length;
+      return `
+        <p class="guide-step-body">I nodi illuminati, in bianco e nero (${count} su ${nodes.length}), sono specie senza osservazioni confermate su iNaturalist nel territorio dell'oasi.</p>
+        <p class="guide-step-note">Resta disponibile anche a tour finito, dal pulsante con il cerchio tratteggiato, accanto al "?" in basso a sinistra.</p>
+      `;
+    }
+
+    // Bottone permanente, indipendente dal tour: resta sulla pagina anche
+    // dopo che il tour è stato chiuso, così il filtro è riusabile quando
+    // si vuole, non solo durante la guida.
+    let notObservedToggle = d3.select("body").select("#not-observed-toggle");
+    if (notObservedToggle.empty()) {
+      notObservedToggle = d3
+        .select("body")
+        .append("button")
+        .attr("id", "not-observed-toggle");
+    }
+    // Icona: cerchio tratteggiato (il nodo "vuoto", senza osservazioni).
+    // Il nome resta nell'aria-label e nel tooltip.
+    notObservedToggle
+      .attr("aria-label", "Solo specie non osservate")
+      .html(
+        `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3.2"/></svg>`
+      );
+    notObservedToggle
+      .attr("data-tooltip", NOT_OBSERVED_TOOLTIP.off)
+      .attr("data-tooltip-align", "start");
+    notObservedToggle.on("click", () =>
+      applyNotObservedSpotlight(!notObservedSpotlightActive)
+    );
+
+    let tourClickExampleNode = null; // nodo aperto dallo step "click-species"
+    // ---- I 7 step del tour ----
+    const GUIDE_STEPS = [
+      {
+        key: "cover",
+        modifier: "cover",
+        eyebrow: "Guida rapida",
+        title: "Come leggere la rete",
+        onEnter() {
+          // Risolti qui, una volta sola all'apertura del tour, così lo
+          // spostarsi avanti e indietro tra gli step non li ricalcola
+          // ogni volta.
+          resolveDirectionalExample();
+          resolveNeutralExample();
+          tourClearSpotlight();
+          tourFocusOnWholeGraph();
+        },
+        body: () =>
+          `<p class="guide-step-body">Ogni nodo è una specie.<br>Ogni collegamento è un'interazione.<br> Ogni interazione ha un verso.</p>`,
+      },
+      {
+        // Apre lo Scoiattolo come un click vero (selectNode, nessuna
+        // enfasi/opacità aggiunta dal tour: identico alla rete normale) e
+        // ci zooma sopra, così aggancia lo step successivo, dove lo
+        // Scoiattolo compare insieme al Biacco. L'utente può comunque
+        // cliccare qualsiasi altra specie: il grafo resta interattivo.
+        key: "click-species",
+        eyebrow: "Prova tu",
+        title: "Clicca una specie",
+        onEnter() {
+          tourResetVisuals();
+          if (!tourPairIds) resolveDirectionalExample();
+          tourClickExampleNode =
+            findNodeByName(/scoiattol/i) ||
+            (tourPairIds && nodeByName.get(tourPairIds.b)) ||
+            null;
+          if (tourClickExampleNode) {
+            tourOpenNodeReal(tourClickExampleNode);
+            tourFocusOnPoints([tourClickExampleNode], { maxScale: 2.4 });
+          } else {
+            tourFocusOnWholeGraph();
+          }
+        },
+        body: () => {
+          const name = tourClickExampleNode ? tourClickExampleNode.name : null;
+          return `<p class="guide-step-body">${
+            name
+              ? `Ho aperto <strong>${name}</strong>: i suoi collegamenti si illuminano e a lato compare la sua scheda. `
+              : ""
+          }Clicca una specie per aprire le sue interazioni.</p>`;
+        },
+      },
+      {
+        key: "directional-intro",
+        eyebrow: "Le interazioni direzionali",
+        title: "La freccia punta sempre verso chi subisce",
+        onEnter() {
+          if (!tourPairIds) resolveDirectionalExample();
+          if (tourPairIds) {
+            tourResetVisuals();
+            tourOpenNodeWithEdgeFocus(
+              nodeByName.get(tourPairIds.a),
+              tourPairIds.edge
+            );
+            tourFocusOnPoints([
+              nodeByName.get(tourPairIds.a),
+              nodeByName.get(tourPairIds.b),
+            ]);
+          } else {
+            tourClearSpotlight();
+          }
+        },
+        body: () => directionalIntroHTML(),
+      },
+      {
+        key: "directional-switch",
+        eyebrow: "Stesso collegamento, altro punto di vista",
+        title: "Ora passo all'altro capo",
+        onEnter() {
+          if (!tourPairIds) {
+            tourClearSpotlight();
+            return;
+          }
+          // Lo switch lo fa il tour stesso, nessun click richiesto:
+          // chiude Biacco e apre Scoiattolo, sullo stesso identico
+          // collegamento già in evidenza dallo step precedente.
+          tourResetVisuals();
+          tourOpenNodeWithEdgeFocus(
+            nodeByName.get(tourPairIds.b),
+            tourPairIds.edge
+          );
+          tourFocusOnPoints([
+            nodeByName.get(tourPairIds.a),
+            nodeByName.get(tourPairIds.b),
+          ]);
+        },
+        body: () => directionalSwitchHTML(),
+      },
+      {
+        key: "neutral",
+        eyebrow: "Le interazioni reciproche",
+        title: "A volte non c'è né azione né subordine",
+        onEnter() {
+          if (!tourNeutralPair) resolveNeutralExample();
+          if (tourNeutralPair) {
+            tourResetVisuals();
+            tourOpenNodeWithEdgeFocus(
+              nodeByName.get(tourNeutralPair.a),
+              tourNeutralPair.edge
+            );
+            // Qui non interessa l'elenco di tutte le interazioni del
+            // nodo: interessa IL collegamento. Si apre anche l'inspector
+            // dell'edge (lo stesso che si apre cliccandolo per davvero),
+            // che mostra le due specie fianco a fianco con il pallino —
+            // più chiaro, per un'interazione senza soggetto/oggetto, che
+            // l'elenco di un singolo nodo.
+            openEdgeInfo(tourNeutralPair.edge);
+            // Zoom più stretto apposta per questo step: i due pallini
+            // sono piccoli, devono essere ben leggibili.
+            tourFocusOnPoints(
+              [
+                nodeByName.get(tourNeutralPair.a),
+                nodeByName.get(tourNeutralPair.b),
+              ],
+              { pad: 60, maxScale: 3.4 }
+            );
+          } else {
+            tourClearSpotlight();
+          }
+        },
+        body: () => neutralGuidanceHTML(),
+      },
+      {
+        key: "notobserved",
+        eyebrow: "Il dettaglio da sapere",
+        title: "I nodi in bianco e nero",
+        onEnter() {
+          applyNotObservedSpotlight(true);
+          const pts = nodes.filter((n) => n.notObserved);
+          if (pts.length) tourFocusOnPoints(pts);
+          else tourFocusOnWholeGraph();
+        },
+        onLeave() {
+          applyNotObservedSpotlight(false);
+        },
+        body: () => notObservedGuidanceHTML(),
+      },
+      {
+        key: "closing",
+        modifier: "cover",
+        eyebrow: "Pronti",
+        title: "Ora sai leggere la rete",
+        onEnter() {
+          tourClearSpotlight();
+          tourFocusOnWholeGraph();
+        },
+        body: () => `
+          <p class="guide-step-body">Puoi riaprire questa guida in qualsiasi momento dal pulsante "?" in basso a sinistra.</p>
+          <button id="guide-cta" class="guide-cta">Inizia a esplorare</button>
+        `,
+      },
+    ];
+
+    let guideStepIndex = 0;
+    let guideIsOpen = false;
+
+    let guideCard = d3.select("body").select("#guide-card");
+    if (guideCard.empty()) {
+      guideCard = d3.select("body").append("div").attr("id", "guide-card");
+      guideCard
+        .append("button")
+        .attr("id", "guide-close")
+        .attr("aria-label", "Chiudi il tour")
+        .text("×");
+      guideCard.append("div").attr("id", "guide-step-content");
+      const guideNav = guideCard.append("div").attr("id", "guide-nav");
+      guideNav
+        .append("button")
+        .attr("id", "guide-prev")
+        .attr("aria-label", "Step precedente")
+        .text("‹");
+      guideNav.append("div").attr("id", "guide-dots");
+      guideNav
+        .append("button")
+        .attr("id", "guide-next")
+        .attr("aria-label", "Step successivo")
+        .text("›");
+    }
+
+    // Quali nodi si possono cliccare in ciascuno step. Tutto il resto
+    // (hover/click sugli edge, click sullo sfondo, ricerca, filtro "solo
+    // non osservate", trascinamento nodi) è bloccato per tutta la guida:
+    // restano liberi solo pan e zoom.
+    function tourLockForStep(key) {
+      if (key === "click-species") return { nodes: "all" };
+      if (key === "directional-intro" || key === "directional-switch") {
+        return tourPairIds
+          ? { nodes: "pair", ids: [tourPairIds.a, tourPairIds.b] }
+          : { nodes: "none" };
+      }
+      if (key === "neutral") {
+        return tourNeutralPair
+          ? { nodes: "pair", ids: [tourNeutralPair.a, tourNeutralPair.b] }
+          : { nodes: "none" };
+      }
+      return { nodes: "none" };
+    }
+    function setTourLock(policy) {
+      tourLockPolicy = policy;
+      const locked = !!policy;
+      document.body.classList.toggle("tour-locked", locked);
+      // "inert" toglie anche focus e tastiera, non solo il mouse.
+      searchBox.node().inert = locked;
+      topSpeciesCounter.node().inert = locked;
+      const noBtn = document.getElementById("not-observed-toggle");
+      if (noBtn) noBtn.inert = locked;
+      if (
+        locked &&
+        document.activeElement &&
+        document.activeElement !== document.body
+      ) {
+        if (searchBox.node().contains(document.activeElement))
+          document.activeElement.blur();
+      }
+      node.style("cursor", (d) =>
+        locked && !tourAllowsNodeClick(d) ? "default" : null
+      );
+    }
+
+    function renderGuideStep() {
+      const step = GUIDE_STEPS[guideStepIndex];
+      step.onEnter?.();
+      setTourLock(tourLockForStep(step.key));
+      const content = d3.select("#guide-step-content");
+      content
+        .attr(
+          "class",
+          `guide-step${step.modifier ? ` guide-step--${step.modifier}` : ""}`
+        )
+        .html(
+          `<div class="guide-eyebrow">${
+            step.eyebrow
+          }</div><h3 class="guide-step-title">${step.title}</h3>${step.body()}`
+        );
+      if (guideStepIndex === GUIDE_STEPS.length - 1) {
+        content.select("#guide-cta").on("click", closeGuide);
+      }
+
+      const dots = d3.select("#guide-dots");
+      dots.selectAll("span").remove();
+      GUIDE_STEPS.forEach((_, i) => {
+        dots
+          .append("span")
+          .attr(
+            "class",
+            `guide-dot${i === guideStepIndex ? " guide-dot--active" : ""}`
+          )
+          .on("click", () => goToGuideStep(i));
+      });
+
+      const isLastStep = guideStepIndex === GUIDE_STEPS.length - 1;
+      d3.select("#guide-close")
+        .attr("data-tooltip", "Chiudi la guida")
+        .attr("data-tooltip-align", "end");
+      d3.select("#guide-prev")
+        .property("disabled", guideStepIndex === 0)
+        .attr("data-tooltip", "Passo precedente");
+      d3.select("#guide-next")
+        .property("disabled", false)
+        .attr(
+          "data-tooltip",
+          isLastStep ? "Termina la guida" : "Passo successivo"
+        )
+        .text(isLastStep ? "✓" : "›");
+    }
+
+    function goToGuideStep(i) {
+      const next = Math.max(0, Math.min(GUIDE_STEPS.length - 1, i));
+      if (next === guideStepIndex) return;
+      GUIDE_STEPS[guideStepIndex].onLeave?.();
+      guideStepIndex = next;
+      renderGuideStep();
+    }
+
+    function openGuide() {
+      guideIsOpen = true;
+      guideStepIndex = 0;
+      renderGuideStep();
+      guideCard.style("display", "flex");
+    }
+    function closeGuide() {
+      GUIDE_STEPS[guideStepIndex].onLeave?.();
+      tourClearSpotlight();
+      setTourLock(null);
+      guideIsOpen = false;
+      guideCard.style("display", "none");
+    }
+
+    d3.select("#guide-prev").on("click", () =>
+      goToGuideStep(guideStepIndex - 1)
+    );
+    d3.select("#guide-next").on("click", () => {
+      if (guideStepIndex === GUIDE_STEPS.length - 1) closeGuide();
+      else goToGuideStep(guideStepIndex + 1);
+    });
+    d3.select("#guide-close").on("click", closeGuide);
+
+    // Swipe orizzontale per chi è su touch, coerente con l'idea di
+    // "carosello" anche sul pannello (non solo freccette/puntini).
+    let guideTouchStartX = null;
+    guideCard.node().addEventListener("touchstart", (event) => {
+      guideTouchStartX = event.touches[0].clientX;
+    });
+    guideCard.node().addEventListener("touchend", (event) => {
+      if (guideTouchStartX == null) return;
+      const dx = event.changedTouches[0].clientX - guideTouchStartX;
+      guideTouchStartX = null;
+      if (Math.abs(dx) < 40) return;
+      if (dx < 0) goToGuideStep(guideStepIndex + 1);
+      else goToGuideStep(guideStepIndex - 1);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!guideIsOpen) return;
+      const tag = event.target && event.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (event.key === "Escape") closeGuide();
+      else if (event.key === "ArrowRight") goToGuideStep(guideStepIndex + 1);
+      else if (event.key === "ArrowLeft") goToGuideStep(guideStepIndex - 1);
+    });
+
+    // Bottone "?" sempre visibile (in basso a sinistra) per riaprire il tour
+    // in qualsiasi momento, anche a prima visita già passata.
+    let guideToggle = d3.select("body").select("#guide-toggle");
+    if (guideToggle.empty()) {
+      guideToggle = d3
+        .select("body")
+        .append("button")
+        .attr("id", "guide-toggle")
+        .attr("aria-label", "Apri il tour")
+        .text("?");
+    }
+    guideToggle
+      .attr("data-tooltip", "Come leggere la rete")
+      .attr("data-tooltip-align", "start");
+    guideToggle.on("click", openGuide);
+
+    // Ascolta i click SUI NODI VERI in aggiunta al listener già presente
+    // (namespace separato, ".tour": d3 li tiene entrambi attivi) solo per
+    // sapere, durante lo step "direzionale", quale dei due nodi
+    // dell'esempio l'utente ha effettivamente aperto — il resto
+    // (evidenziazione reale, inspector) lo fa già selectNode() come
+    // sempre, senza bisogno che il tour intervenga.
+    // Negli step "direzionale" lo switch lo fa il tour stesso (vedi
+    // "directional-switch" sopra): qui resta solo il caso facoltativo
+    // dello step reciproco, dove si invita a cliccare l'altro nodo "per
+    // provare" — se lo si fa, ri-evidenzia lo stesso collegamento sul
+    // nuovo nodo aperto (altrimenti il click vero lo lascerebbe di
+    // nuovo indistinguibile tra tutti gli altri).
+    node.on("click.tour", (event, d) => {
+      if (!guideIsOpen || !tourAllowsNodeClick(d)) return;
+      const key = GUIDE_STEPS[guideStepIndex].key;
+      if (
+        (key === "directional-intro" || key === "directional-switch") &&
+        tourPairIds
+      ) {
+        // Il click vero (selectNode) ha appena aperto il nodo: rimette in
+        // evidenza lo stesso collegamento dell'esempio, altrimenti si
+        // perderebbe di nuovo tra tutti gli altri.
+        tourApplyEdgeEmphasis(tourPairIds.edge, d.scientific_name);
+        return;
+      }
+      if (key !== "neutral" || !tourNeutralPair) return;
+      tourApplyEdgeEmphasis(tourNeutralPair.edge, d.scientific_name);
+      // Il click vero (selectNode) ha appena rimesso l'inspector sul
+      // nodo: lo si riporta sull'edge, coerente con quello che mostra
+      // questo step.
+      openEdgeInfo(tourNeutralPair.edge);
+    });
+
+    // Prima visita: il tour si apre da solo una volta, poi resta solo su
+    // richiesta (bottone "?"). Il flag si fissa subito, non alla chiusura,
+    // così anche chi lo chiude senza finirlo non se lo ritrova ad ogni
+    // ricarica — può comunque riaprirlo quando vuole.
+    // "?guide" nell'URL la riapre sempre (comodo per riprovarla senza
+    // svuotare il localStorage).
+    let guideShouldOpen = new URLSearchParams(location.search).has("guide");
+    try {
+      if (!localStorage.getItem("autopoiesi-guide-seen")) {
+        guideShouldOpen = true;
+        localStorage.setItem("autopoiesi-guide-seen", "1");
+      }
+    } catch (e) {
+      // localStorage non disponibile (storage bloccato, navigazione
+      // privata): non si può sapere se è la prima visita, quindi la
+      // guida si apre comunque — meglio vederla due volte che mai.
+      guideShouldOpen = true;
+    }
+    if (guideShouldOpen) openGuide();
   }
 );
-
-// Un dasharray fisso (es. "4 6") lascia quasi sempre un residuo nel punto
-// in cui il cerchio si richiude, perché la circonferenza raramente è un
-// multiplo esatto di dash+gap: lì si vede un trattino più corto o uno
-// spazio più lungo. Calcolando quanti segmenti "entrano" nella
-// circonferenza e ridistribuendo la lunghezza in modo uniforme, il
-// tratteggio si richiude sempre in modo pulito, qualunque sia il raggio.
-function computeEvenDashArray(radius, dashLength = 4, gapLength = 6) {
-  const circumference = 2 * Math.PI * radius;
-  const unit = dashLength + gapLength;
-  const segments = Math.max(1, Math.round(circumference / unit));
-  const actualUnit = circumference / segments;
-  const dashRatio = dashLength / unit;
-  const dash = actualUnit * dashRatio;
-  const gap = actualUnit - dash;
-  return `${dash} ${gap}`;
-}
 
 function scaleAndCenter(nodes) {
   const padding = 40;
@@ -1541,20 +3412,26 @@ function scaleAndCenter(nodes) {
 }
 
 function drag(simulation) {
-  return d3
-    .drag()
-    .on("start", (event, d) => {
-      if (!event.active) simulation.alphaTarget(0.1).restart();
-      d.fx = d.x;
-      d.fy = d.y;
-    })
-    .on("drag", (event, d) => {
-      d.fx = event.x;
-      d.fy = event.y;
-    })
-    .on("end", (event, d) => {
-      if (!event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
-    });
+  return (
+    d3
+      .drag()
+      // Stesso filtro di default di d3.drag, più il blocco della guida:
+      // con la guida aperta i nodi non si spostano (il pan dello sfondo
+      // resta libero, l'evento passa all'svg).
+      .filter((event) => !tourLockPolicy && !event.ctrlKey && !event.button)
+      .on("start", (event, d) => {
+        if (!event.active) simulation.alphaTarget(0.1).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      })
+      .on("drag", (event, d) => {
+        d.fx = event.x;
+        d.fy = event.y;
+      })
+      .on("end", (event, d) => {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      })
+  );
 }
