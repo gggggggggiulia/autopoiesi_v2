@@ -1,105 +1,327 @@
+/* ===== Token condivisi (stessi valori in style.css e info.css) ===== */
+:root {
+  --bg: #000;
+  --text: #f4f4f4;
+  --text-dim: #9a9a9c;
+  --line-dim: #8a8a8c;
+  --panel: #1a1a1ac1;
+  --font: "Inconsolata", monospace;
+  --fs-base: 16px;
+  --fs-small: 14px;
+  --fs-tiny: 12px;
+  --border-soft: rgba(244, 244, 244, 0.25); /* tooltip, separatori */
+  --border-ctrl: rgba(244, 244, 244, 0.4); /* controlli a riposo */
+  --border-strong: #f4f4f4; /* pannelli, hover, focus */
+  --hover-bg: #2c2c2c;
+  --on-active: #1a1a1a; /* testo su fondo chiaro (stato attivo) */
+  --radius-pill: 40px;
+  --t: 0.2s ease;
+}
 body {
   margin: 0;
   padding: 0;
-  background-color: #1a1a1a;
-  color: #f4f4f4;
+  background-color: var(--bg);
+  color: var(--text);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Occupa tutta l'altezza dello schermo */
-  font-family: "Inconsolata", monospace;
+  height: 100vh;
+  font-family: var(--font);
 }
-
 svg {
   display: block;
   width: 100vw;
   height: 100vh;
-  background: black; /* colore di sfondo */
+  background: var(--bg);
   touch-action: none;
 }
-
 button#reset {
+  /* Temporaneamente nascosto su richiesta: il posto in basso a sinistra
+     serve ora a "?" e "Solo non osservate" (vedi sotto). La funzione
+     resta nel codice, solo non raggiungibile da bottone o barra
+     spaziatrice — vedi RESET_BUTTON_ENABLED in script.js. */
+  display: none;
   position: absolute;
   bottom: 20px;
   left: 20px;
-
   height: 48px;
   width: 48px;
-
-  /* padding: 10px 20px; */
   font-size: 16px;
   cursor: pointer;
   border: none;
   background-color: #44444400;
-  /* color: white; */
-  border-radius: 40px;
+  border-radius: var(--radius-pill);
   transition: background-color 0.3s ease;
 }
-
 button#reset:hover {
   background-color: #222;
 }
-
 #reload {
   height: 20px;
   width: 20px;
-
   margin: 0px;
   padding: 0px;
 }
-
-/* --------------------------------------------------------------- */
 
 #info-box {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 230px;
-
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 337px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 24px;
   border-style: solid;
-  border-color: #f4f4f4;
-  background-color: #1a1a1ac1;
-  border-width: 0.5px;
-
-  color: #f4f4f4;
-  padding: 15px;
+  border-color: var(--text);
+  border-width: 1px;
+  background-color: var(
+    --panel
+  ); /* colore originale, NON quello del Figma (rgba(30,30,30,0.7)) */
+  color: var(--text);
   font-size: 14px;
-  pointer-events: none; /* lascia passare drag/zoom verso l'svg sottostante */
+  font-family: var(--font);
+  pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-
   backdrop-filter: blur(5px);
 }
-
-#info-box h3 {
-  margin: 0 0 5px;
-  font-size: 16px;
+#info-box * {
+  box-sizing: border-box;
 }
-
-#info-box h4 {
-  font-style: italic;
-  margin: 0 0 10px;
-  font-size: 14px;
-}
-
 #info-box img {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+/* Il pannello è inerte (pointer-events: none) tranne i numeri delle
+   interazioni, che al passaggio del mouse evidenziano le specie nella rete. */
+#info-box:not(.is-closed) .ni-row[data-type] .ni-count-badge {
+  pointer-events: auto;
+  cursor: default;
+}
+#info-box .ni-row[data-type] .ni-count-badge:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+#info-box.is-closed img {
+  pointer-events: none;
+}
+#info-box img.enlarged {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+}
+
+/* Contenitore del contenuto: il gap fra i blocchi cambia fra i due
+   inspector (32px per quello dei nodi, 24px per quello degli edge, come
+   da Figma), quindi vive qui invece che su #info-box, che resta neutro
+   rispetto a QUALE pannello ospita in quel momento. */
+.ni-root,
+.ei-root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+.ni-root {
+  gap: 32px;
+}
+.ei-root {
+  gap: 24px;
+}
+
+/* ---- Node-Inspector: struttura derivata dal componente Figma ---- */
+.ni-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+.ni-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.ni-name {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 17px;
+  color: var(--text);
+}
+.ni-sci {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 17px;
+  color: var(--text);
+}
+.ni-photo {
   width: 100%;
   height: auto;
-  margin-top: 10px;
-  pointer-events: auto; /* le immagini restano cliccabili per l'ingrandimento */
+  display: block;
+}
+
+.ni-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+.ni-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 16px;
+  color: var(--text);
+}
+.ni-divider {
+  width: 100%;
+  height: 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.2);
+}
+.ni-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  padding: 0 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+/* Numeri delle statistiche: solo testo. Il riquadro grigino (.ni-count-badge)
+   è riservato ai numeri che rispondono all'hover (interazioni per tipo). */
+.ni-stat-value {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.ni-interactions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.ni-interactions-title {
+  font-size: 16px;
+  color: var(--text);
+}
+.ni-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  font-size: 16px;
+  color: var(--text);
+}
+.ni-row--empty {
+  color: var(--text-dim);
+}
+.ni-icon-slot {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 17px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.ni-chevron {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-top: 1.5px solid #f4f4f4;
+  border-right: 1.5px solid #f4f4f4;
+  transform: rotate(45deg);
+}
+.ni-chevron--in {
+  transform: rotate(-135deg);
+}
+.ni-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: block;
+}
+.ni-type {
+  flex: 0 0 auto;
+}
+.ni-unit {
+  color: var(--text-dim);
+}
+
+/* ---- Edge-Inspector: struttura derivata dal componente Figma ---- */
+.ei-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.ei-name {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 17px;
+  color: var(--text);
+  text-align: center;
+}
+.ei-type {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 17px;
+  color: var(--text);
+  text-align: center;
+}
+.ei-photos {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+.ei-photo {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  display: block;
+  background: rgba(217, 217, 217, 0.2);
+}
+.ei-icon-slot {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 17px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.ei-description {
+  width: 100%;
+  font-size: 16px;
+  line-height: 17px;
+  color: var(--text);
 }
 
 .node {
   cursor: pointer;
 }
-
 .selection-ring {
   transform-box: fill-box;
   transform-origin: center;
   animation: rotate-selection-ring 30s linear infinite;
 }
-
 @keyframes rotate-selection-ring {
   from {
     transform: rotate(0deg);
@@ -108,82 +330,39 @@ button#reset:hover {
     transform: rotate(360deg);
   }
 }
-
-/* #overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.7);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  cursor: pointer;
-}
-
-#overlay img {
-  max-width: 80vw;
-  max-height: 80vh;
-  border-radius: 8px;
-  box-shadow: 0 0 15px white;
-} */
-
-#info-box img {
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#info-box img.enlarged {
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-  border-radius: 8px;
-}
-
-/* --------------------------------------------------------------- */
-
 ::selection {
-  background: #f4f4f4;
-  color: rgb(31, 31, 31);
+  background: #595959;
+  /* color: rgb(31, 31, 31); */
+  color: #fff;
   text-shadow: none;
 }
-
 .cliccabile {
   margin-top: 20px;
 }
-
 .cliccabile:hover {
-  color: #a5a5a5;
+  color: var(--text-dim);
 }
-
 .cliccabile:visited {
   color: inherit;
 }
-
-/* MENU----------------------------------------------- */
 .menu-container {
   position: fixed;
   top: 0px;
   left: 20px;
   z-index: 1000;
-  font-family: "Inconsolata", monospace;
-  /* background-color: red; */
+  font-family: var(--font);
 }
-
 .menu {
   flex-direction: column;
   margin-top: 10px;
   padding: 10px 12px;
-  /* background-color: blue; */
 }
-
 .menu a {
-  color: white;
+  color: var(--text);
   text-decoration: none;
   font-size: 14px;
   margin: 4px 0;
 }
-
-/* ---------------------------- */
-
 #lightbox-overlay {
   position: fixed;
   top: 0;
@@ -192,12 +371,11 @@ button#reset:hover {
   height: 100vh;
   background: rgba(0, 0, 0, 0.85);
   z-index: 20000;
-  display: none; /* alternato a "flex" dal JS */
+  display: none;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 }
-
 #lightbox-overlay img {
   width: 90vw;
   height: 90vh;
@@ -207,4 +385,494 @@ button#reset:hover {
   filter: none;
   opacity: 1;
   mix-blend-mode: normal;
+}
+
+/* ---- Tour "Come leggere la rete" ---- */
+/* "?" e "Solo non osservate" vivono insieme in basso a sinistra, dove
+   prima stava il reset (ora nascosto, vedi sopra). */
+button#guide-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  height: 36px;
+  width: 36px;
+  font-size: 16px;
+  font-family: var(--font);
+  cursor: pointer;
+  /* Stesso bordo (chiaro di riposo, pieno all'hover) del bottone
+     "Solo non osservate" qui a fianco: prima era pieno sempre,
+     mentre l'altro era più tenue — disallineati. */
+  border: 1px solid var(--border-ctrl);
+  background-color: var(--panel);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--t), border-color var(--t);
+  z-index: 15000;
+}
+button#guide-toggle:hover {
+  background-color: var(--hover-bg);
+  border-color: var(--border-strong);
+}
+
+/* Pannello fisso, NON un overlay a schermo intero: il grafo resta
+   visibile e cliccabile dietro e intorno, perché il tour "punta il
+   dito" su nodi veri e invita a cliccarli davvero mentre è aperto. */
+#guide-card {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  width: min(460px, 92vw);
+  max-height: 46vh;
+  padding: 24px;
+  border: 1px solid var(--border-strong);
+  background-color: var(--panel);
+  backdrop-filter: blur(5px);
+  color: var(--text);
+  font-family: var(--font);
+  z-index: 15000;
+}
+#guide-card * {
+  box-sizing: border-box;
+}
+
+button#guide-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+button#guide-close:hover {
+  color: var(--text-dim);
+}
+
+/* ---- Contenuto dello step corrente ---- */
+#guide-step-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  overflow-y: auto;
+  padding-top: 4px;
+  animation: guide-step-in 0.25s ease;
+}
+@keyframes guide-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.guide-eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.guide-step-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  max-width: 420px;
+}
+
+.guide-step-body,
+.guide-step-lead {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  max-width: 420px;
+}
+.guide-step-lead {
+  color: var(--text-dim);
+}
+
+.guide-step-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  max-width: 400px;
+}
+
+#guide-card em {
+  font-style: normal;
+  color: var(--text);
+  border-bottom: 1px dashed rgba(244, 244, 244, 0.5);
+}
+
+/* Step "cover" (apertura/chiusura): più aria, titolo più grande — sono
+   le uniche due slide che non toccano il grafo. */
+.guide-step--cover .guide-step-title {
+  font-size: 24px;
+  margin-top: 8px;
+}
+.guide-step--cover {
+  justify-content: center;
+  flex: 1 1 auto;
+}
+
+.guide-cta {
+  margin-top: 8px;
+  padding: 12px 28px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--t), color var(--t);
+}
+.guide-cta:hover {
+  background-color: var(--text);
+  color: var(--on-active);
+}
+
+/* ---- Bottone permanente "Solo non osservate": vive fuori dal tour,
+   accanto a "?" in basso a sinistra, e resta utilizzabile anche a tour
+   chiuso. */
+button#not-observed-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 66px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: var(--font);
+  cursor: pointer;
+  border: 1px solid var(--border-ctrl);
+  background-color: var(--panel);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--t), border-color var(--t);
+  z-index: 15000;
+}
+button#not-observed-toggle:hover {
+  border-color: var(--border-strong);
+  background-color: var(--hover-bg);
+}
+button#not-observed-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  background: none; /* lo svg globale ha sfondo nero */
+}
+button#not-observed-toggle.active,
+button#not-observed-toggle.active:hover {
+  background-color: var(--text);
+  color: var(--on-active);
+}
+
+/* ---- Navigazione del carosello: freccette + puntini ---- */
+#guide-nav {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+button#guide-prev,
+button#guide-next {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-ctrl);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+  transition: background-color var(--t), opacity var(--t);
+}
+button#guide-prev:hover:not(:disabled),
+button#guide-next:hover:not(:disabled) {
+  background-color: var(--hover-bg);
+}
+button#guide-prev:disabled,
+button#guide-next:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+#guide-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.guide-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(244, 244, 244, 0.3);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.guide-dot:hover {
+  background: rgba(244, 244, 244, 0.6);
+}
+.guide-dot--active {
+  background: var(--text);
+  transform: scale(1.3);
+}
+
+/* ---- Mini tooltip all'hover dei bottoni ----
+   Si attiva con l'attributo data-tooltip="..." sul bottone. Opzionali:
+   data-tooltip-pos="bottom" (default: sopra) e
+   data-tooltip-align="start" | "end" (default: centrato) per i bottoni
+   vicini al bordo dello schermo. Solo dove esiste un vero hover (niente
+   tooltip "appiccicati" sul touch). Sfondo quasi opaco e senza blur: il
+   bottone che lo contiene ha già un backdrop-filter, e un blur annidato
+   renderebbe male. */
+:where([data-tooltip]) {
+  position: relative;
+}
+@media (hover: hover) {
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translate(-50%, 3px);
+    width: max-content;
+    max-width: 200px;
+    padding: 6px 9px;
+    background: #1a1a1af2;
+    border: 1px solid var(--border-soft);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.35;
+    text-align: left;
+    white-space: normal;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 16000;
+  }
+  [data-tooltip][data-tooltip-pos="bottom"]::after {
+    bottom: auto;
+    top: calc(100% + 8px);
+    transform: translate(-50%, -3px);
+  }
+  [data-tooltip][data-tooltip-align="start"]::after {
+    left: 0;
+    transform: translate(0, 3px);
+  }
+  [data-tooltip][data-tooltip-align="end"]::after {
+    left: auto;
+    right: 0;
+    transform: translate(0, 3px);
+  }
+  [data-tooltip][data-tooltip-pos="bottom"][data-tooltip-align="end"]::after {
+    transform: translate(0, -3px);
+  }
+  /* Piccolo ritardo in entrata, così non compare passando di striscio. */
+  [data-tooltip]:hover:not(:disabled)::after,
+  [data-tooltip]:focus-visible:not(:disabled)::after {
+    opacity: 1;
+    transition-delay: 0.35s;
+  }
+  [data-tooltip]:hover:not(:disabled)::after {
+    transform: translate(-50%, 0);
+  }
+  [data-tooltip][data-tooltip-align="start"]:hover:not(:disabled)::after,
+  [data-tooltip][data-tooltip-align="end"]:hover:not(:disabled)::after {
+    transform: translate(0, 0);
+  }
+  [data-tooltip]:focus-visible:not(:disabled)::after {
+    transform: translate(-50%, 0);
+  }
+  [data-tooltip][data-tooltip-align="start"]:focus-visible:not(
+      :disabled
+    )::after,
+  [data-tooltip][data-tooltip-align="end"]:focus-visible:not(:disabled)::after {
+    transform: translate(0, 0);
+  }
+}
+
+/* Durante la guida alcune azioni sono bloccate (vedi setTourLock in
+   script.js): ricerca e filtro "solo non osservate" restano visibili ma
+   spenti, così è chiaro che in questo momento non rispondono. */
+#search-box,
+button#not-observed-toggle {
+  transition: opacity 0.2s ease;
+}
+body.tour-locked #search-box,
+body.tour-locked #top-species-counter,
+body.tour-locked button#not-observed-toggle {
+  opacity: 0.4;
+}
+
+/* ---- Alone sfocato ai bordi dello schermo ("progressive blur") ----
+   Due strati sovrapposti: ognuno sfoca ciò che sta dietro (il grafo)
+   con un raggio crescente, ma solo in una fascia sempre più stretta lungo
+   i quattro bordi (maschera = unione di 4 gradienti, uno per bordo). Risultato:
+   sfocatura graduale, nulla verso il centro e massima sul bordo. Non
+   cliccabile, e sotto a pannelli/ricerca/guida (z-index più basso).
+   Le fasce sono in pixel (non in vmin) così restano ben visibili anche
+   su schermi bassi e larghi. Per regolare l'effetto: --edge-blur-size
+   (altezza della fascia) e i blur() dei due strati. */
+#edge-blur {
+  --edge-blur-size: clamp(30px, 7vw, 70px);
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.edge-blur-layer {
+  position: absolute;
+  inset: 0;
+  --w: var(--edge-blur-size);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent var(--w)),
+    linear-gradient(to top, #000, transparent var(--w)),
+    linear-gradient(to right, #000, transparent var(--w)),
+    linear-gradient(to left, #000, transparent var(--w));
+  mask-image: linear-gradient(to bottom, #000, transparent var(--w)),
+    linear-gradient(to top, #000, transparent var(--w)),
+    linear-gradient(to right, #000, transparent var(--w)),
+    linear-gradient(to left, #000, transparent var(--w));
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
+.edge-blur-layer--1 {
+  --w: var(--edge-blur-size);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.edge-blur-layer--2 {
+  --w: calc(var(--edge-blur-size) * 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+/* Pannelli fissi sopra l'alone, così non vengono sfocati. */
+#info-box,
+#top-species-counter,
+#edge-tooltip {
+  z-index: 5;
+}
+
+/* Sfocatura delle specie non collegate al nodo aperto: SENZA transizione
+   di proposito. Animare filter su centinaia di cerchi con immagine, e
+   rilanciarlo a ogni click ravvicinato, faceva sfarfallare i nodi. */
+
+/* Dissolvenza del filtro "Solo non osservate": la classe viene messa sul
+   body da script.js solo per la durata del cambio (vedi
+   playSpotlightAnimation) e poi tolta, così le transizioni non restano
+   attive durante l'uso normale. */
+body.spotlight-anim circle.node,
+body.spotlight-anim circle.bg,
+body.spotlight-anim path.link-path {
+  transition: opacity var(--spotlight-ms, 450ms) ease,
+    filter var(--spotlight-ms, 450ms) ease;
+}
+
+/* ---- Contatore "specie più connessa" (in alto a destra) ----
+   Versione discreta: stessa famiglia della scheda del nodo (etichetta,
+   nome, scientifico, riquadro grigino del numero) ma più piccola, con
+   bordo da controllo e non da pannello. È cliccabile (apre la specie),
+   quindi ha un hover come gli altri controlli. */
+#top-species-counter {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  box-sizing: border-box;
+  width: max-content; /* si adatta al contenuto (hug) */
+  max-width: calc(100vw - 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  background-color: var(--panel);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid var(--border-ctrl);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color var(--t), border-color var(--t), opacity var(--t);
+}
+#top-species-counter:hover {
+  background-color: var(--hover-bg);
+  border-color: var(--border-strong);
+}
+#top-species-counter:focus-visible {
+  outline: 1px solid var(--border-strong);
+  outline-offset: 3px;
+}
+#top-species-counter * {
+  box-sizing: border-box;
+}
+.tsc-eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.tsc-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+.tsc-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.tsc-count .ni-count-badge {
+  font-size: 14px;
+  color: var(--text);
+}
+.tsc-sci {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-dim);
+}
+#top-species-counter.is-covered {
+  opacity: 0;
+  pointer-events: none;
 }
