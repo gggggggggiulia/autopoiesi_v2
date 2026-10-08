@@ -202,7 +202,7 @@ h3 {
    la parola va a capo. Nessuna transition: cambio istantaneo, come lo
    scambio dei media. */
 .trigger {
-  cursor: url("img/chevron.svg") 12 12, pointer;
+  cursor: url("img/inspect.svg") 12 12, pointer;
   color: var(--text);
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
