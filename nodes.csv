@@ -1,89 +1,178 @@
-scientific_name,node_type,name,image,observations
-Vulpes vulpes,Animalia,Volpe rossa,https://i.postimg.cc/nLxTLMMr/volpe.png,Nessuna
-Muscardinus avellanarius,Animalia,Moscardino,https://i.postimg.cc/QNzbTfVR/1529px-hazel-dormouse-muscardinus-avellanarius-skole-lviv-oblast-ukraine-50540055351jpg.png,Nessuna
-Arvicola amphibius,Animalia,Arvicola acquatica europea,https://i.postimg.cc/WzdwykYW/Water-Vole-on-Boot-Hill-5592665124.png,Nessuna
-Micromys minutus,Animalia,Topolino delle risaie,https://i.postimg.cc/C1P4JN7n/Micromys-minutus-01.png,Nessuna
-Lepus europaeus,Animalia,Lepre comune,https://i.postimg.cc/ZKhLHCFc/medium.png,Nessuna
-Bufotes viridis,Animalia,Rospo smeraldino europeo,https://i.postimg.cc/Zqrf4pcC/Bufotes-viridis.jpg,Nessuna
-Rana latastei,Animalia,Rana di Lataste,https://i.postimg.cc/QNY6qXYY/rosp.png,Nessuna
-Lacerta bilineata,Animalia,Ramarro occidentale,https://i.postimg.cc/Jz5YZjfZ/medium-1.png,Nessuna
-Natrix natrix,Animalia,Natrice dal collare eurasiatica,https://i.postimg.cc/6QHH1t5Q/medium-2.png,Nessuna
-Natrix helvetica,Animalia,Biscia dal collare barrata,https://i.postimg.cc/yxRvdRhJ/medium-3.png,Nessuna
-Lissotriton vulgaris,Animalia,Tritone punteggiato,https://i.postimg.cc/7LX1YVpt/Common-Newt-Triturus-vulgaris-8475532697.png,Nessuna
-Alcedo atthis,Animalia,Martin pescatore,https://i.imgur.com/88F4lIA.jpeg,2
-Rana dalmatina,Animalia,Rana agile,https://i.postimg.cc/QMN4bHDP/medium-1.png,Nessuna
-Ixobrychus minutus,Animalia,Tarabusino comune,https://i.postimg.cc/MKRFZCts/Ixobrychus-minutus-3-Marek-Szczepanek.png,Nessuna
-Emys orbicularis,Animalia,Testuggine palustre europea,https://i.postimg.cc/Vs07DyyY/medium-4.png,Nessuna
-Utricularia macrorhiza,Plantae,Utricularia macrorhiza,https://i.postimg.cc/15LJLvQp/Utricularia-macrorhiza-flower.png,Nessuna
-Iris pseudacorus,Plantae,Giaggiolo acquatico,https://i.postimg.cc/P5T2XPCx/medium-5.png,Nessuna
-Alnus glutinosa,Plantae,Ontano nero,https://i.postimg.cc/T30Qpfbc/medium-6.png,Nessuna
-Rosa canina,Plantae,Rosa canina,https://i.postimg.cc/SsJgB3Jf/medium-2.png,Nessuna
-Salix alba,Plantae,Salice bianco,https://i.postimg.cc/wvZwg2N8/medium-3.png,Nessuna
-Aegithalos caudatus,Animalia,Codibugnolo,https://static.inaturalist.org/photos/92318314/medium.jpeg,2
-Ajuga reptans,Plantae,Bugola,https://static.inaturalist.org/photos/332303154/medium.jpeg,1
-Alliaria petiolata,Plantae,Alliaria,https://static.inaturalist.org/photos/131581566/medium.jpeg,1
-Anas carolinensis,Animalia,Alzavola americana,https://i.postimg.cc/W1Lw9tG8/Anas-carolinensis-Green-winged-Teal-male.png,Nessuna
-Anas crecca,Animalia,Alzavola,https://inaturalist-open-data.s3.amazonaws.com/photos/102623526/medium.jpg,6
-Anas platyrhynchos,Animalia,Germano reale,https://inaturalist-open-data.s3.amazonaws.com/photos/102623505/medium.jpg,1
-Apis mellifera,Animalia,Ape europea,https://inaturalist-open-data.s3.amazonaws.com/photos/297063345/medium.jpeg,1
-Ardea alba,Animalia,Airone bianco maggiore,https://static.inaturalist.org/photos/92324580/medium.jpeg,3
-Ardea cinerea,Animalia,Airone cenerino,https://static.inaturalist.org/photos/92323666/medium.jpeg,4
-Ardea,Animalia,Airone,https://i.postimg.cc/Vk8HJKVz/Grey-Heron-Ardea-cinerea-Vaxholm-Sweden-1.png,Nessuna
-Ardea purpurea,Animalia,Airone rosso,https://static.inaturalist.org/photos/125392710/medium.jpeg,2
-Buteo buteo,Animalia,Poiana,https://static.inaturalist.org/photos/266218274/medium.jpeg,1
-Calopteryx splendens,Animalia,Splendente comune,https://static.inaturalist.org/photos/92324096/medium.jpeg,2
-Cettia cetti,Animalia,Usignolo di fiume,https://cdn.download.ams.birds.cornell.edu/api/v2/asset/222183611/1200,1
-Clytus arietis,Animalia,Scarabeo vespa,https://static.inaturalist.org/photos/131606123/medium.jpg,1
-Plagionotus arcuatus,Animalia,Plagionotus arcuatus,https://i.postimg.cc/DfSNHJG3/images.png,Nessuna
-Coloeus monedula,Animalia,Taccola,https://static.inaturalist.org/photos/266312930/medium.jpeg,1
-Columba palumbus,Animalia,Colombaccio,https://static.inaturalist.org/photos/92323034/medium.jpeg,2
-Dendrocopos major,Animalia,Picchio rosso maggiore,https://static.inaturalist.org/photos/266315307/medium.jpeg,1
-Egretta garzetta,Animalia,Garzetta,https://static.inaturalist.org/photos/92322923/medium.jpeg,3
-Eristalis tenax,Animalia,Eristalo tenace,https://static.inaturalist.org/photos/131600781/medium.jpeg,1
-Fringilla coelebs,Animalia,Fringuello,https://inaturalist-open-data.s3.amazonaws.com/photos/102623488/medium.jpg,1
-Helianthus tuberosus,Plantae,Topinambur,https://static.inaturalist.org/photos/131601666/medium.jpeg,1
-Hierophis viridiflavus carbonarius,Animalia,Biacco,https://inaturalist-open-data.s3.amazonaws.com/photos/198612186/medium.jpeg,1
-Ischnura elegans,Animalia,Codazzurra comune,https://static.inaturalist.org/photos/131577951/medium.jpeg,3
-Isodontia mexicana,Animalia,Isodontia mexicana,https://static.inaturalist.org/photos/92325049/medium.jpeg,1
-Linaria vulgaris,Plantae,Linajola comune,https://inaturalist-open-data.s3.amazonaws.com/photos/10916921/medium.jpg,1
-Linaria genistifolia,Plantae,Linajola,https://i.postimg.cc/Th8gHHD1/images-1.png,Nessuna
-Lonicera japonica,Plantae,Caprifoglio giapponese,https://static.inaturalist.org/photos/131568254/medium.jpeg,1
-Lysimachia vulgaris,Plantae,Mazza d'oro comune,https://static.inaturalist.org/photos/131572170/medium.jpg,1
-Melitaea athalia,Animalia,Atalia,https://i.postimg.cc/R0bRLdX6/medium-7.png,Nessuna
-Melitaea didyma,Animalia,Didima,https://static.inaturalist.org/photos/92325636/medium.jpeg,2
-Microcarbo pygmaeus,Animalia,Cormorano pigmeo,https://static.inaturalist.org/photos/92322389/medium.jpeg,2
-Nycticorax nycticorax,Animalia,Nitticora,https://static.inaturalist.org/photos/266315483/medium.jpeg,2
-Orthetrum cancellatum,Animalia,Frecciazzurra puntanera,https://static.inaturalist.org/photos/131601352/medium.jpg,1
-Pelophylax lessonae lessonae,Animalia,Rana di Lessona,https://i.postimg.cc/tR8cjqdZ/images-2.png,Nessuna
-Pelophylax ridibundus,Animalia,Rana verde maggiore,https://i.postimg.cc/fLGf6L4M/Marsh-frog-Pelophylax-ridibundus.png,Nessuna
-Pelophylax shqipericus,Animalia,Rana d'acqua albanese,https://i.postimg.cc/LXbzjs4z/Benny-Trapp-Pelophylax-shquipericus-Montenegro.png,Nessuna
-Pelophylax cerigensis,Animalia,Rana d'acqua di Karpathos,https://i.postimg.cc/T3VqBGQ6/Benny-Trapp-Pelophylax-cerigensis.png,Nessuna
-Phalacrocorax carbo,Animalia,Cormorano,https://static.inaturalist.org/photos/87624627/medium.jpeg,4
-Pica pica,Animalia,Gazza ladra,https://inaturalist-open-data.s3.amazonaws.com/photos/102623479/medium.jpg,1
-Pieris napi,Animalia,Navoncella,https://static.inaturalist.org/photos/131600248/medium.jpeg,1
-Polistes dominula,Animalia,Vespa cartonaia,https://static.inaturalist.org/photos/131573786/medium.jpg,1
-Schizophyllum commune,Fungi,Schizophyllum commune,https://static.inaturalist.org/photos/332302810/medium.jpeg,1
-Sciurus vulgaris,Animalia,Scoiattolo comune,https://static.inaturalist.org/photos/42993164/medium.jpeg,1
-Stachys sylvatica,Plantae,Stregona dei boschi,https://static.inaturalist.org/photos/131567250/medium.jpeg,1
-Sylvia atricapilla,Animalia,Capinera,https://static.inaturalist.org/photos/266316598/medium.jpeg,1
-Trachemys scripta,Animalia,Testuggine palustre americana,https://static.inaturalist.org/photos/92325975/medium.jpeg,1
-Trifolium campestre,Plantae,Trifoglio campestre,https://static.inaturalist.org/photos/131568477/medium.jpeg,1
-Trifolium dubium,Plantae,Trifoglio minore,https://static.inaturalist.org/photos/131567675/medium.jpeg,1
-Tussilago farfara,Plantae,Tossilaggine comune,https://static.inaturalist.org/photos/131600899/medium.jpeg,1
-Vanessa atalanta,Animalia,Vanessa atalanta,https://inaturalist-open-data.s3.amazonaws.com/photos/102623551/medium.jpg,2
-Verbena officinalis,Plantae,Verbena comune,https://static.inaturalist.org/photos/131584746/medium.jpeg,1
-Salix caprea,Plantae,Salicone,https://i.postimg.cc/j5dXz9Hr/Weidenkaetzchen-Strauch.png,Nessuna
-Bubulcus ibis,Animalia,Airone guardabuoi,https://i.postimg.cc/RFF73tmS/Flickr-Dario-Sanches-GAR-A-VAQUEIRA-Bubulcus-ibis.png,Nessuna
-Rallus aquaticus,Animalia,Porciglione,https://i.postimg.cc/wThwYhTZ/medium-4.png,Nessuna
-Luscinia megarhynchos,Animalia,Usignolo,https://i.postimg.cc/PqMyvh84/320.png,Nessuna
-Botaurus stellaris,Animalia,Tarabuso,https://i.postimg.cc/D0RP3wt2/1200.png,Nessuna
-Fulica atra,Animalia,Folaga,https://i.postimg.cc/c4qFzDZf/medium-5.png,Nessuna
-Gallinula chloropus galeata,Animalia,Gallinella americana,https://i.postimg.cc/8cfL4Vsx/Gallinula-galeata-Horto-Florestal-8.png,Nessuna
-Gallinula chloropus,Animalia,Gallinella d'acqua,https://i.postimg.cc/26bxcWKH/medium-8.png,Nessuna
-Allium ursinum,Plantae,Aglio orsino,https://i.postimg.cc/MH1mxSxV/medium-9.png,Nessuna
-Typha latifolia,Plantae,Lisca maggiore,https://i.postimg.cc/657MjDDW/Typha-latifolia-Finland.png,Nessuna
-Phragmites australis,Plantae,Cannuccia di palude,https://i.postimg.cc/d006Cpmc/medium-6.png,Nessuna
-Lacerta viridis,Animalia,Ramarro orientale,https://i.postimg.cc/s239r80Z/1637702123.png,Nessuna
-Pelophylax,Animalia,Rana d'acqua,https://static.inaturalist.org/photos/95679791/medium.jpg,1
-Utricularia vulgaris,Plantae,Erba vescica,https://i.postimg.cc/nhB0ZqFN/utricularia-vulgaris-erba-vescica-comune.png,Nessuna
-Talpa europaea,Animalia,Talpa europea,https://i.postimg.cc/BZFg2xDb/medium-10.png,Nessuna
+scientific_name,name,image,observations,image_credit,image_license
+Nymphaea alba,Ninfea comune,https://inaturalist-open-data.s3.amazonaws.com/photos/140174901/medium.jpeg,Nessuna,"(c) Ana Molina, some rights reserved (CC BY-NC)",cc-by-nc
+Populus nigra,Pioppo nero,https://inaturalist-open-data.s3.amazonaws.com/photos/130757264/medium.jpeg,Nessuna,"(c) ajmorales1, some rights reserved (CC BY-NC)",cc-by-nc
+Populus alba,Pioppo bianco,https://inaturalist-open-data.s3.amazonaws.com/photos/386408834/medium.jpeg,Nessuna,"(c) Emilio Andújar, some rights reserved (CC BY-NC)",cc-by-nc
+Carex,Carice,https://static.inaturalist.org/photos/131571856/medium.jpeg,3,,
+Typha latifolia,Tifa,https://inaturalist-open-data.s3.amazonaws.com/photos/714571205/medium.jpg,Nessuna,"(c) Víctor Díaz, some rights reserved (CC BY-NC)",cc-by-nc
+Microcarbo pygmaeus,Marangone minore,https://inaturalist-open-data.s3.amazonaws.com/photos/26903166/medium.jpg,3,,
+Emberiza schoeniclus,Migliarino di palude,https://inaturalist-open-data.s3.amazonaws.com/photos/163170798/medium.jpeg,Nessuna,"(c) franciscodocampo, some rights reserved (CC BY)",cc-by
+Tachybaptus ruficollis,Tuffetto,https://inaturalist-open-data.s3.amazonaws.com/photos/194462197/medium.jpg,Nessuna,"(c) jjulio2000, some rights reserved (CC BY-NC)",cc-by-nc
+Tringa glareola,Piro piro boschereccio,https://inaturalist-open-data.s3.amazonaws.com/photos/422763804/medium.jpg,Nessuna,"(c) Diego González Dopico, some rights reserved (CC BY)",cc-by
+Charadrius dubius,Corriere Piccolo,https://inaturalist-open-data.s3.amazonaws.com/photos/475007602/medium.jpg,Nessuna,"(c) Miguel, some rights reserved (CC BY-NC)",cc-by-nc
+Himantopus himantopus,Cavaliere d'Italia,https://inaturalist-open-data.s3.amazonaws.com/photos/582121729/medium.jpg,Nessuna,"(c) pelagicgraf, some rights reserved (CC BY-NC)",cc-by-nc
+Leptidea juvernica,Pieride di Iuverna,https://static.inaturalist.org/photos/71957884/medium.jpeg,Nessuna,"(c) o_beckett98, all rights reserved, uploaded by o_beckett98",
+Melitaea athalia,Atalia,https://inaturalist-open-data.s3.amazonaws.com/photos/58529920/medium.jpeg,Nessuna,"(c) Stephen Moores, some rights reserved (CC BY-NC)",cc-by-nc
+Ochlodes sylvanus,Esperide dei boschi,https://inaturalist-open-data.s3.amazonaws.com/photos/90582574/medium.jpeg,Nessuna,"(c) sergioc, some rights reserved (CC BY-NC)",cc-by-nc
+Lycaena phlaeas,Argo bronzeo,https://inaturalist-open-data.s3.amazonaws.com/photos/383866378/medium.jpg,Nessuna,"(c) Annika Tiane Vermaat, some rights reserved (CC BY-NC)",cc-by-nc
+Coenonympha pamphilus,Ninfa minore,https://inaturalist-open-data.s3.amazonaws.com/photos/263914664/medium.jpeg,Nessuna,"(c) Miguel A. Casado, some rights reserved (CC BY-NC)",cc-by-nc
+Cupido argiades,Argiade,https://inaturalist-open-data.s3.amazonaws.com/photos/53183166/medium.jpg,Nessuna,"(c) xabiervp, some rights reserved (CC BY-NC)",cc-by-nc
+Pieris rapae,Cavolaia minore,https://inaturalist-open-data.s3.amazonaws.com/photos/361975996/medium.jpeg,Nessuna,"(c) Alexei Cortina Ruiz, some rights reserved (CC BY-NC)",cc-by-nc
+Polyommatus icarus,Argo azzurro,https://inaturalist-open-data.s3.amazonaws.com/photos/446113476/medium.jpeg,Nessuna,no rights reserved,cc0
+Polyommatus thersites,Azzurrina,https://inaturalist-open-data.s3.amazonaws.com/photos/62193611/medium.jpeg,Nessuna,"(c) Stephen Moores, some rights reserved (CC BY-NC)",cc-by-nc
+Pontia edusa,Edusa,https://inaturalist-open-data.s3.amazonaws.com/photos/706355702/medium.jpg,Nessuna,"(c) Cheongweei Gan, some rights reserved (CC BY), uploaded by Cheongweei Gan",cc-by
+Pyrgus malvae,Esperia della malva,https://static.inaturalist.org/photos/61213215/medium.jpg,Nessuna,"(c) Jarosław Bury, all rights reserved, uploaded by Jarosław Bury",
+Celastrina argiolus,Licenide del rovo,https://inaturalist-open-data.s3.amazonaws.com/photos/179494692/medium.jpg,Nessuna,"(c) Sue Santamera, some rights reserved (CC BY-NC)",cc-by-nc
+Ardea purpurea,Airone rosso,https://static.inaturalist.org/photos/125392710/medium.jpeg,2,,
+Circus cyaneus,Albanella reale,https://inaturalist-open-data.s3.amazonaws.com/photos/105059155/medium.jpg,Nessuna,"(c) Enric Capalleras, some rights reserved (CC BY-NC)",cc-by-nc
+Egretta garzetta,Garzetta,https://inaturalist-open-data.s3.amazonaws.com/photos/26901667/medium.jpg,4,,
+Emys orbicularis,Testuggine palustre europea,https://inaturalist-open-data.s3.amazonaws.com/photos/1345477/medium.jpg,Nessuna,"(c) Cesar Pollo, some rights reserved (CC BY-NC)",cc-by-nc
+Ixobrychus minutus,Tarabusino,https://inaturalist-open-data.s3.amazonaws.com/photos/66736966/medium.jpeg,Nessuna,"(c) Eamon Corbett, some rights reserved (CC BY)",cc-by
+Lanius collurio,Averla piccola,https://inaturalist-open-data.s3.amazonaws.com/photos/500615384/medium.jpg,Nessuna,"(c) Daniel Eugenio Pérez Garrido, some rights reserved (CC BY-NC)",cc-by-nc
+Nycticorax nycticorax,Nitticora,https://static.inaturalist.org/photos/266315483/medium.jpeg,2,,
+Triturus carnifex,Tritone Crestato Italiano,https://inaturalist-open-data.s3.amazonaws.com/photos/240867952/medium.jpeg,Nessuna,"(c) Andrea Battisti, some rights reserved (CC BY-NC), uploaded by Andrea Battisti",cc-by-nc
+Alcedo atthis,Martin pescatore,https://static.inaturalist.org/photos/18889656/medium.jpeg,2,,
+Lycaena dispar,Licena delle paludi,https://inaturalist-open-data.s3.amazonaws.com/photos/696728/medium.jpg,Nessuna,"(c) Anne SORBES, some rights reserved (CC BY-NC-SA), uploaded by Anne SORBES",cc-by-nc-sa
+Rana latastei,Rana Di Lataste,https://inaturalist-open-data.s3.amazonaws.com/photos/56181946/medium.jpg,Nessuna,"(c) Paolo Mazzei, some rights reserved (CC BY-NC), uploaded by Paolo Mazzei",cc-by-nc
+Arion vulgaris,Limaccia Rossa,https://inaturalist-open-data.s3.amazonaws.com/photos/10916902/medium.jpg,1,,
+Calystegia,Vilucchio,https://inaturalist-open-data.s3.amazonaws.com/photos/10916907/medium.jpg,1,,
+Cichorium intybus,Cicoria comune,https://inaturalist-open-data.s3.amazonaws.com/photos/10916914/medium.jpg,1,,
+Linaria vulgaris,Linajola comune,https://inaturalist-open-data.s3.amazonaws.com/photos/10916921/medium.jpg,1,,
+Taraxacum,Tarassaco,https://inaturalist-open-data.s3.amazonaws.com/photos/14945638/medium.jpeg,1,,
+Sympetrum depressiusculum,Cardinale padano,https://inaturalist-open-data.s3.amazonaws.com/photos/26749410/medium.jpg,1,,
+Sympetrum striolatum,Cardinale striato,https://inaturalist-open-data.s3.amazonaws.com/photos/26749417/medium.jpg,1,,
+Rhodometra sacraria,Vestale,https://inaturalist-open-data.s3.amazonaws.com/photos/26749682/medium.jpg,1,,
+Ardea alba,Airone bianco maggiore,https://inaturalist-open-data.s3.amazonaws.com/photos/26846534/medium.jpg,5,,
+Ardea cinerea,Airone cenerino,https://inaturalist-open-data.s3.amazonaws.com/photos/26846760/medium.jpg,5,,
+Anas crecca,Alzavola,https://inaturalist-open-data.s3.amazonaws.com/photos/26847087/medium.jpg,8,,
+Aeshna mixta,Dragone autunnale,https://inaturalist-open-data.s3.amazonaws.com/photos/26847291/medium.jpg,1,,
+Phalacrocorax carbo,Cormorano,https://inaturalist-open-data.s3.amazonaws.com/photos/26883213/medium.jpg,5,,
+Garrulus glandarius,Ghiandaia,https://inaturalist-open-data.s3.amazonaws.com/photos/26902297/medium.jpg,2,,
+Erithacus rubecula,Pettirosso,https://inaturalist-open-data.s3.amazonaws.com/photos/26930145/medium.jpg,1,,
+Cornus sanguinea,Corniolo sanguinello,https://static.inaturalist.org/photos/91405870/medium.jpeg,1,,
+Aegithalos caudatus,Codibugnolo,https://static.inaturalist.org/photos/92318314/medium.jpeg,2,,
+Ardea ibis,Airone guardabuoi occidentale,https://static.inaturalist.org/photos/92321746/medium.jpeg,6,,
+Columba palumbus,Colombaccio,https://static.inaturalist.org/photos/92323034/medium.jpeg,2,,
+Sciurus vulgaris,Scoiattolo rosso,https://static.inaturalist.org/photos/92323361/medium.jpeg,1,,
+Rubus,Rovo comune,https://static.inaturalist.org/photos/92323756/medium.jpeg,2,,
+Polistes,Vespa cartonaia,https://static.inaturalist.org/photos/92323915/medium.jpeg,1,,
+Calopteryx splendens,Splendente comune,https://static.inaturalist.org/photos/92324096/medium.jpeg,2,,
+Orthetrum albistylum,Frecciazzurra puntabianca,https://static.inaturalist.org/photos/92324542/medium.jpeg,2,,
+Isodontia mexicana,Vespa messicana portaerba,https://static.inaturalist.org/photos/92325049/medium.jpeg,1,,
+Melitaea didyma,Didima,https://static.inaturalist.org/photos/92325636/medium.jpeg,3,,
+Trachemys scripta,Testuggine palustre americana,https://static.inaturalist.org/photos/92325975/medium.jpeg,1,,
+Pelophylax,Rana d'acqua,https://static.inaturalist.org/photos/95679791/medium.jpg,1,,
+Lepiota cristata,Falsa mazza di tamburo,https://inaturalist-open-data.s3.amazonaws.com/photos/102078180/medium.jpg,1,,
+Pica pica,Gazza,https://inaturalist-open-data.s3.amazonaws.com/photos/102623479/medium.jpg,1,,
+Fringilla coelebs,Fringuello,https://inaturalist-open-data.s3.amazonaws.com/photos/102623488/medium.jpg,1,,
+Anas platyrhynchos,Germano reale,https://inaturalist-open-data.s3.amazonaws.com/photos/102623505/medium.jpg,1,,
+Vanessa atalanta,Vanessa atalanta,https://inaturalist-open-data.s3.amazonaws.com/photos/102623551/medium.jpg,2,,
+Poaceae,Poacee,https://inaturalist-open-data.s3.amazonaws.com/photos/113617772/medium.jpg,1,,
+Parthenocissus inserta,Vite del Canadà comune,https://static.inaturalist.org/photos/131564680/medium.jpeg,1,,
+Magnoliopsida,dicotiledoni,https://static.inaturalist.org/photos/131565317/medium.jpeg,2,,
+Thyatira batis,Falena fiore di pesco,https://static.inaturalist.org/photos/131565554/medium.jpg,1,,
+Prunus avium,Ciliegio,https://static.inaturalist.org/photos/131566520/medium.jpeg,1,,
+Stachys sylvatica,Stregona dei boschi,https://static.inaturalist.org/photos/131567250/medium.jpeg,1,,
+Lonicera japonica,Caprifoglio giapponese,https://static.inaturalist.org/photos/131568254/medium.jpeg,1,,
+Trifolium dubium,Trifoglio minore,https://static.inaturalist.org/photos/131567675/medium.jpeg,1,,
+Trifolium campestre,Trifoglio campestre,https://static.inaturalist.org/photos/131568477/medium.jpeg,1,,
+Salix,Salici,https://static.inaturalist.org/photos/131570905/medium.jpeg,2,,
+Aphrophorinae,Afroforidi,https://static.inaturalist.org/photos/131571211/medium.jpg,1,,
+Ligustrum,ligustri,https://static.inaturalist.org/photos/131571994/medium.jpeg,2,,
+Lysimachia vulgaris,Mazza d'oro comune,https://static.inaturalist.org/photos/131572170/medium.jpg,1,,
+Parasteatoda,Parasteatoda,https://static.inaturalist.org/photos/131572755/medium.jpg,1,,
+Polistes dominula,Vespa cartonaia europea,https://static.inaturalist.org/photos/131573786/medium.jpg,1,,
+Carex hirta,Carice irta,https://static.inaturalist.org/photos/131575826/medium.jpeg,1,,
+Cryptocephalus sericeus,Cryptocephalus sericeus,https://static.inaturalist.org/photos/131575774/medium.jpg,1,,
+Hordeinae,Hordeinae,https://static.inaturalist.org/photos/131576396/medium.jpeg,1,,
+Vitis,Vite comune,https://static.inaturalist.org/photos/131577147/medium.jpeg,1,,
+Ischnura elegans,Codazzurra comune,https://static.inaturalist.org/photos/131577951/medium.jpeg,4,,
+Platycnemis pennipes,Zampalarga comune,https://static.inaturalist.org/photos/131578185/medium.jpeg,4,,
+Ligustrum vulgare,Ligustro comune,https://static.inaturalist.org/photos/131579251/medium.jpeg,1,,
+Idaea degeneraria,Idaea degeneraria,https://static.inaturalist.org/photos/131579266/medium.jpg,1,,
+Alliaria petiolata,Alliaria,https://static.inaturalist.org/photos/131581566/medium.jpeg,1,,
+Chrysotoxum festivum,Chrysotoxum festivum,https://static.inaturalist.org/photos/131582880/medium.jpg,1,,
+Calyptratae,Caliptrati,https://static.inaturalist.org/photos/131583300/medium.jpg,1,,
+Verbena officinalis,Verbena comune,https://static.inaturalist.org/photos/131584746/medium.jpeg,1,,
+Fraxinus,Frassini,https://static.inaturalist.org/photos/131584805/medium.jpeg,1,,
+Equisetum telmateia telmateia,Equiseto massimo,https://static.inaturalist.org/photos/131585373/medium.jpeg,1,,
+Ectobius,Blatta silvestre,https://static.inaturalist.org/photos/131585659/medium.jpg,1,,
+Araneus,Araneus,https://static.inaturalist.org/photos/131585848/medium.jpg,1,,
+Chrysopilus,Chrysopilus,https://static.inaturalist.org/photos/131585882/medium.jpg,1,,
+Araneidae,Araneidi,https://static.inaturalist.org/photos/131592882/medium.jpg,1,,
+Tipulinae,Tipule,https://static.inaturalist.org/photos/131593297/medium.jpeg,1,,
+Rosa,Rosa,https://static.inaturalist.org/photos/131594043/medium.jpeg,1,,
+Macrophya annulata,Macrophya annulata,https://static.inaturalist.org/photos/131594727/medium.jpg,1,,
+Cicadellidae,Cicalina,https://static.inaturalist.org/photos/131595110/medium.jpg,1,,
+Geranium,gerani,https://static.inaturalist.org/photos/131595761/medium.jpeg,1,,
+Caryophyllaceae,Cariofillacee,https://static.inaturalist.org/photos/131596113/medium.jpeg,1,,
+Crepidinae,Crepidinae,https://static.inaturalist.org/photos/131597519/medium.jpeg,1,,
+Philodromus aureolus,Philodromus aureolus,https://static.inaturalist.org/photos/131597646/medium.jpg,1,,
+Agapeta hamana,Agapeta hamana,https://static.inaturalist.org/photos/131597730/medium.jpg,1,,
+Artemisia vulgaris,artemisia comune,https://static.inaturalist.org/photos/131598491/medium.jpeg,1,,
+Coprinus comatus,Fungo dell'inchiostro,https://static.inaturalist.org/photos/131598740/medium.jpeg,1,,
+Xanthogramma,Xanthogramma,https://static.inaturalist.org/photos/131598509/medium.jpg,1,,
+Lauxaniidae,Lauxaniidae,https://static.inaturalist.org/photos/131598606/medium.jpg,1,,
+Anthemideae,Anthemideae,https://static.inaturalist.org/photos/131599516/medium.jpeg,1,,
+Pieris napi,Pieride del navone,https://static.inaturalist.org/photos/131600248/medium.jpeg,1,,
+Eristalis tenax,Eristalo tenace,https://static.inaturalist.org/photos/131600781/medium.jpeg,1,,
+Allium vineale,Aglio delle viti,https://static.inaturalist.org/photos/131600666/medium.jpeg,1,,
+Tussilago farfara,Farfara,https://static.inaturalist.org/photos/131600899/medium.jpeg,1,,
+Orthetrum cancellatum,Frecciazzurra puntanera,https://static.inaturalist.org/photos/131601352/medium.jpg,2,,
+Helianthus tuberosus,Topinambur,https://static.inaturalist.org/photos/131601666/medium.jpeg,1,,
+Apioideae,Apioideae,https://static.inaturalist.org/photos/131602764/medium.jpeg,1,,
+Phalaris,Scagliola,https://static.inaturalist.org/photos/131605614/medium.jpeg,1,,
+Artemisia verlotiorum,Assenzio dei fratelli Verlot,https://static.inaturalist.org/photos/131605437/medium.jpeg,1,,
+Triticeae,Triticeae,https://static.inaturalist.org/photos/131606838/medium.jpeg,1,,
+Clytus arietis,Coleottero vespa,https://static.inaturalist.org/photos/131606123/medium.jpg,1,,
+Polygonum aviculare,Erba curzola,https://static.inaturalist.org/photos/131607072/medium.jpeg,1,,
+Cettia cetti,Usignolo di fiume,https://inaturalist-open-data.s3.amazonaws.com/photos/260312449/medium.jpg,1,"(c) Yolanda, some rights reserved (CC BY-NC)",cc-by-nc
+Cichorium,Cicoria,https://inaturalist-open-data.s3.amazonaws.com/photos/147524256/medium.jpeg,1,,
+Buteo buteo,Poiana,https://static.inaturalist.org/photos/266218274/medium.jpeg,1,,
+Coloeus monedula,Taccola,https://static.inaturalist.org/photos/266312930/medium.jpeg,1,,
+Dendrocopos major,Picchio rosso maggiore,https://static.inaturalist.org/photos/266315307/medium.jpeg,1,,
+Sylvia atricapilla,Capinera,https://static.inaturalist.org/photos/266316598/medium.jpeg,1,,
+Apis mellifera,Ape europea,https://inaturalist-open-data.s3.amazonaws.com/photos/297063345/medium.jpeg,1,,
+Schizophyllum commune,Fungo del Legno Comune,https://static.inaturalist.org/photos/332302810/medium.jpeg,1,,
+Ajuga reptans,Bugola,https://static.inaturalist.org/photos/332303154/medium.jpeg,1,,
+Hierophis viridiflavus carbonarius,Biacco,https://inaturalist-open-data.s3.amazonaws.com/photos/380071719/medium.jpeg,1,,
+Talpa,Talpa,https://inaturalist-open-data.s3.amazonaws.com/photos/417235468/medium.jpeg,1,,
+Micropterix calthella,Micropterix calthella,https://inaturalist-open-data.s3.amazonaws.com/photos/485597779/medium.jpeg,1,,
+Turdus merula,Merlo,https://inaturalist-open-data.s3.amazonaws.com/photos/355887368/medium.jpeg,1,,
+Laothoe populi,Sfinge del pioppo,https://inaturalist-open-data.s3.amazonaws.com/photos/535534181/medium.jpg,1,,
+Esperia sulphurella,Esperia sulphurella,https://inaturalist-open-data.s3.amazonaws.com/photos/634137027/medium.jpg,1,,
+Platycnemis,Zampalarga,https://inaturalist-open-data.s3.amazonaws.com/photos/670144965/medium.jpg,1,,
+Calopterygidae,Calotterigidi,https://inaturalist-open-data.s3.amazonaws.com/photos/674104427/medium.jpg,1,,
+Vulpes vulpes,Volpe rossa,https://inaturalist-open-data.s3.amazonaws.com/photos/259419026/medium.png,Nessuna,"(c) Daniel Gaona Carrilero, some rights reserved (CC BY-NC)",cc-by-nc
+Muscardinus avellanarius,Moscardino,https://inaturalist-open-data.s3.amazonaws.com/photos/139499578/medium.jpeg,Nessuna,"(c) Matthieu Gauvain, some rights reserved (CC BY-NC), uploaded by Matthieu Gauvain",cc-by-nc
+Arvicola amphibius,Arvicola acquatica europea,https://inaturalist-open-data.s3.amazonaws.com/photos/227214323/medium.jpg,Nessuna,"(c) adrianwsayers, some rights reserved (CC BY-NC)",cc-by-nc
+Micromys minutus,Topolino delle risaie,https://inaturalist-open-data.s3.amazonaws.com/photos/460185258/medium.jpg,Nessuna,"(c) sylvatica_, some rights reserved (CC BY-NC)",cc-by-nc
+Lepus europaeus,Lepre comune,https://inaturalist-open-data.s3.amazonaws.com/photos/256107122/medium.jpeg,Nessuna,"(c) Kepa Alkiza, some rights reserved (CC BY-NC)",cc-by-nc
+Bufotes viridis,Rospo smeraldino europeo,https://inaturalist-open-data.s3.amazonaws.com/photos/635158199/medium.jpg,Nessuna,"(c) Emil Førby, some rights reserved (CC BY-NC)",cc-by-nc
+Lacerta bilineata,Ramarro occidentale,https://inaturalist-open-data.s3.amazonaws.com/photos/366106943/medium.jpeg,Nessuna,"(c) Diego González Dopico, some rights reserved (CC BY)",cc-by
+Natrix natrix,Natrice dal collare eurasiatica,https://inaturalist-open-data.s3.amazonaws.com/photos/458672403/medium.jpeg,Nessuna,"(c) Jacobo Krauel, some rights reserved (CC BY-NC)",cc-by-nc
+Natrix helvetica,Biscia dal collare barrata,https://inaturalist-open-data.s3.amazonaws.com/photos/650159692/medium.jpg,Nessuna,"(c) Joseph Grosse, some rights reserved (CC BY-NC)",cc-by-nc
+Lissotriton vulgaris,Tritone punteggiato,https://inaturalist-open-data.s3.amazonaws.com/photos/125432817/medium.jpg,Nessuna,"(c) Vit Lukas, some rights reserved (CC BY-NC), uploaded by Vit Lukas",cc-by-nc
+Rana dalmatina,Rana agile,https://inaturalist-open-data.s3.amazonaws.com/photos/430329566/medium.jpg,Nessuna,"(c) bertogcliment, some rights reserved (CC BY-NC)",cc-by-nc
+Utricularia macrorhiza,Utricularia macrorhiza,https://inaturalist-open-data.s3.amazonaws.com/photos/140301847/medium.jpeg,Nessuna,"(c) Joey Santore, some rights reserved (CC BY-NC), uploaded by Joey Santore",cc-by-nc
+Iris pseudacorus,Giaggiolo acquatico,https://inaturalist-open-data.s3.amazonaws.com/photos/284425725/medium.jpeg,Nessuna,"(c) Felipe Castilla Lattke, some rights reserved (CC BY-NC)",cc-by-nc
+Alnus glutinosa,Ontano nero,https://inaturalist-open-data.s3.amazonaws.com/photos/446490382/medium.jpg,Nessuna,"(c) Martinho-Fiz López Lindoso, some rights reserved (CC BY-NC)",cc-by-nc
+Rosa canina,Rosa canina,https://inaturalist-open-data.s3.amazonaws.com/photos/92814838/medium.jpg,Nessuna,"(c) mchaquis, some rights reserved (CC BY-NC)",cc-by-nc
+Salix alba,Salice bianco,https://inaturalist-open-data.s3.amazonaws.com/photos/697262095/medium.jpg,Nessuna,"(c) aalvite, some rights reserved (CC BY-NC)",cc-by-nc
+Anas carolinensis,Alzavola americana,https://inaturalist-open-data.s3.amazonaws.com/photos/106106647/medium.png,Nessuna,"(c) sergioc, some rights reserved (CC BY-NC)",cc-by-nc
+Plagionotus arcuatus,Plagionotus arcuatus,https://inaturalist-open-data.s3.amazonaws.com/photos/271041157/medium.jpeg,Nessuna,"(c) Ramón Ramiro Carta, some rights reserved (CC BY-NC)",cc-by-nc
+Linaria genistifolia,Linajola,https://inaturalist-open-data.s3.amazonaws.com/photos/200942910/medium.jpg,Nessuna,"(c) josefwirth, some rights reserved (CC BY-NC), uploaded by josefwirth",cc-by-nc
+Pelophylax lessonae lessonae,Rana di Lessona,https://inaturalist-open-data.s3.amazonaws.com/photos/28649993/medium.jpeg,Nessuna,"(c) Serge M. Appolonov, some rights reserved (CC BY-NC), uploaded by Serge M. Appolonov",cc-by-nc
+Pelophylax ridibundus,Rana verde maggiore,https://inaturalist-open-data.s3.amazonaws.com/photos/11067279/medium.jpg,Nessuna,"(c) Ioana Mita, some rights reserved (CC BY-NC), uploaded by Ioana Mita",cc-by-nc
+Pelophylax shqipericus,Rana d'acqua albanese,https://inaturalist-open-data.s3.amazonaws.com/photos/84435145/medium.jpg,Nessuna,"(c) lawriehillsuk, some rights reserved (CC BY-NC)",cc-by-nc
+Pelophylax cerigensis,Rana d'acqua di Karpathos,https://inaturalist-open-data.s3.amazonaws.com/photos/11067279/medium.jpg,Nessuna,"(c) Ioana Mita, some rights reserved (CC BY-NC), uploaded by Ioana Mita",cc-by-nc
+Salix caprea,Salicone,https://inaturalist-open-data.s3.amazonaws.com/photos/260315489/medium.jpeg,Nessuna,"(c) Mireia, some rights reserved (CC BY-NC)",cc-by-nc
+Rallus aquaticus,Porciglione,https://inaturalist-open-data.s3.amazonaws.com/photos/556932004/medium.jpg,Nessuna,"(c) carlosmurias, some rights reserved (CC BY-NC)",cc-by-nc
+Luscinia megarhynchos,Usignolo,https://inaturalist-open-data.s3.amazonaws.com/photos/366392883/medium.jpeg,Nessuna,"(c) b3ugaz, some rights reserved (CC BY-NC)",cc-by-nc
+Botaurus stellaris,Tarabuso,https://inaturalist-open-data.s3.amazonaws.com/photos/589696424/medium.jpg,Nessuna,"(c) David Barros Cardona, some rights reserved (CC BY-NC)",cc-by-nc
+Fulica atra,Folaga,https://inaturalist-open-data.s3.amazonaws.com/photos/367976669/medium.jpeg,Nessuna,"(c) Diego González Dopico, some rights reserved (CC BY)",cc-by
+Gallinula chloropus,Gallinella d'acqua,https://inaturalist-open-data.s3.amazonaws.com/photos/8051335/medium.jpeg,Nessuna,"(c) belyykit, some rights reserved (CC BY-NC)",cc-by-nc
+Allium ursinum,Aglio orsino,https://inaturalist-open-data.s3.amazonaws.com/photos/486458299/medium.jpeg,Nessuna,"(c) Emilio Andújar, some rights reserved (CC BY-NC)",cc-by-nc
+Phragmites australis,Cannuccia di palude,https://inaturalist-open-data.s3.amazonaws.com/photos/175550899/medium.jpg,Nessuna,"(c) Felipe Castilla Lattke, some rights reserved (CC BY-NC)",cc-by-nc
+Lacerta viridis,Ramarro orientale,https://inaturalist-open-data.s3.amazonaws.com/photos/366106943/medium.jpeg,Nessuna,"(c) Diego González Dopico, some rights reserved (CC BY)",cc-by
+Utricularia vulgaris,Erba vescica,https://inaturalist-open-data.s3.amazonaws.com/photos/304106607/medium.jpg,Nessuna,"(c) Carles Fabregat, some rights reserved (CC BY-NC)",cc-by-nc
+Talpa europaea,Talpa europea,https://inaturalist-open-data.s3.amazonaws.com/photos/707130370/medium.jpg,Nessuna,"(c) arnautuneu, some rights reserved (CC BY-NC)",cc-by-nc
