@@ -35,11 +35,11 @@ if (infoBox.empty()) {
 //    verso il bordo, nitido verso il centro): un overlay fisso, non
 //    cliccabile, fatto di 2 strati con backdrop-filter e maschera a
 //    gradiente (vedi #edge-blur in style.css). Mettere false per toglierlo.
-const EDGE_BLUR_ENABLED = true;
+const EDGE_BLUR_ENABLED = false;
 // Durante zoom, pan e spostamenti automatici (guida, "top specie", ricerca)
 // l'alone viene spento e poi rimesso a riposo: è l'elemento più pesante da
 // ridisegnare in movimento. Mettere false per tenerlo sempre acceso.
-const EDGE_BLUR_PAUSE_WHILE_MOVING = true;
+const EDGE_BLUR_PAUSE_WHILE_MOVING = false;
 // 2) Quando si apre un nodo, le specie non collegate perdono opacità E
 //    vengono sfocate di questi pixel. 0 = solo opacità, come prima.
 const FOCUS_BLUR_PX = 2;
