@@ -35,12 +35,30 @@ if (infoBox.empty()) {
 //    verso il bordo, nitido verso il centro): un overlay fisso, non
 //    cliccabile, fatto di 2 strati con backdrop-filter e maschera a
 //    gradiente (vedi #edge-blur in style.css). Mettere false per toglierlo.
-const EDGE_BLUR_ENABLED = true;
+const EDGE_BLUR_ENABLED = false;
+// Durante zoom, pan e spostamenti automatici (guida, "top specie", ricerca)
+// l'alone viene spento e poi rimesso a riposo: è l'elemento più pesante da
+// ridisegnare in movimento. Mettere false per tenerlo sempre acceso.
+const EDGE_BLUR_PAUSE_WHILE_MOVING = false;
 // 2) Quando si apre un nodo, le specie non collegate perdono opacità E
 //    vengono sfocate di questi pixel. 0 = solo opacità, come prima.
 const FOCUS_BLUR_PX = 2;
 // 3) Opacità a cui scendono nodi, collegamenti e cerchi di sfondo NON
 //    collegati al nodo aperto (0 = spariscono, 1 = nessun calo). Era 0.1.
+// Aspetto dei nodi non osservati (bianco e nero): CONTRAST 1 = contrasto
+// originale, più basso = più sbiadito; LIFT schiarisce (0 = nessuna
+// variazione, 0.3 = molto più chiari).
+const NOT_OBSERVED_CONTRAST = 0.55;
+const NOT_OBSERVED_LIFT = 0.25;
+
+// Colore dei collegamenti (edge): EDGE_COLOR a riposo, EDGE_COLOR_ACTIVE
+// quando l'edge è in hover / selezionato. Accetta qualsiasi colore CSS
+// ("#646466", "rgb(...)", "orange"...). Gli edge sono sottili (0.4px) e
+// semitrasparenti nel CSS di base: se il nuovo colore ti sembra troppo
+// tenue, schiariscilo o aumenta lo spessore (stroke-width, cerca "link-path").
+const EDGE_COLOR = "#646466";
+const EDGE_COLOR_ACTIVE = "#F4F4F4";
+
 const FOCUS_DIM_OPACITY = 0.15;
 // 4) Hover su un numero di interazioni nel pannello del nodo (es. il "33"
 //    di "mangia"): le specie di quel tipo restano accese, le altre specie
@@ -145,6 +163,23 @@ lightbox.on("click", closeLightbox);
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeLightbox();
 });
+
+// Segna sul body "sto muovendo la vista" (classe .is-moving) mentre dura
+// uno zoom/pan; la classe si toglie un attimo dopo la fine, così l'alone
+// non lampeggia fra due movimenti ravvicinati.
+let movingTimer = null;
+function setMoving(on) {
+  if (!EDGE_BLUR_PAUSE_WHILE_MOVING) return;
+  clearTimeout(movingTimer);
+  if (on) {
+    document.body.classList.add("is-moving");
+  } else {
+    movingTimer = setTimeout(
+      () => document.body.classList.remove("is-moving"),
+      180
+    );
+  }
+}
 
 let simulation, node, curvedLinks, linkTextPaths, edgeLabels, zoom;
 let nodeChevrons; // piccoli chevron direzionali intorno al nodo selezionato (uno per edge collegato)
@@ -577,8 +612,74 @@ function labelForViewpoint(edge, viewpointId) {
   return INVERSE_TYPE[edge.type] || edge.type;
 }
 
-Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
-  ([nodes, links]) => {
+// Legge un CSV in modo tollerante: toglie il BOM (Excel/Numbers/Sheets lo aggiungono
+// e rovinano il nome della prima colonna), riconosce il separatore (virgola,
+// punto e virgola, tab) e ripulisce gli spazi nei nomi delle colonne.
+function loadCsv(url) {
+  return fetch(url)
+    .then((r) => {
+      if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+      return r.text();
+    })
+    .then((txt) => {
+      txt = txt.replace(/^\uFEFF/, "");
+      const first = txt.split(/\r?\n/, 1)[0];
+      const count = (c) => first.split(c).length - 1;
+      const delim = [",", ";", "\t"].sort((x, y) => count(y) - count(x))[0];
+      const rows = d3.dsvFormat(delim).parse(txt);
+      return rows.map((row) => {
+        const clean = {};
+        Object.keys(row).forEach((k) => {
+          const v = row[k];
+          clean[k.trim()] = typeof v === "string" ? v.trim() : v;
+        });
+        return clean;
+      });
+    });
+}
+
+Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
+  ([nodes, allLinks]) => {
+    if (!nodes.length || nodes[0].scientific_name === undefined) {
+      console.error(
+        "nodes.csv: colonna 'scientific_name' non trovata. Colonne lette:",
+        nodes[0] ? Object.keys(nodes[0]) : "(file vuoto)"
+      );
+    }
+    nodes = nodes.filter((n) => n.scientific_name);
+    // Una sola riga per nome scientifico: se ci sono doppioni resta la prima
+    // (le altre sarebbero nodi "fantasma" senza collegamenti).
+    {
+      const seenNames = new Set();
+      const dup = [];
+      nodes = nodes.filter((n) => {
+        if (seenNames.has(n.scientific_name)) {
+          dup.push(n.scientific_name);
+          return false;
+        }
+        seenNames.add(n.scientific_name);
+        return true;
+      });
+      if (dup.length) console.warn("nodes.csv: righe doppie ignorate:", dup);
+    }
+    // Scarta i collegamenti che citano una specie assente da nodes.csv
+    // (altrimenti d3.forceLink si blocca con "node not found" e la pagina resta nera).
+    const knownIds = new Set(nodes.map((n) => n.scientific_name));
+    const links = allLinks.filter(
+      (l) => knownIds.has(l.source) && knownIds.has(l.target)
+    );
+    if (links.length < allLinks.length) {
+      const missing = new Set();
+      allLinks.forEach((l) => {
+        if (!knownIds.has(l.source)) missing.add(l.source);
+        if (!knownIds.has(l.target)) missing.add(l.target);
+      });
+      console.warn(
+        `edges.csv: ${allLinks.length - links.length} collegamenti ignorati, ` +
+          `specie non presenti in nodes.csv:`,
+        [...missing].sort()
+      );
+    }
     const adjacency = {};
     links.forEach(({ source, target }) => {
       if (!adjacency[source]) adjacency[source] = new Set();
@@ -658,29 +759,48 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .select("body")
       .append("div")
       .attr("id", "top-species-counter")
-      .attr("role", "button")
-      .attr("tabindex", 0)
-      .attr("aria-label", `Apri ${maxDegreeNode.name}, la specie più connessa`)
       .html(
-        `<div class="tsc-eyebrow">Specie più connessa</div>
-        <div class="tsc-name">${maxDegreeNode.name}</div>
-        <div class="tsc-sci">${maxDegreeNode.scientific_name}</div>
-        <div class="tsc-count">
-          <span class="ni-count-badge">${maxDegreeNode.degree}</span>
-          <span>specie</span>
+        `<div class="tsc-section tsc-totals">
+          <div class="tsc-eyebrow">Contatore totale</div>
+          <div class="tsc-count">
+            <span class="ni-count-badge">${nodes.length.toLocaleString(
+              "it-IT"
+            )}</span>
+            <span>specie</span>
+          </div>
+          <div class="tsc-count">
+            <span class="ni-count-badge">${links.length.toLocaleString(
+              "it-IT"
+            )}</span>
+            <span>interazioni</span>
+          </div>
+        </div>
+        <div class="tsc-divider"></div>
+        <div class="tsc-section tsc-top" role="button" tabindex="0"
+             aria-label="Apri ${maxDegreeNode.name}, la specie più connessa">
+          <div class="tsc-eyebrow">Specie più connessa</div>
+          <div class="tsc-name">${maxDegreeNode.name}</div>
+          <div class="tsc-sci">${maxDegreeNode.scientific_name}</div>
+          <div class="tsc-count">
+            <span class="ni-count-badge">${maxDegreeNode.degree}</span>
+            <span>specie</span>
+          </div>
         </div>`
       );
+    // Solo la parte "specie più connessa" è cliccabile: il resto è informativo.
+    const topSpeciesButton = topSpeciesCounter.select(".tsc-top");
+
     function openTopSpecies() {
       if (!tourAllowsNodeClick(maxDegreeNode)) return;
       closeSearchResults();
       selectNode(maxDegreeNode);
       focusOnNode(maxDegreeNode);
     }
-    topSpeciesCounter.on("click", (event) => {
+    topSpeciesButton.on("click", (event) => {
       event.stopPropagation();
       openTopSpecies();
     });
-    topSpeciesCounter.on("keydown", (event) => {
+    topSpeciesButton.on("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         openTopSpecies();
@@ -832,7 +952,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .enter()
       .append("path")
       .attr("class", "link-path")
-      .attr("stroke", "#646466")
+      .attr("stroke", EDGE_COLOR)
       .attr("stroke-width", 0.4)
       .attr("fill", "none")
       .attr("id", (d, i) => `link-path-${i}`)
@@ -893,7 +1013,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     // quello il segnale — mentre per tutti gli altri l'ispessimento
     // resta un segnale esclusivo dell'hover.
     function edgeRestStroke(d) {
-      return d === selectedEdgeDatum ? "#F4F4F4" : "#646466";
+      return d === selectedEdgeDatum ? EDGE_COLOR_ACTIVE : EDGE_COLOR;
     }
     function edgeRestWidth(d) {
       return d === selectedEdgeDatum ? 1.4 : 0.4;
@@ -918,7 +1038,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       return roleMarkerId(d, d === selectedEdgeDatum);
     }
     function farDotFill(d) {
-      return d === selectedEdgeDatum ? "#F4F4F4" : "#646466";
+      return d === selectedEdgeDatum ? EDGE_COLOR_ACTIVE : EDGE_COLOR;
     }
     // Va richiamata ogni volta che selectedEdgeDatum cambia: i marker
     // lontani sono elementi già presenti nel DOM (creati una volta da
@@ -939,12 +1059,12 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     function openEdgeInfo(d) {
       if (selectedEdgeDatum && selectedEdgeDatum !== d) {
         d3.select(`#link-path-${links.indexOf(selectedEdgeDatum)}`)
-          .attr("stroke", "#646466")
+          .attr("stroke", EDGE_COLOR)
           .attr("stroke-width", 0.4);
       }
       selectedEdgeDatum = d;
       d3.select(`#link-path-${links.indexOf(d)}`)
-        .attr("stroke", "#F4F4F4")
+        .attr("stroke", EDGE_COLOR_ACTIVE)
         .attr("stroke-width", 1.4);
       updateFarMarkerHighlight();
 
@@ -998,7 +1118,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       .on("mouseenter", (event, d) => {
         if (tourLockPolicy) return; // guida aperta: l'evidenziazione dello step non si tocca
         d3.select(`#link-path-${links.indexOf(d)}`)
-          .attr("stroke", "#F4F4F4")
+          .attr("stroke", EDGE_COLOR_ACTIVE)
           .attr("stroke-width", 1.4);
         // Anche il marker lontano di QUESTO edge (non tutti) passa a piena
         // opacità durante l'hover, stesso trattamento della selezione.
@@ -1147,9 +1267,21 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       defs
         .append("filter")
         .attr("id", "grayscale-filter")
-        .append("feColorMatrix")
-        .attr("type", "saturate")
-        .attr("values", 0);
+        .call((f) => {
+          // 1) toglie il colore
+          f.append("feColorMatrix").attr("type", "saturate").attr("values", 0);
+          // 2) riduce il contrasto e schiarisce: out = slope * in + intercept
+          const slope = NOT_OBSERVED_CONTRAST;
+          const intercept = (1 - NOT_OBSERVED_CONTRAST) / 2 + NOT_OBSERVED_LIFT;
+          const t = f.append("feComponentTransfer");
+          ["R", "G", "B"].forEach((ch) =>
+            t
+              .append(`feFunc${ch}`)
+              .attr("type", "linear")
+              .attr("slope", slope)
+              .attr("intercept", intercept)
+          );
+        });
     }
 
     defs
@@ -1543,6 +1675,18 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         );
     }
 
+    // Selezioni tenute da parte: rifarle con selectAll a ogni fotogramma
+    // costava una scansione del DOM per ogni tick.
+    const nodeCircles = container.selectAll("circle.node");
+    const bgCircles = container.selectAll("circle.bg");
+
+    // Stessa curva dell'arco visibile, ma tracciata sempre da sinistra a
+    // destra (vedi computeTextPathD): il testo lungo il path segue così
+    // una direzione leggibile.
+    function syncTextPaths() {
+      linkTextPaths.attr("d", computeTextPathD);
+    }
+
     simulation.on("tick", () => {
       // Vincolo rigido: qualunque nodo che NON fa parte della componente
       // connessa principale (cioè fa parte di un cluster satellite,
@@ -1582,29 +1726,24 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         l.__arc = arcGeometry(l);
       });
 
-      curvedLinks.attr("d", computeArcD);
+      // Arco visibile e hit-area hanno la stessa identica geometria: la
+      // stringa del path si calcola una volta sola e si scrive su entrambi.
+      const hitNodes = linkHitAreas.nodes();
+      curvedLinks.each(function (d, i) {
+        const dStr = computeArcD(d);
+        this.setAttribute("d", dStr);
+        hitNodes[i].setAttribute("d", dStr);
+      });
 
-      // Stessa identica geometria del path visibile (computeArcD): la
-      // hit-area deve sovrapporsi esattamente all'arco, solo più larga.
-      linkHitAreas.attr("d", computeArcD);
+      // I path-guida del testo servono SOLO alle etichette di un nodo
+      // aperto: aggiornarne migliaia a ogni fotogramma, quando nessuna
+      // etichetta è visibile, era lavoro sprecato (e una delle cause dei
+      // rallentamenti). Si sincronizzano all'apertura di un nodo
+      // (syncTextPaths) e qui solo finché un nodo è aperto.
+      if (selectedNodeId) syncTextPaths();
 
-      // Stessa curva dell'arco visibile, ma tracciata sempre da sinistra a
-      // destra: se il nodo sorgente sta a destra del target, scambiamo i
-      // due estremi e invertiamo lo sweep-flag (1 -> 0). Questo produce
-      // esattamente la stessa forma sullo schermo, ma il testo lungo il
-      // path segue sempre una direzione "leggibile" invece di percorrere
-      // l'arco al contrario, il che è ciò che lo fa apparire capovolto.
-      linkTextPaths.attr("d", computeTextPathD);
-
-      container
-        .selectAll("circle.node")
-        .attr("cx", (d) => d.x)
-        .attr("cy", (d) => d.y);
-
-      container
-        .selectAll("circle.bg")
-        .attr("cx", (d) => d.x)
-        .attr("cy", (d) => d.y);
+      nodeCircles.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+      bgCircles.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
       if (selectedNodeId) {
         updateNodeChevrons();
@@ -1659,7 +1798,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     function clearSelectedEdge() {
       if (selectedEdgeDatum) {
         d3.select(`#link-path-${links.indexOf(selectedEdgeDatum)}`)
-          .attr("stroke", "#646466")
+          .attr("stroke", EDGE_COLOR)
           .attr("stroke-width", 0.4);
       }
       selectedEdgeDatum = null;
@@ -1764,6 +1903,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
             : null
         );
 
+      syncTextPaths(); // le etichette lavorano sui path-guida: vanno allineati ora
       const edgesToShow = links.filter((lk) => {
         const src =
           typeof lk.source === "object" ? lk.source.scientific_name : lk.source;
@@ -2519,6 +2659,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         return !event.ctrlKey && !event.button;
       })
       .on("start", (event) => {
+        setMoving(true);
         if (event.sourceEvent && event.sourceEvent.type === "mousedown") {
           isMouseDragging = true;
         }
@@ -2537,6 +2678,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         container.attr("transform", event.transform);
       })
       .on("end", () => {
+        setMoving(false);
         isMouseDragging = false;
         edgeLabels.style("display", null);
       });
@@ -2655,15 +2797,54 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     // rispetto al collegamento in evidenza (1) — stesso valore per ogni
     // tipo di elemento (nodi, edge, chevron/pallini, label).
     const TOUR_SIBLING_DIM = 0.4;
+    // Inquadratura dei due step "direzionali" (3 e 4): margine e zoom
+    // massimo. pad/padX più bassi = coppia più grande a schermo (padX è
+    // largo perché a destra c'è l'inspector); maxScale più alto = permette
+    // zoom più vicini quando i due nodi sono ravvicinati.
+    const TOUR_PAIR_FOCUS = { pad: 110, padX: 430, maxScale: 2.8 };
+
+    // Strato in primo piano: copia "viva" (<use>) del collegamento in
+    // evidenza con chevron e pallini, disegnata SOPRA i nodi, così nessun
+    // nodo (anche se semitrasparente) lo copre. Le copie seguono gli
+    // originali, quindi restano allineate anche se la simulazione si muove.
+    let tourFocusLayer = null;
+    function tourRaiseEdge(edge) {
+      tourClearFocusLayer();
+      tourFocusLayer = container
+        .append("g")
+        .attr("class", "tour-focus-layer")
+        .style("pointer-events", "none");
+      const add = (sel) =>
+        sel.each(function () {
+          if (!this.id) this.id = `tfl-${Math.random().toString(36).slice(2)}`;
+          tourFocusLayer.append("use").attr("href", `#${this.id}`);
+        });
+      add(d3.select(`#link-path-${links.indexOf(edge)}`));
+      [nodeChevrons, nodeFarChevrons].forEach((g) =>
+        add(g.selectAll("path").filter((d) => d === edge))
+      );
+      [nodeNeutralDots, nodeFarNeutralDots].forEach((g) =>
+        add(g.selectAll("circle").filter((d) => d === edge))
+      );
+      // anche la label del collegamento, altrimenti i nodi la coprono
+      add(edgeLabels.selectAll("text").filter((d) => d === edge));
+    }
+    function tourClearFocusLayer() {
+      if (tourFocusLayer) tourFocusLayer.remove();
+      tourFocusLayer = null;
+    }
 
     function tourApplyEdgeEmphasis(edge, ownerNodeId) {
       tourClearEdgeEmphasis();
       if (!edge) return;
       tourHighlightedEdge = edge;
       d3.select(`#link-path-${links.indexOf(edge)}`)
-        .attr("stroke", "#F4F4F4")
+        .attr("stroke", EDGE_COLOR_ACTIVE)
         .attr("stroke-width", 1.4);
-      if (!ownerNodeId) return;
+      if (!ownerNodeId) {
+        tourRaiseEdge(edge);
+        return;
+      }
 
       const otherId =
         nodeIdOf(edge.source) === ownerNodeId
@@ -2742,11 +2923,13 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         .selectAll("circle")
         .filter(isFocusEdge)
         .attr("r", SHOW_INTERACTION_SYMBOLS ? 4 : 0);
+      tourRaiseEdge(edge);
     }
     function tourClearEdgeEmphasis() {
+      tourClearFocusLayer();
       if (tourHighlightedEdge) {
         d3.select(`#link-path-${links.indexOf(tourHighlightedEdge)}`)
-          .attr("stroke", "#646466")
+          .attr("stroke", EDGE_COLOR)
           .attr("stroke-width", 0.4);
       }
       tourHighlightedEdge = null;
@@ -2769,10 +2952,28 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     // alto del centro reale dello schermo, per lasciare libera l'area in
     // basso dove sta la card del tour. Disattiva l'auto-fit iniziale
     // della simulazione (hasAutoFitted) così non lo sovrascrive più tardi.
-    function tourFocusOnPoints(points, options) {
+    // La simulazione può ancora muovere i nodi mentre lo zoom parte: dopo la
+    // transizione si ricalcola l'inquadratura sulle posizioni aggiornate
+    // (una sola volta, solo se i nodi si sono spostati davvero), così la
+    // vista resta centrata. tourFocusToken invalida i ricontrolli
+    // di uno step già abbandonato.
+    let tourFocusToken = 0;
+    function tourFocusOnPoints(points, options, isRefit) {
       if (!points || points.length === 0) return;
       hasAutoFitted = true;
+      const token = isRefit ? tourFocusToken : ++tourFocusToken;
+      if (!isRefit) {
+        const snap = points.map((p) => [p.x, p.y]);
+        setTimeout(() => {
+          if (token !== tourFocusToken) return;
+          const moved = points.some(
+            (p, i) => Math.hypot(p.x - snap[i][0], p.y - snap[i][1]) > 4
+          );
+          if (moved) tourFocusOnPoints(points, options, true);
+        }, 800);
+      }
       const pad = options?.pad ?? 180;
+      const padX = options?.padX ?? pad; // margine laterale (può essere più largo: l'inspector sta a destra)
       const maxScale = options?.maxScale ?? 2.2;
       const xs = points.map((p) => p.x);
       const ys = points.map((p) => p.y);
@@ -2786,7 +2987,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       const spanY = Math.max(maxY - minY, 1);
       const usableHeight = height * 0.6; // la card occupa la fascia bassa
       const scale = Math.min(
-        (width - pad * 2) / spanX,
+        (width - padX * 2) / spanX,
         (usableHeight - pad * 2) / spanY,
         maxScale
       );
@@ -2816,41 +3017,56 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     let tourPairIds = null; // {a, b, edge} risolti all'inizio del tour (step "cover")
 
     function resolveDirectionalExample() {
+      // Esempio fisso: Biacco (primo nodo, quello aperto) e Poiana
+      // (secondo nodo, quello a cui si passa nello step dopo).
       const biacco = findNodeByName(/biacco/i);
-      const scoiattolo = findNodeByName(/scoiattol/i);
+      const poiana = findNodeByName(/poiana/i);
       let edge = null;
-      if (biacco && scoiattolo) {
+      let aId = null;
+      let bId = null;
+      if (biacco && poiana) {
         edge = links.find((lk) => {
           const s = nodeIdOf(lk.source);
           const t = nodeIdOf(lk.target);
           return (
-            (s === biacco.scientific_name &&
-              t === scoiattolo.scientific_name) ||
-            (s === scoiattolo.scientific_name && t === biacco.scientific_name)
+            (s === biacco.scientific_name && t === poiana.scientific_name) ||
+            (s === poiana.scientific_name && t === biacco.scientific_name)
           );
         });
+        if (edge) {
+          aId = biacco.scientific_name;
+          bId = poiana.scientific_name;
+        }
       }
-      // Fallback: se l'esempio Biacco/Scoiattolo non è nel dataset caricato
+      // Fallback: se l'esempio Biacco/Poiana non è nel dataset caricato
       // in questo momento (es. dati di test), prende la prima interazione
       // direzionale che trova — il tour resta sempre funzionante.
       if (!edge || SYMMETRIC_TYPES.has(edge.type)) {
         edge = links.find((lk) => !SYMMETRIC_TYPES.has(lk.type));
+        aId = edge ? nodeIdOf(edge.source) : null;
+        bId = edge ? nodeIdOf(edge.target) : null;
       }
-      tourPairIds = edge
-        ? { a: nodeIdOf(edge.source), b: nodeIdOf(edge.target), edge }
-        : null;
+      tourPairIds = edge ? { a: aId, b: bId, edge } : null;
     }
 
     // Testo per lo step "intro": il tour ha già aperto per davvero il
     // primo nodo (a) prima che questa funzione sia chiamata.
     function directionalIntroHTML() {
-      if (!tourPairIds) {
-        return `<p class="guide-step-body">Non ho trovato un'interazione direzionale nei dati per farti un esempio dal vivo — ma la regola resta questa: il chevron punta sempre verso chi subisce l'azione.</p>`;
-      }
-      const nodeA = nodeByName.get(tourPairIds.a);
-      const nodeB = nodeByName.get(tourPairIds.b);
-      const label = labelForViewpoint(tourPairIds.edge, tourPairIds.a);
-      return `<p class="guide-step-lead">Guarda l'interazione tra <strong>${nodeA.name}</strong> e <strong>${nodeB.name}</strong>. Con <strong>${nodeB.name}</strong> si legge <em>"${label}"</em>. Guarda da che parte punta il chevron sul collegamento tra i due.</p>`;
+      const glyph = (inner) =>
+        `<span class="ni-count-badge guide-glyph">${inner}</span>`;
+      return `
+        <p class="guide-step-body">Ogni interazione ha un verso, segnalato da una freccia che può essere:</p>
+        <div class="guide-legend">
+          <span>uscente</span>${glyph(
+            '<span class="ni-chevron"></span>'
+          )}<span>(attiva)</span>
+          <span>entrante</span>${glyph(
+            '<span class="ni-chevron ni-chevron--in"></span>'
+          )}<span>(passiva)</span>
+          <span>pallino</span>${glyph(
+            '<span class="ni-dot"></span>'
+          )}<span>(neutra)</span>
+        </div>`;
     }
 
     // Testo per lo step "switch": il tour stesso passa l'apertura dal
@@ -2861,8 +3077,42 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       }
       const nodeA = nodeByName.get(tourPairIds.a);
       const nodeB = nodeByName.get(tourPairIds.b);
-      const label = labelForViewpoint(tourPairIds.edge, tourPairIds.b);
-      return `<p class="guide-step-lead">Dal punto di vista del <strong>${nodeB.name}</strong> l'interazione cambia: lo stesso collegamento ora diventa <em>"${label}"</em> — ma il verso dell'interazione rimane invariato, la freccia non cambia direzione.</p>`;
+      const labelA = labelForViewpoint(tourPairIds.edge, tourPairIds.a);
+      const labelB = labelForViewpoint(tourPairIds.edge, tourPairIds.b);
+      // "mangiato da" vuole l'ausiliare ("è mangiato da"), "mangia" no.
+      // Il participio concorda col soggetto: nomi in -a → "mangiata da".
+      const verb = (label, subject) => {
+        const passive = interactionRole(label) === "passive";
+        const text =
+          passive && /a$/i.test(subject.trim())
+            ? label.replace(/(\w)ato da$/i, "$1ata da")
+            : label;
+        return `${passive ? "è " : ""}<em>${text}</em>`;
+      };
+      // Una riga dello schema: "chi guarda" — etichetta sopra la freccia —
+      // "l'altro". La freccia punta verso chi subisce: se per chi guarda
+      // l'etichetta è passiva (es. "mangiato da") punta a sinistra.
+      const flow = (from, label, to) => {
+        const dir = interactionRole(label) === "passive" ? "in" : "out";
+        return `<div class="guide-flow-row">
+          <span class="guide-flow-name">${from.name}</span>
+          <span class="guide-flow-arrow guide-flow-arrow--${dir}"><span class="guide-flow-label">${label}</span></span>
+          <span class="guide-flow-name">${to.name}</span>
+        </div>`;
+      };
+      return `
+        <p class="guide-step-body">A seconda del nodo cliccato, la stessa interazione si modifica. <strong>${
+          nodeA.name
+        }</strong> ${verb(labelA, nodeA.name)} <strong>${
+        nodeB.name
+      }</strong>, la stessa relazione può essere letta anche come <strong>${
+        nodeB.name
+      }</strong> ${verb(labelB, nodeB.name)} <strong>${nodeA.name}</strong>.</p>
+        <div class="guide-flow">
+          ${flow(nodeA, labelA, nodeB)}
+          <div class="guide-flow-eq">=</div>
+          ${flow(nodeB, labelB, nodeA)}
+        </div>`;
     }
 
     // ---- Step "interazioni reciproche": prima coppia neutra reale trovata ----
@@ -2877,16 +3127,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
     // questa viene chiamata: essendo un'interazione simmetrica, non serve
     // un secondo click obbligatorio — la lettura non cambierebbe comunque.
     function neutralGuidanceHTML() {
-      if (!tourNeutralPair) {
-        return `<p class="guide-step-body">Non ci sono interazioni reciproche nei dati caricati in questo momento, ma la regola resta questa: nessuna freccia, solo un pallino.</p>`;
-      }
-      const nodeA = nodeByName.get(tourNeutralPair.a);
-      const nodeB = nodeByName.get(tourNeutralPair.b);
-      const label = labelForViewpoint(tourNeutralPair.edge, tourNeutralPair.a);
-      return `
-        <p class="guide-step-lead">Ho aperto <strong>${nodeA.name}</strong> per te: con <strong>${nodeB.name}</strong> si legge <em>"${label}"</em> — nessuna freccia, solo un pallino, perché "${tourNeutralPair.edge.type}" non ha un verso da segnalare.</p>
-        <p class="guide-step-note">Prova pure a cliccare ${nodeB.name}: qui la lettura resta identica, perché il punto di vista non cambia nulla.</p>
-      `;
+      return `<p class="guide-step-body">In alcuni casi le interazioni non hanno verso, sono reciproche. In queste relazioni non esistono attori attivi o passivi.</p>`;
     }
 
     // ---- Step "specie non osservate": bianco e nero = 0 osservazioni ----
@@ -2949,11 +3190,9 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       }
     }
     function notObservedGuidanceHTML() {
-      const count = nodes.filter((n) => n.notObserved).length;
       return `
-        <p class="guide-step-body">I nodi illuminati, in bianco e nero (${count} su ${nodes.length}), sono specie senza osservazioni confermate su iNaturalist nel territorio dell'oasi.</p>
-        <p class="guide-step-note">Resta disponibile anche a tour finito, dal pulsante con il cerchio tratteggiato, accanto al "?" in basso a sinistra.</p>
-      `;
+        <p class="guide-step-body">Tutti possono contribuire ad ampliare o completare la rete, scopri quali specie non sono ancora state osservate nelle Cave di Noale, esplora l'oasi e prova a trovarle tu.</p>
+        <a class="guide-link" href="https://www.inaturalist.org/" target="_blank" rel="noopener">Scopri iNaturalist</a>`;
     }
 
     // Bottone permanente, indipendente dal tour: resta sulla pagina anche
@@ -2986,7 +3225,6 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       {
         key: "cover",
         modifier: "cover",
-        eyebrow: "Guida rapida",
         title: "Come leggere la rete",
         onEnter() {
           // Risolti qui, una volta sola all'apertura del tour, così lo
@@ -3007,13 +3245,12 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         // Scoiattolo compare insieme al Biacco. L'utente può comunque
         // cliccare qualsiasi altra specie: il grafo resta interattivo.
         key: "click-species",
-        eyebrow: "Prova tu",
-        title: "Clicca una specie",
+        title: "Le specie",
         onEnter() {
           tourResetVisuals();
           if (!tourPairIds) resolveDirectionalExample();
           tourClickExampleNode =
-            findNodeByName(/scoiattol/i) ||
+            findNodeByName(/biacco/i) ||
             (tourPairIds && nodeByName.get(tourPairIds.b)) ||
             null;
           if (tourClickExampleNode) {
@@ -3023,19 +3260,12 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
             tourFocusOnWholeGraph();
           }
         },
-        body: () => {
-          const name = tourClickExampleNode ? tourClickExampleNode.name : null;
-          return `<p class="guide-step-body">${
-            name
-              ? `Ho aperto <strong>${name}</strong>: i suoi collegamenti si illuminano e a lato compare la sua scheda. `
-              : ""
-          }Clicca una specie per aprire le sue interazioni.</p>`;
-        },
+        body: () =>
+          `<p class="guide-step-body">Clicca una specie per visualizzare le sue interazioni, scopri i dettagli nell'inspector sulla destra.</p>`,
       },
       {
         key: "directional-intro",
-        eyebrow: "Le interazioni direzionali",
-        title: "La freccia punta sempre verso chi subisce",
+        title: "Il verso dell'interazione",
         onEnter() {
           if (!tourPairIds) resolveDirectionalExample();
           if (tourPairIds) {
@@ -3044,10 +3274,10 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
               nodeByName.get(tourPairIds.a),
               tourPairIds.edge
             );
-            tourFocusOnPoints([
-              nodeByName.get(tourPairIds.a),
-              nodeByName.get(tourPairIds.b),
-            ]);
+            tourFocusOnPoints(
+              [nodeByName.get(tourPairIds.a), nodeByName.get(tourPairIds.b)],
+              TOUR_PAIR_FOCUS
+            );
           } else {
             tourClearSpotlight();
           }
@@ -3056,8 +3286,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       },
       {
         key: "directional-switch",
-        eyebrow: "Stesso collegamento, altro punto di vista",
-        title: "Ora passo all'altro capo",
+        title: "Il verso dell'interazione",
         onEnter() {
           if (!tourPairIds) {
             tourClearSpotlight();
@@ -3071,17 +3300,16 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
             nodeByName.get(tourPairIds.b),
             tourPairIds.edge
           );
-          tourFocusOnPoints([
-            nodeByName.get(tourPairIds.a),
-            nodeByName.get(tourPairIds.b),
-          ]);
+          tourFocusOnPoints(
+            [nodeByName.get(tourPairIds.a), nodeByName.get(tourPairIds.b)],
+            TOUR_PAIR_FOCUS
+          );
         },
         body: () => directionalSwitchHTML(),
       },
       {
         key: "neutral",
-        eyebrow: "Le interazioni reciproche",
-        title: "A volte non c'è né azione né subordine",
+        title: "Interazioni neutre",
         onEnter() {
           if (!tourNeutralPair) resolveNeutralExample();
           if (tourNeutralPair) {
@@ -3114,8 +3342,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       },
       {
         key: "notobserved",
-        eyebrow: "Il dettaglio da sapere",
-        title: "I nodi in bianco e nero",
+        title: "Specie non ancora osservate",
         onEnter() {
           applyNotObservedSpotlight(true);
           const pts = nodes.filter((n) => n.notObserved);
@@ -3130,16 +3357,13 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       {
         key: "closing",
         modifier: "cover",
-        eyebrow: "Pronti",
-        title: "Ora sai leggere la rete",
+        title: "Esplora la rete",
         onEnter() {
           tourClearSpotlight();
           tourFocusOnWholeGraph();
         },
-        body: () => `
-          <p class="guide-step-body">Puoi riaprire questa guida in qualsiasi momento dal pulsante "?" in basso a sinistra.</p>
-          <button id="guide-cta" class="guide-cta">Inizia a esplorare</button>
-        `,
+        body: () =>
+          `<p class="guide-step-body">Avvicinati, allontanati, spostati nello spazio, trascina i nodi per districare la rete e farti spazio tra le interazioni non-umane che tengono viva l'oasi.</p>`,
       },
     ];
 
@@ -3160,13 +3384,13 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         .append("button")
         .attr("id", "guide-prev")
         .attr("aria-label", "Step precedente")
-        .text("‹");
+        .text("");
       guideNav.append("div").attr("id", "guide-dots");
       guideNav
         .append("button")
         .attr("id", "guide-next")
         .attr("aria-label", "Step successivo")
-        .text("›");
+        .text("");
     }
 
     // Quali nodi si possono cliccare in ciascuno step. Tutto il resto
@@ -3219,11 +3443,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
           "class",
           `guide-step${step.modifier ? ` guide-step--${step.modifier}` : ""}`
         )
-        .html(
-          `<div class="guide-eyebrow">${
-            step.eyebrow
-          }</div><h3 class="guide-step-title">${step.title}</h3>${step.body()}`
-        );
+        .html(`<h3 class="guide-step-title">${step.title}</h3>${step.body()}`);
       if (guideStepIndex === GUIDE_STEPS.length - 1) {
         content.select("#guide-cta").on("click", closeGuide);
       }
@@ -3241,19 +3461,10 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
       });
 
       const isLastStep = guideStepIndex === GUIDE_STEPS.length - 1;
-      d3.select("#guide-close")
-        .attr("data-tooltip", "Chiudi la guida")
-        .attr("data-tooltip-align", "end");
-      d3.select("#guide-prev")
-        .property("disabled", guideStepIndex === 0)
-        .attr("data-tooltip", "Passo precedente");
+      d3.select("#guide-prev").property("disabled", guideStepIndex === 0);
       d3.select("#guide-next")
         .property("disabled", false)
-        .attr(
-          "data-tooltip",
-          isLastStep ? "Termina la guida" : "Passo successivo"
-        )
-        .text(isLastStep ? "✓" : "›");
+        .text(isLastStep ? "✓" : "");
     }
 
     function goToGuideStep(i) {
@@ -3322,9 +3533,7 @@ Promise.all([d3.csv("nodes.csv"), d3.csv("edges.csv")]).then(
         .attr("aria-label", "Apri il tour")
         .text("?");
     }
-    guideToggle
-      .attr("data-tooltip", "Come leggere la rete")
-      .attr("data-tooltip-align", "start");
+    guideToggle.attr("aria-label", "Come leggere la rete");
     guideToggle.on("click", openGuide);
 
     // Ascolta i click SUI NODI VERI in aggiunta al listener già presente
