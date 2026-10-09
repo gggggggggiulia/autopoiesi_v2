@@ -35,11 +35,11 @@ if (infoBox.empty()) {
 //    verso il bordo, nitido verso il centro): un overlay fisso, non
 //    cliccabile, fatto di 2 strati con backdrop-filter e maschera a
 //    gradiente (vedi #edge-blur in style.css). Mettere false per toglierlo.
-const EDGE_BLUR_ENABLED = false;
+const EDGE_BLUR_ENABLED = true;
 // Durante zoom, pan e spostamenti automatici (guida, "top specie", ricerca)
 // l'alone viene spento e poi rimesso a riposo: è l'elemento più pesante da
 // ridisegnare in movimento. Mettere false per tenerlo sempre acceso.
-const EDGE_BLUR_PAUSE_WHILE_MOVING = false;
+const EDGE_BLUR_PAUSE_WHILE_MOVING = true;
 // 2) Quando si apre un nodo, le specie non collegate perdono opacità E
 //    vengono sfocate di questi pixel. 0 = solo opacità, come prima.
 const FOCUS_BLUR_PX = 2;
@@ -231,9 +231,27 @@ const INVERSE_TYPE = {
   "impollinato da": "impollina",
   "fiore visitato da": "visita il fiore di",
   "visita il fiore di": "fiore visitato da",
+  // forme plurali, quelle realmente presenti in edges.csv (le singolari
+  // sopra restano come alias): senza queste l'ape, aprendo "fiori
+  // visitati da", si leggeva "fiori visitati da" invece di "visita i fiori di"
+  "fiori visitati da": "visita i fiori di",
+  "visita i fiori di": "fiori visitati da",
+  "ha come ospite": "ospite di",
+  "parassita di": "ha come parassita",
+  "ha come parassita": "parassita di",
+  "ectoparassita di": "ha come ectoparassita",
+  "ha come ectoparassita": "ectoparassita di",
+  "endoparassita di": "ha come endoparassita",
+  "ha come endoparassita": "endoparassita di",
+  "parassitoide di": "ha come parassitoide",
+  "ha come parassitoide": "parassitoide di",
+  "patogeno di": "ha come patogeno",
+  "ha come patogeno": "patogeno di",
+  "epifita di": "ha come epifita",
+  "ha come epifita": "epifita di",
   "visitato da": "visita",
   visita: "visitato da",
-  "ospite di": "ha ospite",
+  "ospite di": "ha come ospite",
   "ha ospite": "ospite di",
   "ha come vettore di dispersione": "vettore di dispersione di",
   "vettore di dispersione di": "ha come vettore di dispersione",
@@ -550,6 +568,9 @@ ARROW_REVERSED_TYPES.add("impollinato"); // forma breve, oltre a "impollinato da
 interactionDescriptions["impollinato"] =
   interactionDescriptions["impollinato da"];
 
+ARROW_REVERSED_TYPES.add("ha come ospite"); // forma usata in edges.csv (inverso di "ospite di")
+interactionDescriptions["ha come ospite"] =
+  interactionDescriptions["ospite di"];
 ARROW_REVERSED_TYPES.add("ha ospite"); // inverso di "ospite di" (attivo): manca dal dataset, ma per coerenza va passivo
 interactionDescriptions["ha ospite"] = interactionDescriptions["ospite di"];
 
