@@ -1,487 +1,2367 @@
-source,target,type
-Lepus europaeus,Vulpes vulpes,interagisce con
-Pica pica,Vulpes vulpes,mangiato da
-Sylvia atricapilla,Vulpes vulpes,mangiato da
-Buteo buteo,Vulpes vulpes,mangiato da
-Columba palumbus,Vulpes vulpes,mangiato da
-Lepus europaeus,Vulpes vulpes,mangiato da
-Anas platyrhynchos,Vulpes vulpes,mangiato da
-Sciurus vulgaris,Vulpes vulpes,predato da
-Columba palumbus,Vulpes vulpes,predato da
-Lepus europaeus,Vulpes vulpes,predato da
-Muscardinus avellanarius,Vulpes vulpes,interagisce con
-Muscardinus avellanarius,Vulpes vulpes,mangiato da
-Aegithalos caudatus,Muscardinus avellanarius,mangiato da
-Fringilla coelebs,Muscardinus avellanarius,mangiato da
-Luscinia megarhynchos,Muscardinus avellanarius,mangiato da
-Dendrocopos major,Muscardinus avellanarius,mangiato da
-Muscardinus avellanarius,Hierophis viridiflavus carbonarius,mangiato da
-Muscardinus avellanarius,Natrix natrix,mangiato da
-Muscardinus avellanarius,Dendrocopos major,mangiato da
-Muscardinus avellanarius,Coloeus monedula,mangiato da
-Muscardinus avellanarius,Pica pica,mangiato da
-Muscardinus avellanarius,Sciurus vulgaris,mangiato da
-Muscardinus avellanarius,Buteo buteo,mangiato da
-Muscardinus avellanarius,Lacerta viridis,mangiato da
-Ardea cinerea,Arvicola amphibius,interagisce con
-Arvicola amphibius,Vulpes vulpes,interagisce con
-Arvicola amphibius,Hierophis viridiflavus carbonarius,mangiato da
-Arvicola amphibius,Natrix natrix,mangiato da
-Arvicola amphibius,Coloeus monedula,mangiato da
-Arvicola amphibius,Microcarbo pygmaeus,mangiato da
-Arvicola amphibius,Phalacrocorax carbo,mangiato da
-Arvicola amphibius,Buteo buteo,mangiato da
-Arvicola amphibius,Botaurus stellaris,mangiato da
-Arvicola amphibius,Bubulcus ibis,mangiato da
-Arvicola amphibius,Rallus aquaticus,mangiato da
-Arvicola amphibius,Fulica atra,mangiato da
-Arvicola amphibius,Vulpes vulpes,mangiato da
-Arvicola amphibius,Egretta garzetta,mangiato da
-Arvicola amphibius,Ardea cinerea,mangiato da
-Arvicola amphibius,Pica pica,mangiato da
-Arvicola amphibius,Ardea alba,mangiato da
-Arvicola amphibius,Ixobrychus minutus,mangiato da
-Arvicola amphibius,Nycticorax nycticorax,mangiato da
-Arvicola amphibius,Lacerta viridis,mangiato da
-Arvicola amphibius,Vulpes vulpes,predato da
-Arvicola amphibius,Ardea cinerea,predato da
-Arvicola amphibius,Buteo buteo,interagisce con
-Micromys minutus,Vulpes vulpes,mangiato da
-Stachys sylvatica,Micromys minutus,mangiato da
-Micromys minutus,Hierophis viridiflavus carbonarius,mangiato da
-Micromys minutus,Coloeus monedula,mangiato da
-Micromys minutus,Pica pica,mangiato da
-Micromys minutus,Egretta garzetta,mangiato da
-Micromys minutus,Buteo buteo,mangiato da
-Micromys minutus,Lacerta viridis,mangiato da
-Micromys minutus,Natrix natrix,mangiato da
-Micromys minutus,Ardea alba,mangiato da
-Micromys minutus,Ardea cinerea,mangiato da
-Micromys minutus,Bubulcus ibis,mangiato da
-Lepus europaeus,Coloeus monedula,mangiato da
-Lepus europaeus,Buteo buteo,mangiato da
-Lepus europaeus,Pica pica,mangiato da
-Lepus europaeus,Vulpes vulpes,ucciso da
-Bufotes viridis,Natrix natrix,mangiato da
-Bufotes viridis,Rallus aquaticus,mangiato da
-Bufotes viridis,Coloeus monedula,mangiato da
-Bufotes viridis,Pica pica,mangiato da
-Bufotes viridis,Ardea alba,mangiato da
-Bufotes viridis,Ardea cinerea,mangiato da
-Bufotes viridis,Buteo buteo,mangiato da
-Bufotes viridis,Anas platyrhynchos,mangiato da
-Bufotes viridis,Bubulcus ibis,mangiato da
-Bufotes viridis,Vulpes vulpes,mangiato da
-Bufotes viridis,Gallinula chloropus,mangiato da
-Bufotes viridis,Natrix natrix,predato da
-Bufotes viridis,Buteo buteo,predato da
-Bufotes viridis,Bubulcus ibis,predato da
-Rana latastei,Pica pica,mangiato da
-Rana latastei,Coloeus monedula,mangiato da
-Rana latastei,Botaurus stellaris,mangiato da
-Rana latastei,Alcedo atthis,mangiato da
-Rana latastei,Anas platyrhynchos,mangiato da
-Rana latastei,Emys orbicularis,mangiato da
-Rana latastei,Rallus aquaticus,mangiato da
-Rana latastei,Nycticorax nycticorax,mangiato da
-Rana latastei,Buteo buteo,mangiato da
-Rana latastei,Gallinula chloropus,mangiato da
-Rana latastei,Vulpes vulpes,mangiato da
-Rana latastei,Ardea cinerea,mangiato da
-Rana latastei,Egretta garzetta,mangiato da
-Rana latastei,Natrix natrix,mangiato da
-Rana latastei,Ixobrychus minutus,mangiato da
-Rana latastei,Ardea alba,mangiato da
-Lacerta bilineata,Hierophis viridiflavus carbonarius,mangiato da
-Lacerta bilineata,Hierophis viridiflavus carbonarius,predato da
-Hierophis viridiflavus carbonarius,Lacerta bilineata,mangiato da
-Muscardinus avellanarius,Lacerta bilineata,mangiato da
-Aegithalos caudatus,Lacerta bilineata,mangiato da
-Luscinia megarhynchos,Lacerta bilineata,mangiato da
-Natrix natrix,Lacerta bilineata,mangiato da
-Pica pica,Lacerta bilineata,mangiato da
-Coloeus monedula,Lacerta bilineata,mangiato da
-Sylvia atricapilla,Lacerta bilineata,mangiato da
-Fringilla coelebs,Lacerta bilineata,mangiato da
-Lacerta viridis,Lacerta bilineata,mangiato da
-Cettia cetti,Lacerta bilineata,mangiato da
-Sciurus vulgaris,Lacerta bilineata,mangiato da
-Micromys minutus,Lacerta bilineata,mangiato da
-Pelophylax,Natrix natrix,mangiato da
-Rana dalmatina,Natrix natrix,mangiato da
-Rana dalmatina,Natrix natrix,predato da
-Pelophylax,Natrix natrix,predato da
-Pelophylax,Natrix helvetica,mangiato da
-Natrix helvetica,Ardea cinerea,mangiato da
-Pelophylax,Natrix helvetica,predato da
-Natrix helvetica,Ardea cinerea,predato da
-Natrix natrix,Ardea cinerea,mangiato da
-Natrix natrix,Hierophis viridiflavus carbonarius,mangiato da
-Natrix natrix,Nycticorax nycticorax,mangiato da
-Natrix natrix,Botaurus stellaris,mangiato da
-Natrix natrix,Pica pica,mangiato da
-Natrix natrix,Ardea alba,mangiato da
-Natrix natrix,Egretta garzetta,mangiato da
-Natrix natrix,Lacerta viridis,mangiato da
-Natrix natrix,Buteo buteo,mangiato da
-Natrix natrix,Bubulcus ibis,mangiato da
-Natrix natrix,Vulpes vulpes,mangiato da
-Lissotriton vulgaris,Natrix natrix,mangiato da
-Lissotriton vulgaris,Ardea alba,mangiato da
-Lissotriton vulgaris,Anas platyrhynchos,mangiato da
-Lissotriton vulgaris,Ardea cinerea,mangiato da
-Lissotriton vulgaris,Emys orbicularis,mangiato da
-Lissotriton vulgaris,Pica pica,mangiato da
-Lissotriton vulgaris,Rallus aquaticus,mangiato da
-Lissotriton vulgaris,Nycticorax nycticorax,mangiato da
-Lissotriton vulgaris,Botaurus stellaris,mangiato da
-Lissotriton vulgaris,Egretta garzetta,mangiato da
-Lissotriton vulgaris,Natrix natrix,predato da
-Rana dalmatina,Alcedo atthis,mangiato da
-Alcedo atthis,Hierophis viridiflavus carbonarius,mangiato da
-Alcedo atthis,Vulpes vulpes,mangiato da
-Pelophylax,Alcedo atthis,predato da
-Rana dalmatina,Ixobrychus minutus,mangiato da
-Rana dalmatina,Nycticorax nycticorax,mangiato da
-Rana dalmatina,Botaurus stellaris,mangiato da
-Rana dalmatina,Rallus aquaticus,mangiato da
-Rana dalmatina,Coloeus monedula,mangiato da
-Rana dalmatina,Pica pica,mangiato da
-Rana dalmatina,Anas platyrhynchos,mangiato da
-Rana dalmatina,Vulpes vulpes,mangiato da
-Rana dalmatina,Emys orbicularis,mangiato da
-Rana dalmatina,Egretta garzetta,mangiato da
-Rana dalmatina,Buteo buteo,mangiato da
-Rana dalmatina,Ardea alba,mangiato da
-Rana dalmatina,Gallinula chloropus,mangiato da
-Rana dalmatina,Ardea cinerea,mangiato da
-Cettia cetti,Ixobrychus minutus,mangiato da
-Ixobrychus minutus,Hierophis viridiflavus carbonarius,mangiato da
-Ixobrychus minutus,Coloeus monedula,mangiato da
-Emys orbicularis,Pica pica,mangiato da
-Emys orbicularis,Ardea alba,mangiato da
-Emys orbicularis,Egretta garzetta,mangiato da
-Emys orbicularis,Ardea cinerea,mangiato da
-Emys orbicularis,Vulpes vulpes,mangiato da
-Emys orbicularis,Bubulcus ibis,mangiato da
-Utricularia macrorhiza,Utricularia vulgaris,interagisce con
-Iris pseudacorus,Apis mellifera,mangiato da
-Iris pseudacorus,Apis mellifera,impollinato da
-Iris pseudacorus,Apis mellifera,fiore visitato da
-Iris pseudacorus,Apis mellifera,ospite di
-Alnus glutinosa,Schizophyllum commune,interagisce con
-Alnus glutinosa,Sylvia atricapilla,interagisce con
-Apis mellifera,Rosa canina,interagisce con
-Rosa canina,Apis mellifera,impollinato da
-Columba palumbus,Rosa canina,interagisce con
-Rosa canina,Sylvia atricapilla,interagisce con
-Rosa canina,Eristalis tenax,impollinato da
-Rosa canina,Apis mellifera,fiore visitato da
-Rosa canina,Eristalis tenax,fiore visitato da
-Rosa canina,Sylvia atricapilla,ha come vettore di dispersione
-Rosa canina,Columba palumbus,ha come vettore di dispersione
-Salix alba,Apis mellifera,fiore visitato da
-Salix alba,Eristalis tenax,fiore visitato da
-Rosa canina,Aegithalos caudatus,mangiato da
-Aegithalos caudatus,Hierophis viridiflavus carbonarius,mangiato da
-Aegithalos caudatus,Sciurus vulgaris,mangiato da
-Aegithalos caudatus,Lacerta viridis,mangiato da
-Aegithalos caudatus,Dendrocopos major,mangiato da
-Ajuga reptans,Apis mellifera,interagisce con
-Ajuga reptans,Apis mellifera,impollinato da
-Ajuga reptans,Eristalis tenax,impollinato da
-Ajuga reptans,Pieris napi,impollinato da
-Ajuga reptans,Apis mellifera,fiore visitato da
-Ajuga reptans,Pieris napi,fiore visitato da
-Ajuga reptans,Apis mellifera,visitato da
-Alliaria petiolata,Lonicera japonica,interagisce con
-Alliaria petiolata,Pieris napi,mangiato da
-Alliaria petiolata,Apis mellifera,fiore visitato da
-Alliaria petiolata,Pieris napi,fiore visitato da
-Alliaria petiolata,Pieris napi,ospite di
-Alliaria petiolata,Pieris napi,interagisce con
-Alliaria petiolata,Apis mellifera,interagisce con
-Alliaria petiolata,Vanessa atalanta,fiore visitato da
-Alliaria petiolata,Eristalis tenax,fiore visitato da
-Anas carolinensis,Anas crecca,interagisce con
-Anas crecca,Vulpes vulpes,interagisce con
-Anas crecca,Anas platyrhynchos,interagisce con
-Anas crecca,Gallinula chloropus,interagisce con
-Anas crecca,Ardea cinerea,interagisce con
-Anas crecca,Pica pica,interagisce con
-Anas crecca,Hierophis viridiflavus carbonarius,mangiato da
-Anas crecca,Vulpes vulpes,mangiato da
-Anas platyrhynchos,Phragmites australis,interagisce con
-Anas platyrhynchos,Nycticorax nycticorax,interagisce con
-Anas platyrhynchos,Ardea alba,interagisce con
-Anas platyrhynchos,Trachemys scripta,interagisce con
-Anas platyrhynchos,Fulica atra,interagisce con
-Anas platyrhynchos,Gallinula chloropus,interagisce con
-Phragmites australis,Anas platyrhynchos,mangiato da
-Anas platyrhynchos,Hierophis viridiflavus carbonarius,mangiato da
-Apis mellifera,Lonicera japonica,interagisce con
-Apis mellifera,Salix caprea,interagisce con
-Ardea alba,Egretta garzetta,interagisce con
-Ardea alba,Nycticorax nycticorax,interagisce con
-Ardea alba,Ardea cinerea,interagisce con
-Ardea alba,Bubulcus ibis,interagisce con
-Cettia cetti,Ardea alba,mangiato da
-Lacerta viridis,Ardea alba,mangiato da
-Ardea alba,Hierophis viridiflavus carbonarius,mangiato da
-Ardea alba,Coloeus monedula,mangiato da
-Ardea cinerea,Phragmites australis,interagisce con
-Ardea cinerea,Nycticorax nycticorax,interagisce con
-Ardea cinerea,Ardea purpurea,interagisce con
-Ardea cinerea,Egretta garzetta,interagisce con
-Ardea cinerea,Gallinula chloropus,interagisce con
-Fulica atra,Ardea cinerea,mangiato da
-Lacerta viridis,Ardea cinerea,mangiato da
-Ardea cinerea,Hierophis viridiflavus carbonarius,mangiato da
-Ardea cinerea,Coloeus monedula,mangiato da
-Pelophylax,Ardea cinerea,predato da
-Fulica atra,Ardea cinerea,predato da
-Ardea,Egretta garzetta,interagisce con
-Rana latastei,Ardea,mangiato da
-Rana dalmatina,Ardea,mangiato da
-Micromys minutus,Ardea,mangiato da
-Lacerta viridis,Ardea,mangiato da
-Emys orbicularis,Ardea,mangiato da
-Natrix natrix,Ardea,mangiato da
-Ardea,Hierophis viridiflavus carbonarius,mangiato da
-Ardea,Coloeus monedula,mangiato da
-Ardea purpurea,Nycticorax nycticorax,interagisce con
-Pelophylax,Buteo buteo,predato da
-Buteo buteo,Vulpes vulpes,uccide
-Buteo buteo,Vulpes vulpes,ucciso da
-Sylvia atricapilla,Buteo buteo,mangiato da
-Dendrocopos major,Buteo buteo,mangiato da
-Coloeus monedula,Buteo buteo,mangiato da
-Columba palumbus,Buteo buteo,mangiato da
-Fringilla coelebs,Buteo buteo,mangiato da
-Pica pica,Buteo buteo,mangiato da
-Lacerta viridis,Buteo buteo,mangiato da
-Sciurus vulgaris,Buteo buteo,mangiato da
-Fulica atra,Buteo buteo,mangiato da
-Calopteryx splendens,Orthetrum cancellatum,predato da
-Cettia cetti,Hierophis viridiflavus carbonarius,mangiato da
-Cettia cetti,Rallus aquaticus,mangiato da
-Cettia cetti,Lacerta viridis,mangiato da
-Cettia cetti,Fulica atra,mangiato da
-Cettia cetti,Botaurus stellaris,mangiato da
-Cettia cetti,Vulpes vulpes,mangiato da
-Cettia cetti,Nycticorax nycticorax,mangiato da
-Salix caprea,Clytus arietis,mangiato da
-Salix caprea,Plagionotus arcuatus,mangiato da
-Coloeus monedula,Pica pica,interagisce con
-Trifolium dubium,Coloeus monedula,mangiato da
-Luscinia megarhynchos,Coloeus monedula,mangiato da
-Nycticorax nycticorax,Coloeus monedula,mangiato da
-Botaurus stellaris,Coloeus monedula,mangiato da
-Egretta garzetta,Coloeus monedula,mangiato da
-Sciurus vulgaris,Coloeus monedula,mangiato da
-Lacerta viridis,Coloeus monedula,mangiato da
-Rosa canina,Columba palumbus,mangiato da
-Allium ursinum,Columba palumbus,mangiato da
-Trifolium dubium,Columba palumbus,mangiato da
-Columba palumbus,Hierophis viridiflavus carbonarius,mangiato da
-Columba palumbus,Coloeus monedula,mangiato da
-Sylvia atricapilla,Dendrocopos major,mangiato da
-Fringilla coelebs,Dendrocopos major,mangiato da
-Dendrocopos major,Alnus glutinosa,crea habitat per
-Rosa canina,Dendrocopos major,mangiato da
-Dendrocopos major,Hierophis viridiflavus carbonarius,mangiato da
-Dendrocopos major,Sciurus vulgaris,mangiato da
-Fringilla coelebs,Dendrocopos major,predato da
-Sylvia atricapilla,Dendrocopos major,predato da
-Egretta garzetta,Nycticorax nycticorax,interagisce con
-Lacerta viridis,Egretta garzetta,mangiato da
-Egretta garzetta,Hierophis viridiflavus carbonarius,mangiato da
-Egretta garzetta,Vulpes vulpes,mangiato da
-Eristalis tenax,Helianthus tuberosus,interagisce con
-Fringilla coelebs,Sciurus vulgaris,mangiato da
-Rosa canina,Fringilla coelebs,mangiato da
-Stachys sylvatica,Fringilla coelebs,mangiato da
-Trifolium dubium,Fringilla coelebs,mangiato da
-Fringilla coelebs,Hierophis viridiflavus carbonarius,mangiato da
-Fringilla coelebs,Coloeus monedula,mangiato da
-Fringilla coelebs,Lacerta viridis,mangiato da
-Fringilla coelebs,Pica pica,mangiato da
-Fringilla coelebs,Vulpes vulpes,mangiato da
-Fringilla coelebs,Sciurus vulgaris,predato da
-Helianthus tuberosus,Apis mellifera,mangiato da
-Helianthus tuberosus,Eristalis tenax,fiore visitato da
-Helianthus tuberosus,Apis mellifera,fiore visitato da
-Luscinia megarhynchos,Hierophis viridiflavus carbonarius,mangiato da
-Buteo buteo,Hierophis viridiflavus carbonarius,mangiato da
-Pica pica,Hierophis viridiflavus carbonarius,mangiato da
-Gallinula chloropus,Hierophis viridiflavus carbonarius,mangiato da
-Bubulcus ibis,Hierophis viridiflavus carbonarius,mangiato da
-Sylvia atricapilla,Hierophis viridiflavus carbonarius,mangiato da
-Botaurus stellaris,Hierophis viridiflavus carbonarius,mangiato da
-Fulica atra,Hierophis viridiflavus carbonarius,mangiato da
-Rallus aquaticus,Hierophis viridiflavus carbonarius,mangiato da
-Microcarbo pygmaeus,Hierophis viridiflavus carbonarius,mangiato da
-Sciurus vulgaris,Hierophis viridiflavus carbonarius,mangiato da
-Phalacrocorax carbo,Hierophis viridiflavus carbonarius,mangiato da
-Nycticorax nycticorax,Hierophis viridiflavus carbonarius,mangiato da
-Lacerta viridis,Hierophis viridiflavus carbonarius,mangiato da
-Coloeus monedula,Hierophis viridiflavus carbonarius,mangiato da
-Ischnura elegans,Orthetrum cancellatum,predato da
-Isodontia mexicana,Polistes dominula,interagisce con
-Apis mellifera,Linaria vulgaris,interagisce con
-Linaria vulgaris,Pieris napi,impollinato da
-Linaria vulgaris,Apis mellifera,impollinato da
-Linaria vulgaris,Eristalis tenax,impollinato da
-Linaria vulgaris,Pieris napi,fiore visitato da
-Linaria vulgaris,Apis mellifera,fiore visitato da
-Linaria vulgaris,Eristalis tenax,fiore visitato da
-Linaria vulgaris,Melitaea didyma,ospite di
-Linaria genistifolia,Apis mellifera,impollinato da
-Linaria vulgaris,Melitaea didyma,interagisce con
-Linaria vulgaris,Apis mellifera,mangiato da
-Linaria vulgaris,Melitaea didyma,mangiato da
-Lonicera japonica,Vanessa atalanta,interagisce con
-Lonicera japonica,Apis mellifera,mangiato da
-Lonicera japonica,Vanessa atalanta,fiore visitato da
-Lonicera japonica,Apis mellifera,fiore visitato da
-Lonicera japonica,Apis mellifera,impollinato da
-Lysimachia vulgaris,Apis mellifera,impollinato da
-Lysimachia vulgaris,Apis mellifera,fiore visitato da
-Lysimachia vulgaris,Anas platyrhynchos,ha vettore
-Ajuga reptans,Melitaea athalia,fiore visitato da
-Microcarbo pygmaeus,Vulpes vulpes,mangiato da
-Ardea alba,Nycticorax nycticorax,mangiato da
-Bubulcus ibis,Nycticorax nycticorax,interagisce con
-Bubulcus ibis,Nycticorax nycticorax,mangiato da
-Lacerta viridis,Nycticorax nycticorax,mangiato da
-Pelophylax lessonae lessonae,Natrix natrix,predato da
-Rana latastei,Pelophylax ridibundus,mangiato da
-Rana dalmatina,Pelophylax ridibundus,mangiato da
-Pelophylax ridibundus,Natrix natrix,mangiato da
-Pelophylax ridibundus,Emys orbicularis,mangiato da
-Pelophylax ridibundus,Rallus aquaticus,mangiato da
-Pelophylax ridibundus,Alcedo atthis,mangiato da
-Pelophylax ridibundus,Botaurus stellaris,mangiato da
-Pelophylax ridibundus,Vulpes vulpes,mangiato da
-Pelophylax ridibundus,Pica pica,mangiato da
-Pelophylax ridibundus,Nycticorax nycticorax,mangiato da
-Pelophylax ridibundus,Ardea cinerea,mangiato da
-Pelophylax ridibundus,Gallinula chloropus,mangiato da
-Pelophylax ridibundus,Buteo buteo,mangiato da
-Pelophylax ridibundus,Ardea alba,mangiato da
-Pelophylax ridibundus,Egretta garzetta,mangiato da
-Pelophylax ridibundus,Ixobrychus minutus,mangiato da
-Pelophylax ridibundus,Coloeus monedula,mangiato da
-Pelophylax ridibundus,Anas platyrhynchos,mangiato da
-Pelophylax ridibundus,Natrix natrix,predato da
-Pelophylax shqipericus,Botaurus stellaris,mangiato da
-Pelophylax shqipericus,Ardea alba,mangiato da
-Pelophylax shqipericus,Gallinula chloropus,mangiato da
-Pelophylax shqipericus,Alcedo atthis,mangiato da
-Pelophylax shqipericus,Egretta garzetta,mangiato da
-Pelophylax shqipericus,Buteo buteo,mangiato da
-Pelophylax shqipericus,Coloeus monedula,mangiato da
-Pelophylax shqipericus,Emys orbicularis,mangiato da
-Pelophylax shqipericus,Ardea cinerea,mangiato da
-Pelophylax shqipericus,Nycticorax nycticorax,mangiato da
-Pelophylax shqipericus,Pica pica,mangiato da
-Pelophylax shqipericus,Vulpes vulpes,mangiato da
-Pelophylax shqipericus,Natrix natrix,mangiato da
-Pelophylax shqipericus,Rallus aquaticus,mangiato da
-Pelophylax shqipericus,Anas platyrhynchos,mangiato da
-Pelophylax shqipericus,Ixobrychus minutus,mangiato da
-Rana latastei,Pelophylax cerigensis,mangiato da
-Rana dalmatina,Pelophylax cerigensis,mangiato da
-Phalacrocorax carbo,Vulpes vulpes,interagisce con
-Gallinula chloropus,Phalacrocorax carbo,mangiato da
-Pica pica,Vulpes vulpes,interagisce con
-Rosa canina,Pica pica,mangiato da
-Hierophis viridiflavus carbonarius,Pica pica,mangiato da
-Rallus aquaticus,Pica pica,mangiato da
-Sylvia atricapilla,Pica pica,mangiato da
-Lacerta viridis,Pica pica,mangiato da
-Tussilago farfara,Pieris napi,fiore visitato da
-Allium ursinum,Pieris napi,fiore visitato da
-Verbena officinalis,Pieris napi,visitato da
-Tussilago farfara,Pieris napi,visitato da
-Alliaria petiolata,Pieris napi,visitato da
-Sylvia atricapilla,Sciurus vulgaris,mangiato da
-Sciurus vulgaris,Vulpes vulpes,interagisce con
-Luscinia megarhynchos,Sciurus vulgaris,mangiato da
-Sciurus vulgaris,Lacerta viridis,mangiato da
-Sciurus vulgaris,Vulpes vulpes,mangiato da
-Sylvia atricapilla,Sciurus vulgaris,predato da
-Allium ursinum,Stachys sylvatica,interagisce con
-Stachys sylvatica,Apis mellifera,impollinato da
-Rosa canina,Sylvia atricapilla,mangiato da
-Apis mellifera,Sylvia atricapilla,mangiato da
-Sylvia atricapilla,Coloeus monedula,mangiato da
-Sylvia atricapilla,Lacerta viridis,mangiato da
-Sylvia atricapilla,Vulpes vulpes,predato da
-Sylvia atricapilla,Buteo buteo,predato da
-Gallinula chloropus,Trachemys scripta,interagisce con
-Ardea alba,Trachemys scripta,interagisce con
-Trachemys scripta,Vulpes vulpes,interagisce con
-Trachemys scripta,Vulpes vulpes,mangiato da
-Trifolium campestre,Apis mellifera,fiore visitato da
-Trifolium campestre,Apis mellifera,visitato da
-Trifolium campestre,Apis mellifera,impollinato da
-Trifolium campestre,Vanessa atalanta,fiore visitato da
-Trifolium campestre,Eristalis tenax,fiore visitato da
-Trifolium dubium,Apis mellifera,impollinato da
-Trifolium dubium,Vanessa atalanta,fiore visitato da
-Trifolium dubium,Eristalis tenax,fiore visitato da
-Trifolium dubium,Apis mellifera,fiore visitato da
-Tussilago farfara,Apis mellifera,mangiato da
-Tussilago farfara,Apis mellifera,impollinato da
-Tussilago farfara,Vanessa atalanta,fiore visitato da
-Tussilago farfara,Eristalis tenax,fiore visitato da
-Tussilago farfara,Apis mellifera,fiore visitato da
-Salix caprea,Vanessa atalanta,interagisce con
-Apis mellifera,Vanessa atalanta,interagisce con
-Verbena officinalis,Apis mellifera,impollinato da
-Verbena officinalis,Apis mellifera,fiore visitato da
-Verbena officinalis,Eristalis tenax,impollinato da
-Verbena officinalis,Pieris napi,fiore visitato da
-Verbena officinalis,Eristalis tenax,fiore visitato da
-Salix caprea,Apis mellifera,mangiato da
-Salix caprea,Apis mellifera,fiore visitato da
-Salix caprea,Schizophyllum commune,adiacente a
-Bubulcus ibis,Gallinula chloropus,interagisce con
-Hierophis viridiflavus carbonarius,Bubulcus ibis,mangiato da
-Gallinula chloropus,Rallus aquaticus,interagisce con
-Fulica atra,Rallus aquaticus,mangiato da
-Gallinula chloropus,Rallus aquaticus,mangiato da
-Rallus aquaticus,Fulica atra,mangiato da
-Rallus aquaticus,Vulpes vulpes,mangiato da
-Rosa canina,Luscinia megarhynchos,mangiato da
-Luscinia megarhynchos,Lacerta viridis,mangiato da
-Luscinia megarhynchos,Vulpes vulpes,mangiato da
-Lacerta viridis,Botaurus stellaris,mangiato da
-Botaurus stellaris,Vulpes vulpes,mangiato da
-Fulica atra,Gallinula chloropus,interagisce con
-Gallinula chloropus,Fulica atra,mangiato da
-Fulica atra,Vulpes vulpes,mangiato da
-Fulica atra,Buteo buteo,predato da
-Utricularia vulgaris,Gallinula chloropus galeata,mangiato da
-Gallinula chloropus galeata,Nycticorax nycticorax,predato da
-Gallinula chloropus galeata,Ardea alba,predato da
-Rosa canina,Gallinula chloropus,mangiato da
-Gallinula chloropus,Vulpes vulpes,mangiato da
-Gallinula chloropus,Vulpes vulpes,predato da
-Allium ursinum,Apis mellifera,impollinato da
-Typha latifolia,Apis mellifera,mangiato da
-Phragmites australis,Typha latifolia,si verifica con
-Phragmites australis,Apis mellifera,mangiato da
-Phragmites australis,Apis mellifera,fiore visitato da
-Talpa europaea,Vulpes vulpes,mangiato da
-Talpa europaea,Vulpes vulpes,interagisce con
-Talpa europaea,Buteo buteo,mangiato da
-Talpa europaea,Ardea cinerea,mangiato da
-Talpa europaea,Coloeus monedula,mangiato da
-Talpa europaea,Pica pica,mangiato da
-Talpa europaea,Nycticorax nycticorax,mangiato da
-Talpa europaea,Ardea alba,mangiato da
-Talpa europaea,Ixobrychus minutus,mangiato da
-Talpa europaea,Buteo buteo,predato da
-Talpa europaea,Vulpes vulpes,predato da
+source,target,type_EN,type
+Nymphaea alba,Turdus merula,eaten by,mangiato da
+Nymphaea alba,Pica pica,eaten by,mangiato da
+Nymphaea alba,Garrulus glandarius,eaten by,mangiato da
+Nymphaea alba,Fulica atra,eaten by,mangiato da
+Nymphaea alba,Fringilla coelebs,eaten by,mangiato da
+Nymphaea alba,Emberiza schoeniclus,eaten by,mangiato da
+Nymphaea alba,Erithacus rubecula,eaten by,mangiato da
+Nymphaea alba,Emys orbicularis,eaten by,mangiato da
+Nymphaea alba,Columba palumbus,eaten by,mangiato da
+Nymphaea alba,Anas platyrhynchos,eaten by,mangiato da
+Nymphaea alba,Eristalis tenax,pollinated by,impollinato da
+Nymphaea alba,Eristalis tenax,flowers visited by,fiori visitati da
+Nymphaea alba,Apis mellifera,flowers visited by,fiori visitati da
+Nymphaea alba,Apis mellifera,eaten by,mangiato da
+Populus nigra,Coloeus monedula,interacts with,interagisce con
+Populus nigra,Clytus arietis,eaten by,mangiato da
+Populus nigra,Turdus merula,eaten by,mangiato da
+Populus nigra,Pica pica,eaten by,mangiato da
+Populus nigra,Garrulus glandarius,eaten by,mangiato da
+Populus nigra,Fulica atra,eaten by,mangiato da
+Populus nigra,Fringilla coelebs,eaten by,mangiato da
+Populus nigra,Erithacus rubecula,eaten by,mangiato da
+Populus nigra,Emys orbicularis,eaten by,mangiato da
+Populus nigra,Emberiza schoeniclus,eaten by,mangiato da
+Populus nigra,Columba palumbus,eaten by,mangiato da
+Populus nigra,Anas platyrhynchos,eaten by,mangiato da
+Populus nigra,Laothoe populi,host of,ospite di
+Carex,Salix,interacts with,interagisce con
+Carex,Prunus avium,interacts with,interagisce con
+Carex,Emys orbicularis,eaten by,mangiato da
+Carex,Anas crecca,eaten by,mangiato da
+Typha latifolia,Anas platyrhynchos,interacts with,interagisce con
+Typha latifolia,Turdus merula,eaten by,mangiato da
+Typha latifolia,Pica pica,eaten by,mangiato da
+Typha latifolia,Garrulus glandarius,eaten by,mangiato da
+Typha latifolia,Fringilla coelebs,eaten by,mangiato da
+Typha latifolia,Fulica atra,eaten by,mangiato da
+Typha latifolia,Erithacus rubecula,eaten by,mangiato da
+Typha latifolia,Emys orbicularis,eaten by,mangiato da
+Typha latifolia,Emberiza schoeniclus,eaten by,mangiato da
+Typha latifolia,Columba palumbus,eaten by,mangiato da
+Typha latifolia,Anas platyrhynchos,eaten by,mangiato da
+Typha latifolia,Apis mellifera,eaten by,mangiato da
+Typha latifolia,Sympetrum striolatum,pollinated by,impollinato da
+Typha latifolia,Sympetrum striolatum,flowers visited by,fiori visitati da
+Typha latifolia,Salix,interacts with,interagisce con
+Microcarbo pygmaeus,Pelophylax ridibundus,eats,mangia
+Emberiza schoeniclus,Verbena officinalis,eats,mangia
+Emberiza schoeniclus,Tussilago farfara,eats,mangia
+Emberiza schoeniclus,Iris pseudacorus,eats,mangia
+Emberiza schoeniclus,Prunus avium,eats,mangia
+Emberiza schoeniclus,Ligustrum vulgare,eats,mangia
+Emberiza schoeniclus,Trifolium campestre,eats,mangia
+Emberiza schoeniclus,Linaria genistifolia,eats,mangia
+Emberiza schoeniclus,Salix alba,eats,mangia
+Emberiza schoeniclus,Populus alba,eats,mangia
+Emberiza schoeniclus,Phragmites australis,eats,mangia
+Emberiza schoeniclus,Salix caprea,eats,mangia
+Emberiza schoeniclus,Rosa canina,eats,mangia
+Emberiza schoeniclus,Trifolium dubium,eats,mangia
+Emberiza schoeniclus,Polygonum aviculare,eats,mangia
+Emberiza schoeniclus,Helianthus tuberosus,eats,mangia
+Emberiza schoeniclus,Stachys sylvatica,eats,mangia
+Emberiza schoeniclus,Linaria vulgaris,eats,mangia
+Tachybaptus ruficollis,Fulica atra,interacts with,interagisce con
+Tachybaptus ruficollis,Anas platyrhynchos,interacts with,interagisce con
+Tachybaptus ruficollis,Anas crecca,interacts with,interagisce con
+Tachybaptus ruficollis,Lissotriton vulgaris,eats,mangia
+Tachybaptus ruficollis,Pelophylax cerigensis,eats,mangia
+Tachybaptus ruficollis,Pelophylax ridibundus,eats,mangia
+Tachybaptus ruficollis,Pelophylax shqipericus,eats,mangia
+Tachybaptus ruficollis,Rana dalmatina,eats,mangia
+Tachybaptus ruficollis,Rana latastei,eats,mangia
+Tachybaptus ruficollis,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Tachybaptus ruficollis,Fulica atra,eaten by,mangiato da
+Tachybaptus ruficollis,Calopterygidae,preys on,preda
+Tachybaptus ruficollis,Platycnemis pennipes,preys on,preda
+Tachybaptus ruficollis,Ischnura elegans,preys on,preda
+Tachybaptus ruficollis,Calopteryx splendens,preys on,preda
+Tachybaptus ruficollis,Rana dalmatina,preys on,preda
+Tachybaptus ruficollis,Lycaena phlaeas,preys on,preda
+Tachybaptus ruficollis,Melitaea athalia,preys on,preda
+Tachybaptus ruficollis,Polyommatus icarus,preys on,preda
+Tachybaptus ruficollis,Pieris napi,preys on,preda
+Tachybaptus ruficollis,Pyrgus malvae,preys on,preda
+Tachybaptus ruficollis,Melitaea didyma,preys on,preda
+Tachybaptus ruficollis,Pieris rapae,preys on,preda
+Tachybaptus ruficollis,Rana latastei,preys on,preda
+Tachybaptus ruficollis,Polyommatus thersites,preys on,preda
+Tachybaptus ruficollis,Vanessa atalanta,preys on,preda
+Tachybaptus ruficollis,Coenonympha pamphilus,preys on,preda
+Tringa glareola,Bufotes viridis,interacts with,interagisce con
+Tringa glareola,Ardea alba,interacts with,interagisce con
+Tringa glareola,Himantopus himantopus,interacts with,interagisce con
+Tringa glareola,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Tringa glareola,Vulpes vulpes,eaten by,mangiato da
+Tringa glareola,Coloeus monedula,eaten by,mangiato da
+Tringa glareola,Circus cyaneus,eaten by,mangiato da
+Tringa glareola,Vulpes vulpes,preyed upon by,predato da
+Tringa glareola,Circus cyaneus,preyed upon by,predato da
+Charadrius dubius,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Charadrius dubius,Vulpes vulpes,eaten by,mangiato da
+Charadrius dubius,Coloeus monedula,eaten by,mangiato da
+Charadrius dubius,Circus cyaneus,eaten by,mangiato da
+Charadrius dubius,Vulpes vulpes,preyed upon by,predato da
+Charadrius dubius,Circus cyaneus,preyed upon by,predato da
+Himantopus himantopus,Nycticorax nycticorax,interacts with,interagisce con
+Himantopus himantopus,Anas crecca,interacts with,interagisce con
+Himantopus himantopus,Ardea cinerea,interacts with,interagisce con
+Himantopus himantopus,Gallinula chloropus,interacts with,interagisce con
+Himantopus himantopus,Alcedo atthis,interacts with,interagisce con
+Himantopus himantopus,Egretta garzetta,interacts with,interagisce con
+Himantopus himantopus,Ardea alba,interacts with,interagisce con
+Himantopus himantopus,Triturus carnifex,eats,mangia
+Himantopus himantopus,Rana latastei,eats,mangia
+Himantopus himantopus,Pelophylax shqipericus,eats,mangia
+Himantopus himantopus,Bufotes viridis,eats,mangia
+Himantopus himantopus,Rana dalmatina,eats,mangia
+Himantopus himantopus,Pelophylax ridibundus,eats,mangia
+Himantopus himantopus,Pelophylax cerigensis,eats,mangia
+Himantopus himantopus,Lissotriton vulgaris,eats,mangia
+Himantopus himantopus,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Himantopus himantopus,Vulpes vulpes,eaten by,mangiato da
+Himantopus himantopus,Coloeus monedula,eaten by,mangiato da
+Himantopus himantopus,Fulica atra,eaten by,mangiato da
+Himantopus himantopus,Rallus aquaticus,eaten by,mangiato da
+Himantopus himantopus,Triturus carnifex,preys on,preda
+Himantopus himantopus,Rana latastei,preys on,preda
+Himantopus himantopus,Lissotriton vulgaris,preys on,preda
+Himantopus himantopus,Rana dalmatina,preys on,preda
+Himantopus himantopus,Pelophylax ridibundus,preys on,preda
+Himantopus himantopus,Bufotes viridis,preys on,preda
+Himantopus himantopus,Vulpes vulpes,preyed upon by,predato da
+Himantopus himantopus,Rallus aquaticus,preyed upon by,predato da
+Himantopus himantopus,Fulica atra,preyed upon by,predato da
+Leptidea juvernica,Ardea ibis,preyed upon by,predato da
+Melitaea athalia,Rubus,visits flowers of,visita i fiori di
+Melitaea athalia,Linaria vulgaris,eats,mangia
+Melitaea athalia,Linaria genistifolia,eats,mangia
+Melitaea athalia,Ligustrum vulgare,eats,mangia
+Melitaea athalia,Ardea ibis,preyed upon by,predato da
+Melitaea athalia,Turdus merula,preyed upon by,predato da
+Melitaea athalia,Sylvia atricapilla,preyed upon by,predato da
+Melitaea athalia,Rallus aquaticus,preyed upon by,predato da
+Melitaea athalia,Pica pica,preyed upon by,predato da
+Melitaea athalia,Luscinia megarhynchos,preyed upon by,predato da
+Melitaea athalia,Gallinula chloropus,preyed upon by,predato da
+Melitaea athalia,Garrulus glandarius,preyed upon by,predato da
+Melitaea athalia,Fringilla coelebs,preyed upon by,predato da
+Melitaea athalia,Erithacus rubecula,preyed upon by,predato da
+Melitaea athalia,Emberiza schoeniclus,preyed upon by,predato da
+Melitaea athalia,Aegithalos caudatus,preyed upon by,predato da
+Melitaea athalia,Ajuga reptans,pollinates,impollina
+Melitaea athalia,Ajuga reptans,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Cichorium intybus,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Stachys sylvatica,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Rubus,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Ligustrum vulgare,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Trifolium campestre,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Ajuga reptans,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Linaria vulgaris,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Trifolium dubium,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Rosa canina,visits flowers of,visita i fiori di
+Ochlodes sylvanus,Taraxacum,visits flowers of,visita i fiori di
+Lycaena phlaeas,Rubus,interacts with,interagisce con
+Lycaena phlaeas,Polyommatus icarus,interacts with,interagisce con
+Lycaena phlaeas,Polygonum aviculare,eats,mangia
+Lycaena phlaeas,Verbena officinalis,eats,mangia
+Lycaena phlaeas,Taraxacum,eats,mangia
+Lycaena phlaeas,Rubus,eats,mangia
+Lycaena phlaeas,Turdus merula,preyed upon by,predato da
+Lycaena phlaeas,Sylvia atricapilla,preyed upon by,predato da
+Lycaena phlaeas,Rallus aquaticus,preyed upon by,predato da
+Lycaena phlaeas,Pica pica,preyed upon by,predato da
+Lycaena phlaeas,Luscinia megarhynchos,preyed upon by,predato da
+Lycaena phlaeas,Gallinula chloropus,preyed upon by,predato da
+Lycaena phlaeas,Garrulus glandarius,preyed upon by,predato da
+Lycaena phlaeas,Fringilla coelebs,preyed upon by,predato da
+Lycaena phlaeas,Erithacus rubecula,preyed upon by,predato da
+Lycaena phlaeas,Emberiza schoeniclus,preyed upon by,predato da
+Lycaena phlaeas,Aegithalos caudatus,preyed upon by,predato da
+Lycaena phlaeas,Rubus,pollinates,impollina
+Lycaena phlaeas,Ligustrum,pollinates,impollina
+Lycaena phlaeas,Trifolium campestre,pollinates,impollina
+Lycaena phlaeas,Trifolium dubium,pollinates,impollina
+Lycaena phlaeas,Ligustrum vulgare,pollinates,impollina
+Lycaena phlaeas,Rosa canina,pollinates,impollina
+Lycaena phlaeas,Allium ursinum,pollinates,impollina
+Lycaena phlaeas,Alliaria petiolata,pollinates,impollina
+Lycaena phlaeas,Ligustrum,visits flowers of,visita i fiori di
+Lycaena phlaeas,Anthemideae,visits flowers of,visita i fiori di
+Lycaena phlaeas,Helianthus tuberosus,visits flowers of,visita i fiori di
+Lycaena phlaeas,Rubus,visits flowers of,visita i fiori di
+Lycaena phlaeas,Rosa canina,visits flowers of,visita i fiori di
+Lycaena phlaeas,Taraxacum,visits flowers of,visita i fiori di
+Lycaena phlaeas,Allium ursinum,visits flowers of,visita i fiori di
+Lycaena phlaeas,Alliaria petiolata,visits flowers of,visita i fiori di
+Lycaena phlaeas,Taraxacum,visits,visita
+Lycaena phlaeas,Anthemideae,visits,visita
+Coenonympha pamphilus,Poaceae,interacts with,interagisce con
+Coenonympha pamphilus,Magnoliopsida,interacts with,interagisce con
+Coenonympha pamphilus,Verbena officinalis,eats,mangia
+Coenonympha pamphilus,Poaceae,eats,mangia
+Coenonympha pamphilus,Cornus sanguinea,eats,mangia
+Coenonympha pamphilus,Ajuga reptans,eats,mangia
+Coenonympha pamphilus,Polygonum aviculare,eats,mangia
+Coenonympha pamphilus,Ardea ibis,preyed upon by,predato da
+Coenonympha pamphilus,Turdus merula,preyed upon by,predato da
+Coenonympha pamphilus,Sylvia atricapilla,preyed upon by,predato da
+Coenonympha pamphilus,Rallus aquaticus,preyed upon by,predato da
+Coenonympha pamphilus,Pica pica,preyed upon by,predato da
+Coenonympha pamphilus,Luscinia megarhynchos,preyed upon by,predato da
+Coenonympha pamphilus,Fringilla coelebs,preyed upon by,predato da
+Coenonympha pamphilus,Gallinula chloropus,preyed upon by,predato da
+Coenonympha pamphilus,Garrulus glandarius,preyed upon by,predato da
+Coenonympha pamphilus,Erithacus rubecula,preyed upon by,predato da
+Coenonympha pamphilus,Emberiza schoeniclus,preyed upon by,predato da
+Coenonympha pamphilus,Aegithalos caudatus,preyed upon by,predato da
+Coenonympha pamphilus,Taraxacum,pollinates,impollina
+Coenonympha pamphilus,Geranium,pollinates,impollina
+Coenonympha pamphilus,Trifolium campestre,pollinates,impollina
+Coenonympha pamphilus,Trifolium dubium,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Polygonum aviculare,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Ajuga reptans,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Apioideae,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Anthemideae,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Helianthus tuberosus,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Cornus sanguinea,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Poaceae,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Rubus,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Magnoliopsida,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Geranium,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Taraxacum,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Trifolium campestre,visits flowers of,visita i fiori di
+Coenonympha pamphilus,Poaceae,has host,ha come ospite
+Coenonympha pamphilus,Cornus sanguinea,visits,visita
+Coenonympha pamphilus,Anthemideae,visits,visita
+Cupido argiades,Geranium,visits flowers of,visita i fiori di
+Cupido argiades,Trifolium campestre,eats,mangia
+Cupido argiades,Trifolium dubium,eats,mangia
+Cupido argiades,Turdus merula,preyed upon by,predato da
+Cupido argiades,Tachybaptus ruficollis,preyed upon by,predato da
+Cupido argiades,Sylvia atricapilla,preyed upon by,predato da
+Cupido argiades,Rallus aquaticus,preyed upon by,predato da
+Cupido argiades,Pica pica,preyed upon by,predato da
+Cupido argiades,Luscinia megarhynchos,preyed upon by,predato da
+Cupido argiades,Fringilla coelebs,preyed upon by,predato da
+Cupido argiades,Gallinula chloropus,preyed upon by,predato da
+Cupido argiades,Garrulus glandarius,preyed upon by,predato da
+Cupido argiades,Erithacus rubecula,preyed upon by,predato da
+Cupido argiades,Emberiza schoeniclus,preyed upon by,predato da
+Cupido argiades,Aegithalos caudatus,preyed upon by,predato da
+Pieris rapae,Salix,interacts with,interagisce con
+Pieris rapae,Rosa,interacts with,interagisce con
+Pieris rapae,Rubus,interacts with,interagisce con
+Pieris rapae,Magnoliopsida,interacts with,interagisce con
+Pieris rapae,Taraxacum,interacts with,interagisce con
+Pieris rapae,Caryophyllaceae,interacts with,interagisce con
+Pieris rapae,Pieris napi,interacts with,interagisce con
+Pieris rapae,Alliaria petiolata,interacts with,interagisce con
+Pieris rapae,Linaria vulgaris,interacts with,interagisce con
+Pieris rapae,Salix alba,eats,mangia
+Pieris rapae,Allium vineale,eats,mangia
+Pieris rapae,Verbena officinalis,eats,mangia
+Pieris rapae,Salix caprea,eats,mangia
+Pieris rapae,Ligustrum vulgare,eats,mangia
+Polyommatus icarus,Trifolium campestre,eats,mangia
+Polyommatus icarus,Trifolium dubium,eats,mangia
+Polyommatus icarus,Ligustrum vulgare,eats,mangia
+Polyommatus icarus,Turdus merula,preyed upon by,predato da
+Polyommatus icarus,Sylvia atricapilla,preyed upon by,predato da
+Polyommatus icarus,Rallus aquaticus,preyed upon by,predato da
+Polyommatus icarus,Pica pica,preyed upon by,predato da
+Polyommatus icarus,Luscinia megarhynchos,preyed upon by,predato da
+Polyommatus icarus,Fringilla coelebs,preyed upon by,predato da
+Polyommatus icarus,Garrulus glandarius,preyed upon by,predato da
+Polyommatus icarus,Gallinula chloropus,preyed upon by,predato da
+Polyommatus icarus,Erithacus rubecula,preyed upon by,predato da
+Polyommatus icarus,Emberiza schoeniclus,preyed upon by,predato da
+Polyommatus icarus,Aegithalos caudatus,preyed upon by,predato da
+Polyommatus icarus,Taraxacum,pollinates,impollina
+Polyommatus icarus,Rosa canina,pollinates,impollina
+Polyommatus icarus,Linaria genistifolia,pollinates,impollina
+Polyommatus icarus,Trifolium campestre,pollinates,impollina
+Polyommatus icarus,Rubus,visits flowers of,visita i fiori di
+Polyommatus icarus,Cichorium intybus,visits flowers of,visita i fiori di
+Polyommatus icarus,Geranium,visits flowers of,visita i fiori di
+Polyommatus icarus,Crepidinae,visits flowers of,visita i fiori di
+Polyommatus icarus,Linaria vulgaris,visits flowers of,visita i fiori di
+Polyommatus icarus,Ajuga reptans,visits flowers of,visita i fiori di
+Polyommatus icarus,Rosa canina,visits flowers of,visita i fiori di
+Polyommatus icarus,Verbena officinalis,visits flowers of,visita i fiori di
+Polyommatus icarus,Trifolium dubium,visits flowers of,visita i fiori di
+Polyommatus icarus,Trifolium campestre,visits flowers of,visita i fiori di
+Polyommatus thersites,Trifolium campestre,eats,mangia
+Polyommatus thersites,Trifolium dubium,eats,mangia
+Polyommatus thersites,Turdus merula,preyed upon by,predato da
+Polyommatus thersites,Sylvia atricapilla,preyed upon by,predato da
+Polyommatus thersites,Rallus aquaticus,preyed upon by,predato da
+Polyommatus thersites,Pica pica,preyed upon by,predato da
+Polyommatus thersites,Luscinia megarhynchos,preyed upon by,predato da
+Polyommatus thersites,Fringilla coelebs,preyed upon by,predato da
+Polyommatus thersites,Gallinula chloropus,preyed upon by,predato da
+Polyommatus thersites,Garrulus glandarius,preyed upon by,predato da
+Polyommatus thersites,Erithacus rubecula,preyed upon by,predato da
+Polyommatus thersites,Emberiza schoeniclus,preyed upon by,predato da
+Polyommatus thersites,Aegithalos caudatus,preyed upon by,predato da
+Polyommatus thersites,Anthemideae,visits,visita
+Pontia edusa,Magnoliopsida,interacts with,interagisce con
+Pontia edusa,Ardea ibis,preyed upon by,predato da
+Pontia edusa,Taraxacum,visits flowers of,visita i fiori di
+Pontia edusa,Anthemideae,visits flowers of,visita i fiori di
+Pyrgus malvae,Ardea ibis,preyed upon by,predato da
+Pyrgus malvae,Turdus merula,preyed upon by,predato da
+Pyrgus malvae,Sylvia atricapilla,preyed upon by,predato da
+Pyrgus malvae,Rallus aquaticus,preyed upon by,predato da
+Pyrgus malvae,Pica pica,preyed upon by,predato da
+Pyrgus malvae,Luscinia megarhynchos,preyed upon by,predato da
+Pyrgus malvae,Gallinula chloropus,preyed upon by,predato da
+Pyrgus malvae,Garrulus glandarius,preyed upon by,predato da
+Pyrgus malvae,Fringilla coelebs,preyed upon by,predato da
+Pyrgus malvae,Erithacus rubecula,preyed upon by,predato da
+Pyrgus malvae,Emberiza schoeniclus,preyed upon by,predato da
+Pyrgus malvae,Aegithalos caudatus,preyed upon by,predato da
+Pyrgus malvae,Taraxacum,pollinates,impollina
+Pyrgus malvae,Rubus,visits flowers of,visita i fiori di
+Pyrgus malvae,Ajuga reptans,visits flowers of,visita i fiori di
+Pyrgus malvae,Taraxacum,visits flowers of,visita i fiori di
+Pyrgus malvae,Rubus,has host,ha come ospite
+Pyrgus malvae,Rubus,eats,mangia
+Celastrina argiolus,Cornus sanguinea,interacts with,interagisce con
+Celastrina argiolus,Rubus,interacts with,interagisce con
+Celastrina argiolus,Ligustrum,interacts with,interagisce con
+Celastrina argiolus,Alliaria petiolata,interacts with,interagisce con
+Celastrina argiolus,Magnoliopsida,interacts with,interagisce con
+Celastrina argiolus,Caryophyllaceae,interacts with,interagisce con
+Celastrina argiolus,Polygonum aviculare,eats,mangia
+Celastrina argiolus,Lonicera japonica,eats,mangia
+Celastrina argiolus,Rubus,eats,mangia
+Celastrina argiolus,Cornus sanguinea,eats,mangia
+Celastrina argiolus,Turdus merula,preyed upon by,predato da
+Celastrina argiolus,Sylvia atricapilla,preyed upon by,predato da
+Celastrina argiolus,Tachybaptus ruficollis,preyed upon by,predato da
+Celastrina argiolus,Rallus aquaticus,preyed upon by,predato da
+Celastrina argiolus,Pica pica,preyed upon by,predato da
+Celastrina argiolus,Luscinia megarhynchos,preyed upon by,predato da
+Celastrina argiolus,Fringilla coelebs,preyed upon by,predato da
+Celastrina argiolus,Garrulus glandarius,preyed upon by,predato da
+Celastrina argiolus,Gallinula chloropus,preyed upon by,predato da
+Celastrina argiolus,Erithacus rubecula,preyed upon by,predato da
+Celastrina argiolus,Emberiza schoeniclus,preyed upon by,predato da
+Celastrina argiolus,Aegithalos caudatus,preyed upon by,predato da
+Celastrina argiolus,Salix,pollinates,impollina
+Celastrina argiolus,Salix caprea,pollinates,impollina
+Celastrina argiolus,Salix alba,pollinates,impollina
+Celastrina argiolus,Ajuga reptans,pollinates,impollina
+Celastrina argiolus,Prunus avium,pollinates,impollina
+Celastrina argiolus,Linaria vulgaris,pollinates,impollina
+Celastrina argiolus,Alliaria petiolata,pollinates,impollina
+Celastrina argiolus,Rosa canina,pollinates,impollina
+Celastrina argiolus,Taraxacum,visits flowers of,visita i fiori di
+Celastrina argiolus,Salix,visits flowers of,visita i fiori di
+Celastrina argiolus,Rubus,visits flowers of,visita i fiori di
+Celastrina argiolus,Magnoliopsida,visits flowers of,visita i fiori di
+Celastrina argiolus,Linaria vulgaris,visits flowers of,visita i fiori di
+Celastrina argiolus,Prunus avium,visits flowers of,visita i fiori di
+Celastrina argiolus,Ligustrum vulgare,visits flowers of,visita i fiori di
+Celastrina argiolus,Alliaria petiolata,visits flowers of,visita i fiori di
+Ardea purpurea,Ardea cinerea,interacts with,interagisce con
+Ardea purpurea,Ardea alba,interacts with,interagisce con
+Ardea purpurea,Nycticorax nycticorax,interacts with,interagisce con
+Ardea purpurea,Lacerta bilineata,eats,mangia
+Ardea purpurea,Emys orbicularis,eats,mangia
+Ardea purpurea,Arvicola amphibius,eats,mangia
+Ardea purpurea,Bufotes viridis,eats,mangia
+Ardea purpurea,Pelophylax ridibundus,eats,mangia
+Ardea purpurea,Rana latastei,eats,mangia
+Ardea purpurea,Pelophylax shqipericus,eats,mangia
+Ardea purpurea,Micromys minutus,eats,mangia
+Ardea purpurea,Natrix natrix,eats,mangia
+Ardea purpurea,Rana dalmatina,eats,mangia
+Ardea purpurea,Pelophylax cerigensis,eats,mangia
+Ardea purpurea,Lissotriton vulgaris,eats,mangia
+Ardea purpurea,Talpa europaea,eats,mangia
+Ardea purpurea,Lacerta viridis,eats,mangia
+Ardea purpurea,Triturus carnifex,eats,mangia
+Ardea purpurea,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Ardea purpurea,Coloeus monedula,eaten by,mangiato da
+Ardea purpurea,Lissotriton vulgaris,preys on,preda
+Ardea purpurea,Rana latastei,preys on,preda
+Ardea purpurea,Rana dalmatina,preys on,preda
+Ardea purpurea,Triturus carnifex,preys on,preda
+Ardea purpurea,Pelophylax ridibundus,preys on,preda
+Ardea purpurea,Bufotes viridis,preys on,preda
+Ardea purpurea,Talpa europaea,preys on,preda
+Ardea purpurea,Emys orbicularis,preys on,preda
+Ardea purpurea,Natrix natrix,preys on,preda
+Ardea purpurea,Micromys minutus,preys on,preda
+Ardea purpurea,Arvicola amphibius,preys on,preda
+Ardea purpurea,Lacerta bilineata,preys on,preda
+Ardea purpurea,Phragmites australis,visits,visita
+Circus cyaneus,Anas crecca,preys on,preda
+Circus cyaneus,Pelophylax shqipericus,eats,mangia
+Circus cyaneus,Anas platyrhynchos,eats,mangia
+Circus cyaneus,Pelophylax cerigensis,eats,mangia
+Circus cyaneus,Sylvia atricapilla,eats,mangia
+Circus cyaneus,Emberiza schoeniclus,eats,mangia
+Circus cyaneus,Rana dalmatina,eats,mangia
+Circus cyaneus,Micromys minutus,eats,mangia
+Circus cyaneus,Fringilla coelebs,eats,mangia
+Circus cyaneus,Pelophylax ridibundus,eats,mangia
+Circus cyaneus,Rana latastei,eats,mangia
+Circus cyaneus,Anas crecca,eats,mangia
+Circus cyaneus,Arvicola amphibius,eats,mangia
+Circus cyaneus,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Circus cyaneus,Vulpes vulpes,eaten by,mangiato da
+Circus cyaneus,Sylvia atricapilla,preys on,preda
+Circus cyaneus,Arvicola amphibius,preys on,preda
+Circus cyaneus,Rana latastei,preys on,preda
+Circus cyaneus,Anas platyrhynchos,preys on,preda
+Circus cyaneus,Emberiza schoeniclus,preys on,preda
+Circus cyaneus,Rana dalmatina,preys on,preda
+Circus cyaneus,Micromys minutus,preys on,preda
+Circus cyaneus,Pelophylax ridibundus,preys on,preda
+Circus cyaneus,Fringilla coelebs,preys on,preda
+Circus cyaneus,Vulpes vulpes,preyed upon by,predato da
+Circus cyaneus,Vulpes vulpes,interacts with,interagisce con
+Egretta garzetta,Anas platyrhynchos,interacts with,interagisce con
+Egretta garzetta,Ardea cinerea,interacts with,interagisce con
+Egretta garzetta,Magnoliopsida,interacts with,interagisce con
+Egretta garzetta,Gallinula chloropus,interacts with,interagisce con
+Egretta garzetta,Phalacrocorax carbo,interacts with,interagisce con
+Egretta garzetta,Nycticorax nycticorax,interacts with,interagisce con
+Egretta garzetta,Ardea alba,interacts with,interagisce con
+Egretta garzetta,Emys orbicularis,eats,mangia
+Egretta garzetta,Arvicola amphibius,eats,mangia
+Egretta garzetta,Natrix natrix,eats,mangia
+Egretta garzetta,Lacerta bilineata,eats,mangia
+Egretta garzetta,Rana dalmatina,eats,mangia
+Egretta garzetta,Pelophylax shqipericus,eats,mangia
+Egretta garzetta,Triturus carnifex,eats,mangia
+Egretta garzetta,Lacerta viridis,eats,mangia
+Egretta garzetta,Pelophylax ridibundus,eats,mangia
+Egretta garzetta,Rana latastei,eats,mangia
+Egretta garzetta,Pelophylax cerigensis,eats,mangia
+Egretta garzetta,Lissotriton vulgaris,eats,mangia
+Egretta garzetta,Micromys minutus,eats,mangia
+Egretta garzetta,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Egretta garzetta,Vulpes vulpes,eaten by,mangiato da
+Egretta garzetta,Coloeus monedula,eaten by,mangiato da
+Egretta garzetta,Lissotriton vulgaris,preys on,preda
+Egretta garzetta,Arvicola amphibius,preys on,preda
+Egretta garzetta,Rana latastei,preys on,preda
+Egretta garzetta,Triturus carnifex,preys on,preda
+Egretta garzetta,Emys orbicularis,preys on,preda
+Egretta garzetta,Lacerta bilineata,preys on,preda
+Egretta garzetta,Rana dalmatina,preys on,preda
+Egretta garzetta,Micromys minutus,preys on,preda
+Egretta garzetta,Pelophylax ridibundus,preys on,preda
+Egretta garzetta,Natrix natrix,preys on,preda
+Egretta garzetta,Vulpes vulpes,preyed upon by,predato da
+Emys orbicularis,Salix,eats,mangia
+Emys orbicularis,Salix caprea,eats,mangia
+Emys orbicularis,Salix alba,eats,mangia
+Emys orbicularis,Carex hirta,eats,mangia
+Emys orbicularis,Populus alba,eats,mangia
+Emys orbicularis,Iris pseudacorus,eats,mangia
+Emys orbicularis,Alnus glutinosa,eats,mangia
+Emys orbicularis,Phragmites australis,eats,mangia
+Emys orbicularis,Pelophylax ridibundus,eats,mangia
+Emys orbicularis,Triturus carnifex,eats,mangia
+Emys orbicularis,Rana dalmatina,eats,mangia
+Emys orbicularis,Rana latastei,eats,mangia
+Emys orbicularis,Lissotriton vulgaris,eats,mangia
+Emys orbicularis,Pelophylax shqipericus,eats,mangia
+Emys orbicularis,Pelophylax cerigensis,eats,mangia
+Emys orbicularis,Ardea alba,eaten by,mangiato da
+Emys orbicularis,Vulpes vulpes,eaten by,mangiato da
+Emys orbicularis,Pica pica,eaten by,mangiato da
+Emys orbicularis,Ardea ibis,eaten by,mangiato da
+Emys orbicularis,Ardea cinerea,eaten by,mangiato da
+Emys orbicularis,Rana latastei,preys on,preda
+Emys orbicularis,Ischnura elegans,preys on,preda
+Emys orbicularis,Rana dalmatina,preys on,preda
+Emys orbicularis,Sympetrum striolatum,preys on,preda
+Emys orbicularis,Clytus arietis,preys on,preda
+Emys orbicularis,Triturus carnifex,preys on,preda
+Emys orbicularis,Turdus merula,preys on,preda
+Emys orbicularis,Lissotriton vulgaris,preys on,preda
+Emys orbicularis,Pelophylax ridibundus,preys on,preda
+Emys orbicularis,Vulpes vulpes,preyed upon by,predato da
+Emys orbicularis,Pica pica,preyed upon by,predato da
+Emys orbicularis,Ardea ibis,preyed upon by,predato da
+Emys orbicularis,Ardea alba,preyed upon by,predato da
+Emys orbicularis,Ardea cinerea,preyed upon by,predato da
+Lanius collurio,Micromys minutus,eats,mangia
+Lanius collurio,Triturus carnifex,eats,mangia
+Lanius collurio,Lissotriton vulgaris,eats,mangia
+Lanius collurio,Pica pica,eats,mangia
+Lanius collurio,Luscinia megarhynchos,eats,mangia
+Lanius collurio,Erithacus rubecula,eats,mangia
+Lanius collurio,Emberiza schoeniclus,eats,mangia
+Lanius collurio,Pelophylax shqipericus,eats,mangia
+Lanius collurio,Turdus merula,eats,mangia
+Lanius collurio,Pelophylax ridibundus,eats,mangia
+Lanius collurio,Lacerta bilineata,eats,mangia
+Lanius collurio,Fringilla coelebs,eats,mangia
+Lanius collurio,Sylvia atricapilla,eats,mangia
+Lanius collurio,Aegithalos caudatus,eats,mangia
+Lanius collurio,Natrix natrix,eats,mangia
+Lanius collurio,Arvicola amphibius,eats,mangia
+Lanius collurio,Pelophylax cerigensis,eats,mangia
+Lanius collurio,Lacerta viridis,eats,mangia
+Lanius collurio,Cettia cetti,eats,mangia
+Lanius collurio,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Lanius collurio,Lacerta viridis,eaten by,mangiato da
+Lanius collurio,Lacerta bilineata,eaten by,mangiato da
+Lanius collurio,Coloeus monedula,eaten by,mangiato da
+Lanius collurio,Garrulus glandarius,eaten by,mangiato da
+Lanius collurio,Lacerta bilineata,preys on,preda
+Lanius collurio,Luscinia megarhynchos,preys on,preda
+Lanius collurio,Lissotriton vulgaris,preys on,preda
+Lanius collurio,Cettia cetti,preys on,preda
+Lanius collurio,Emberiza schoeniclus,preys on,preda
+Lanius collurio,Pelophylax ridibundus,preys on,preda
+Lanius collurio,Erithacus rubecula,preys on,preda
+Lanius collurio,Fringilla coelebs,preys on,preda
+Lanius collurio,Pica pica,preys on,preda
+Lanius collurio,Natrix natrix,preys on,preda
+Lanius collurio,Triturus carnifex,preys on,preda
+Lanius collurio,Micromys minutus,preys on,preda
+Lanius collurio,Arvicola amphibius,preys on,preda
+Lanius collurio,Turdus merula,preys on,preda
+Lanius collurio,Aegithalos caudatus,preys on,preda
+Lanius collurio,Talpa europaea,preys on,preda
+Lanius collurio,Sylvia atricapilla,preys on,preda
+Lanius collurio,Lacerta bilineata,preyed upon by,predato da
+Lanius collurio,Garrulus glandarius,preyed upon by,predato da
+Nycticorax nycticorax,Ardea ibis,interacts with,interagisce con
+Nycticorax nycticorax,Poaceae,interacts with,interagisce con
+Nycticorax nycticorax,Gallinula chloropus,interacts with,interagisce con
+Nycticorax nycticorax,Anas platyrhynchos,interacts with,interagisce con
+Nycticorax nycticorax,Ardea cinerea,interacts with,interagisce con
+Nycticorax nycticorax,Ardea alba,interacts with,interagisce con
+Nycticorax nycticorax,Ardea alba,eats,mangia
+Nycticorax nycticorax,Ardea ibis,eats,mangia
+Nycticorax nycticorax,Pelophylax shqipericus,eats,mangia
+Nycticorax nycticorax,Pelophylax cerigensis,eats,mangia
+Nycticorax nycticorax,Rana dalmatina,eats,mangia
+Nycticorax nycticorax,Lacerta bilineata,eats,mangia
+Nycticorax nycticorax,Triturus carnifex,eats,mangia
+Nycticorax nycticorax,Arvicola amphibius,eats,mangia
+Nycticorax nycticorax,Natrix natrix,eats,mangia
+Nycticorax nycticorax,Lissotriton vulgaris,eats,mangia
+Nycticorax nycticorax,Cettia cetti,eats,mangia
+Nycticorax nycticorax,Rana latastei,eats,mangia
+Nycticorax nycticorax,Pelophylax ridibundus,eats,mangia
+Nycticorax nycticorax,Talpa europaea,eats,mangia
+Nycticorax nycticorax,Lacerta viridis,eats,mangia
+Nycticorax nycticorax,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Nycticorax nycticorax,Coloeus monedula,eaten by,mangiato da
+Nycticorax nycticorax,Natrix natrix,preys on,preda
+Nycticorax nycticorax,Triturus carnifex,preys on,preda
+Nycticorax nycticorax,Rana dalmatina,preys on,preda
+Nycticorax nycticorax,Rana latastei,preys on,preda
+Nycticorax nycticorax,Talpa europaea,preys on,preda
+Nycticorax nycticorax,Arvicola amphibius,preys on,preda
+Nycticorax nycticorax,Lissotriton vulgaris,preys on,preda
+Nycticorax nycticorax,Lacerta bilineata,preys on,preda
+Nycticorax nycticorax,Ardea ibis,preys on,preda
+Nycticorax nycticorax,Pelophylax ridibundus,preys on,preda
+Nycticorax nycticorax,Cettia cetti,preys on,preda
+Nycticorax nycticorax,Anas platyrhynchos,preys on,preda
+Nycticorax nycticorax,Pelophylax,preys on,preda
+Nycticorax nycticorax,Populus nigra,visits,visita
+Nycticorax nycticorax,Egretta garzetta,interacts with,interagisce con
+Triturus carnifex,Bufotes viridis,eats,mangia
+Triturus carnifex,Pelophylax cerigensis,eats,mangia
+Triturus carnifex,Pelophylax ridibundus,eats,mangia
+Triturus carnifex,Lissotriton vulgaris,eats,mangia
+Triturus carnifex,Rana latastei,eats,mangia
+Triturus carnifex,Pelophylax shqipericus,eats,mangia
+Triturus carnifex,Rana dalmatina,eats,mangia
+Triturus carnifex,Anas platyrhynchos,eaten by,mangiato da
+Triturus carnifex,Natrix helvetica,eaten by,mangiato da
+Triturus carnifex,Natrix natrix,eaten by,mangiato da
+Triturus carnifex,Garrulus glandarius,eaten by,mangiato da
+Triturus carnifex,Pica pica,eaten by,mangiato da
+Triturus carnifex,Rallus aquaticus,eaten by,mangiato da
+Triturus carnifex,Pelophylax ridibundus,eaten by,mangiato da
+Triturus carnifex,Ardea cinerea,eaten by,mangiato da
+Triturus carnifex,Pelophylax cerigensis,eaten by,mangiato da
+Triturus carnifex,Ardea alba,eaten by,mangiato da
+Triturus carnifex,Botaurus stellaris,eaten by,mangiato da
+Triturus carnifex,Bufotes viridis,preys on,preda
+Triturus carnifex,Lissotriton vulgaris,preys on,preda
+Triturus carnifex,Rana dalmatina,preys on,preda
+Triturus carnifex,Rana latastei,preys on,preda
+Triturus carnifex,Pelophylax ridibundus,preys on,preda
+Triturus carnifex,Natrix natrix,preyed upon by,predato da
+Triturus carnifex,Vulpes vulpes,preyed upon by,predato da
+Triturus carnifex,Rallus aquaticus,preyed upon by,predato da
+Triturus carnifex,Pica pica,preyed upon by,predato da
+Triturus carnifex,Pelophylax ridibundus,preyed upon by,predato da
+Triturus carnifex,Garrulus glandarius,preyed upon by,predato da
+Triturus carnifex,Botaurus stellaris,preyed upon by,predato da
+Triturus carnifex,Ardea alba,preyed upon by,predato da
+Triturus carnifex,Ardea cinerea,preyed upon by,predato da
+Triturus carnifex,Anas platyrhynchos,preyed upon by,predato da
+Triturus carnifex,Natrix helvetica,preyed upon by,predato da
+Alcedo atthis,Rana dalmatina,eats,mangia
+Alcedo atthis,Pelophylax shqipericus,eats,mangia
+Alcedo atthis,Rana latastei,eats,mangia
+Alcedo atthis,Pelophylax ridibundus,eats,mangia
+Alcedo atthis,Pelophylax cerigensis,eats,mangia
+Alcedo atthis,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Alcedo atthis,Vulpes vulpes,eaten by,mangiato da
+Alcedo atthis,Rana latastei,preys on,preda
+Alcedo atthis,Pelophylax ridibundus,preys on,preda
+Alcedo atthis,Rana dalmatina,preys on,preda
+Alcedo atthis,Pelophylax,preys on,preda
+Alcedo atthis,Vulpes vulpes,preyed upon by,predato da
+Lycaena dispar,Ligustrum,pollinates,impollina
+Lycaena dispar,Ligustrum vulgare,pollinates,impollina
+Lycaena dispar,Ligustrum,visits flowers of,visita i fiori di
+Lycaena dispar,Taraxacum,visits flowers of,visita i fiori di
+Lycaena dispar,Iris pseudacorus,visits flowers of,visita i fiori di
+Lycaena dispar,Rubus,visits flowers of,visita i fiori di
+Rana latastei,Natrix natrix,eaten by,mangiato da
+Rana latastei,Vulpes vulpes,eaten by,mangiato da
+Rana latastei,Coloeus monedula,eaten by,mangiato da
+Rana latastei,Garrulus glandarius,eaten by,mangiato da
+Rana latastei,Pica pica,eaten by,mangiato da
+Rana latastei,Gallinula chloropus,eaten by,mangiato da
+Rana latastei,Rallus aquaticus,eaten by,mangiato da
+Rana latastei,Buteo buteo,eaten by,mangiato da
+Rana latastei,Ardea alba,eaten by,mangiato da
+Rana latastei,Pelophylax ridibundus,eaten by,mangiato da
+Rana latastei,Anas platyrhynchos,eaten by,mangiato da
+Rana latastei,Ardea cinerea,eaten by,mangiato da
+Rana latastei,Botaurus stellaris,eaten by,mangiato da
+Rana latastei,Ixobrychus minutus,eaten by,mangiato da
+Rana latastei,Pelophylax cerigensis,eaten by,mangiato da
+Rana latastei,Ardea ibis,preyed upon by,predato da
+Rana latastei,Vulpes vulpes,preyed upon by,predato da
+Rana latastei,Rallus aquaticus,preyed upon by,predato da
+Rana latastei,Pica pica,preyed upon by,predato da
+Rana latastei,Pelophylax ridibundus,preyed upon by,predato da
+Rana latastei,Natrix natrix,preyed upon by,predato da
+Rana latastei,Ixobrychus minutus,preyed upon by,predato da
+Rana latastei,Gallinula chloropus,preyed upon by,predato da
+Rana latastei,Garrulus glandarius,preyed upon by,predato da
+Rana latastei,Buteo buteo,preyed upon by,predato da
+Rana latastei,Botaurus stellaris,preyed upon by,predato da
+Rana latastei,Ardea alba,preyed upon by,predato da
+Rana latastei,Ardea cinerea,preyed upon by,predato da
+Rana latastei,Anas platyrhynchos,preyed upon by,predato da
+Calystegia,Apis mellifera,pollinated by,impollinato da
+Calystegia,Apis mellifera,interacts with,interagisce con
+Calystegia,Apis mellifera,flowers visited by,fiori visitati da
+Calystegia,Eristalis tenax,interacts with,interagisce con
+Calystegia,Pieris rapae,eaten by,mangiato da
+Calystegia,Apis mellifera,eaten by,mangiato da
+Calystegia,Lycaena phlaeas,pollinated by,impollinato da
+Calystegia,Pontia edusa,flowers visited by,fiori visitati da
+Calystegia,Pieris rapae,flowers visited by,fiori visitati da
+Calystegia,Phragmites australis,interacts with,interagisce con
+Calystegia,Salix,interacts with,interagisce con
+Cichorium intybus,Cryptocephalus sericeus,interacts with,interagisce con
+Cichorium intybus,Eristalis tenax,interacts with,interagisce con
+Cichorium intybus,Apis mellifera,interacts with,interagisce con
+Cichorium intybus,Turdus merula,eaten by,mangiato da
+Cichorium intybus,Pica pica,eaten by,mangiato da
+Cichorium intybus,Garrulus glandarius,eaten by,mangiato da
+Cichorium intybus,Fulica atra,eaten by,mangiato da
+Cichorium intybus,Fringilla coelebs,eaten by,mangiato da
+Cichorium intybus,Erithacus rubecula,eaten by,mangiato da
+Cichorium intybus,Emberiza schoeniclus,eaten by,mangiato da
+Cichorium intybus,Columba palumbus,eaten by,mangiato da
+Cichorium intybus,Anas platyrhynchos,eaten by,mangiato da
+Cichorium intybus,Pieris rapae,eaten by,mangiato da
+Cichorium intybus,Eristalis tenax,eaten by,mangiato da
+Cichorium intybus,Apis mellifera,eaten by,mangiato da
+Cichorium intybus,Eristalis tenax,pollinated by,impollinato da
+Cichorium intybus,Apis mellifera,pollinated by,impollinato da
+Cichorium intybus,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Cichorium intybus,Vanessa atalanta,flowers visited by,fiori visitati da
+Cichorium intybus,Apis mellifera,flowers visited by,fiori visitati da
+Cichorium intybus,Pieris napi,flowers visited by,fiori visitati da
+Cichorium intybus,Pieris rapae,flowers visited by,fiori visitati da
+Linaria vulgaris,Melitaea didyma,interacts with,interagisce con
+Linaria vulgaris,Ochlodes sylvanus,interacts with,interagisce con
+Linaria vulgaris,Apis mellifera,interacts with,interagisce con
+Linaria vulgaris,Turdus merula,eaten by,mangiato da
+Linaria vulgaris,Pica pica,eaten by,mangiato da
+Linaria vulgaris,Garrulus glandarius,eaten by,mangiato da
+Linaria vulgaris,Fulica atra,eaten by,mangiato da
+Linaria vulgaris,Fringilla coelebs,eaten by,mangiato da
+Linaria vulgaris,Erithacus rubecula,eaten by,mangiato da
+Linaria vulgaris,Columba palumbus,eaten by,mangiato da
+Linaria vulgaris,Anas platyrhynchos,eaten by,mangiato da
+Linaria vulgaris,Melitaea didyma,eaten by,mangiato da
+Linaria vulgaris,Apis mellifera,eaten by,mangiato da
+Linaria vulgaris,Pieris rapae,pollinated by,impollinato da
+Linaria vulgaris,Apis mellifera,pollinated by,impollinato da
+Linaria vulgaris,Eristalis tenax,pollinated by,impollinato da
+Linaria vulgaris,Pieris napi,pollinated by,impollinato da
+Linaria vulgaris,Apis mellifera,flowers visited by,fiori visitati da
+Linaria vulgaris,Pieris napi,flowers visited by,fiori visitati da
+Linaria vulgaris,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Linaria vulgaris,Eristalis tenax,flowers visited by,fiori visitati da
+Linaria vulgaris,Pieris rapae,flowers visited by,fiori visitati da
+Linaria vulgaris,Melitaea didyma,host of,ospite di
+Taraxacum,Salix,interacts with,interagisce con
+Taraxacum,Lonicera japonica,interacts with,interagisce con
+Taraxacum,Alliaria petiolata,interacts with,interagisce con
+Taraxacum,Trifolium dubium,interacts with,interagisce con
+Taraxacum,Vulpes vulpes,interacts with,interagisce con
+Taraxacum,Poaceae,interacts with,interagisce con
+Taraxacum,Apis mellifera,interacts with,interagisce con
+Taraxacum,Eristalis tenax,interacts with,interagisce con
+Taraxacum,Cichorium intybus,interacts with,interagisce con
+Taraxacum,Pieris napi,interacts with,interagisce con
+Taraxacum,Vanessa atalanta,interacts with,interagisce con
+Taraxacum,Ajuga reptans,interacts with,interagisce con
+Taraxacum,Pieris rapae,interacts with,interagisce con
+Taraxacum,Arvicola amphibius,eaten by,mangiato da
+Taraxacum,Idaea degeneraria,eaten by,mangiato da
+Taraxacum,Turdus merula,eaten by,mangiato da
+Sympetrum depressiusculum,Ardea ibis,preyed upon by,predato da
+Sympetrum depressiusculum,Orthetrum albistylum,preyed upon by,predato da
+Sympetrum depressiusculum,Emberiza schoeniclus,preyed upon by,predato da
+Sympetrum striolatum,Ardea ibis,preyed upon by,predato da
+Sympetrum striolatum,Emberiza schoeniclus,preyed upon by,predato da
+Sympetrum striolatum,Orthetrum albistylum,preyed upon by,predato da
+Rhodometra sacraria,Poaceae,interacts with,interagisce con
+Rhodometra sacraria,Rubus,eats,mangia
+Rhodometra sacraria,Polygonum aviculare,eats,mangia
+Rhodometra sacraria,Ardea ibis,preyed upon by,predato da
+Ardea alba,Phalacrocorax carbo,interacts with,interagisce con
+Ardea alba,Poaceae,interacts with,interagisce con
+Ardea alba,Anas platyrhynchos,interacts with,interagisce con
+Ardea alba,Gallinula chloropus,interacts with,interagisce con
+Ardea alba,Ardea cinerea,interacts with,interagisce con
+Ardea alba,Ardea ibis,interacts with,interagisce con
+Ardea alba,Pelophylax cerigensis,eats,mangia
+Ardea alba,Lacerta bilineata,eats,mangia
+Ardea alba,Rana dalmatina,eats,mangia
+Ardea alba,Cettia cetti,eats,mangia
+Ardea alba,Pelophylax ridibundus,eats,mangia
+Ardea alba,Lacerta viridis,eats,mangia
+Ardea alba,Micromys minutus,eats,mangia
+Ardea alba,Lissotriton vulgaris,eats,mangia
+Ardea alba,Pelophylax shqipericus,eats,mangia
+Ardea alba,Arvicola amphibius,eats,mangia
+Ardea alba,Natrix natrix,eats,mangia
+Ardea alba,Bufotes viridis,eats,mangia
+Ardea alba,Talpa europaea,eats,mangia
+Ardea alba,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Ardea alba,Coloeus monedula,eaten by,mangiato da
+Ardea alba,Cettia cetti,preys on,preda
+Ardea alba,Micromys minutus,preys on,preda
+Ardea alba,Pelophylax ridibundus,preys on,preda
+Ardea alba,Lacerta bilineata,preys on,preda
+Ardea alba,Rana dalmatina,preys on,preda
+Ardea alba,Talpa europaea,preys on,preda
+Ardea alba,Bufotes viridis,preys on,preda
+Ardea alba,Natrix natrix,preys on,preda
+Ardea alba,Lissotriton vulgaris,preys on,preda
+Ardea alba,Arvicola amphibius,preys on,preda
+Ardea cinerea,Arvicola amphibius,interacts with,interagisce con
+Ardea cinerea,Fulica atra,interacts with,interagisce con
+Ardea cinerea,Gallinula chloropus,interacts with,interagisce con
+Ardea cinerea,Phragmites australis,interacts with,interagisce con
+Ardea cinerea,Anas platyrhynchos,interacts with,interagisce con
+Ardea cinerea,Phalacrocorax carbo,interacts with,interagisce con
+Ardea cinerea,Anas crecca,interacts with,interagisce con
+Ardea cinerea,Pelophylax,eats,mangia
+Ardea cinerea,Fulica atra,eats,mangia
+Ardea cinerea,Natrix helvetica,eats,mangia
+Ardea cinerea,Micromys minutus,eats,mangia
+Ardea cinerea,Pelophylax ridibundus,eats,mangia
+Ardea cinerea,Pelophylax shqipericus,eats,mangia
+Ardea cinerea,Rana dalmatina,eats,mangia
+Ardea cinerea,Lissotriton vulgaris,eats,mangia
+Ardea cinerea,Lacerta viridis,eats,mangia
+Ardea cinerea,Lacerta bilineata,eats,mangia
+Ardea cinerea,Natrix natrix,eats,mangia
+Ardea cinerea,Talpa europaea,eats,mangia
+Ardea cinerea,Arvicola amphibius,eats,mangia
+Ardea cinerea,Bufotes viridis,eats,mangia
+Ardea cinerea,Pelophylax cerigensis,eats,mangia
+Ardea cinerea,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Ardea cinerea,Coloeus monedula,eaten by,mangiato da
+Ardea cinerea,Natrix natrix,preys on,preda
+Ardea cinerea,Rana dalmatina,preys on,preda
+Ardea cinerea,Lacerta bilineata,preys on,preda
+Ardea cinerea,Micromys minutus,preys on,preda
+Ardea cinerea,Bufotes viridis,preys on,preda
+Ardea cinerea,Emberiza schoeniclus,preys on,preda
+Ardea cinerea,Lissotriton vulgaris,preys on,preda
+Ardea cinerea,Fulica atra,preys on,preda
+Ardea cinerea,Arvicola amphibius,preys on,preda
+Ardea cinerea,Pelophylax,preys on,preda
+Ardea cinerea,Talpa europaea,preys on,preda
+Ardea cinerea,Pelophylax ridibundus,preys on,preda
+Ardea cinerea,Natrix helvetica,preys on,preda
+Ardea cinerea,Ardea alba,interacts with,interagisce con
+Anas crecca,Gallinula chloropus,interacts with,interagisce con
+Anas crecca,Fulica atra,interacts with,interagisce con
+Anas crecca,Anas carolinensis,interacts with,interagisce con
+Anas crecca,Pica pica,interacts with,interagisce con
+Anas crecca,Vulpes vulpes,interacts with,interagisce con
+Anas crecca,Anas platyrhynchos,interacts with,interagisce con
+Anas crecca,Polygonum aviculare,eats,mangia
+Anas crecca,Carex hirta,eats,mangia
+Anas crecca,Poaceae,eats,mangia
+Anas crecca,Magnoliopsida,eats,mangia
+Anas crecca,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Anas crecca,Vulpes vulpes,eaten by,mangiato da
+Anas crecca,Vulpes vulpes,preyed upon by,predato da
+Aeshna mixta,Ardea ibis,preyed upon by,predato da
+Aeshna mixta,Emberiza schoeniclus,preyed upon by,predato da
+Aeshna mixta,Phragmites australis,visits,visita
+Phalacrocorax carbo,Ardea cinerea,interacts with,interagisce con
+Phalacrocorax carbo,Fulica atra,interacts with,interagisce con
+Phalacrocorax carbo,Gallinula chloropus,eats,mangia
+Phalacrocorax carbo,Arvicola amphibius,eats,mangia
+Phalacrocorax carbo,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Phalacrocorax carbo,Vulpes vulpes,eaten by,mangiato da
+Phalacrocorax carbo,Gallinula chloropus,preys on,preda
+Phalacrocorax carbo,Arvicola amphibius,preys on,preda
+Phalacrocorax carbo,Vulpes vulpes,preyed upon by,predato da
+Phalacrocorax carbo,Vulpes vulpes,interacts with,interagisce con
+Garrulus glandarius,Sciurus vulgaris,interacts with,interagisce con
+Garrulus glandarius,Dendrocopos major,interacts with,interagisce con
+Garrulus glandarius,Prunus avium,eats,mangia
+Garrulus glandarius,Iris pseudacorus,eats,mangia
+Garrulus glandarius,Linaria genistifolia,eats,mangia
+Garrulus glandarius,Lonicera japonica,eats,mangia
+Garrulus glandarius,Lysimachia vulgaris,eats,mangia
+Garrulus glandarius,Helianthus tuberosus,eats,mangia
+Garrulus glandarius,Phragmites australis,eats,mangia
+Garrulus glandarius,Verbena officinalis,eats,mangia
+Garrulus glandarius,Salix caprea,eats,mangia
+Garrulus glandarius,Stachys sylvatica,eats,mangia
+Erithacus rubecula,Ligustrum vulgare,interacts with,interagisce con
+Erithacus rubecula,Rosa canina,interacts with,interagisce con
+Erithacus rubecula,Cornus sanguinea,interacts with,interagisce con
+Erithacus rubecula,Stachys sylvatica,eats,mangia
+Erithacus rubecula,Verbena officinalis,eats,mangia
+Erithacus rubecula,Phragmites australis,eats,mangia
+Erithacus rubecula,Salix caprea,eats,mangia
+Erithacus rubecula,Polygonum aviculare,eats,mangia
+Erithacus rubecula,Trifolium campestre,eats,mangia
+Erithacus rubecula,Salix alba,eats,mangia
+Erithacus rubecula,Trifolium dubium,eats,mangia
+Erithacus rubecula,Tussilago farfara,eats,mangia
+Erithacus rubecula,Populus alba,eats,mangia
+Erithacus rubecula,Artemisia vulgaris,eats,mangia
+Erithacus rubecula,Artemisia verlotiorum,eats,mangia
+Erithacus rubecula,Linaria genistifolia,eats,mangia
+Erithacus rubecula,Lysimachia vulgaris,eats,mangia
+Erithacus rubecula,Carex hirta,eats,mangia
+Erithacus rubecula,Ajuga reptans,eats,mangia
+Cornus sanguinea,Sylvia atricapilla,interacts with,interagisce con
+Cornus sanguinea,Ochlodes sylvanus,interacts with,interagisce con
+Cornus sanguinea,Apis mellifera,interacts with,interagisce con
+Cornus sanguinea,Eristalis tenax,interacts with,interagisce con
+Cornus sanguinea,Turdus merula,interacts with,interagisce con
+Cornus sanguinea,Clytus arietis,eaten by,mangiato da
+Cornus sanguinea,Pieris rapae,eaten by,mangiato da
+Cornus sanguinea,Fulica atra,eaten by,mangiato da
+Cornus sanguinea,Emberiza schoeniclus,eaten by,mangiato da
+Cornus sanguinea,Anas platyrhynchos,eaten by,mangiato da
+Cornus sanguinea,Gallinula chloropus,eaten by,mangiato da
+Cornus sanguinea,Aegithalos caudatus,eaten by,mangiato da
+Cornus sanguinea,Columba palumbus,eaten by,mangiato da
+Cornus sanguinea,Pica pica,eaten by,mangiato da
+Cornus sanguinea,Vulpes vulpes,eaten by,mangiato da
+Cornus sanguinea,Luscinia megarhynchos,eaten by,mangiato da
+Cornus sanguinea,Fringilla coelebs,eaten by,mangiato da
+Cornus sanguinea,Dendrocopos major,eaten by,mangiato da
+Cornus sanguinea,Garrulus glandarius,eaten by,mangiato da
+Cornus sanguinea,Polistes dominula,eaten by,mangiato da
+Cornus sanguinea,Platycnemis pennipes,eaten by,mangiato da
+Cornus sanguinea,Eristalis tenax,eaten by,mangiato da
+Cornus sanguinea,Apis mellifera,eaten by,mangiato da
+Cornus sanguinea,Sylvia atricapilla,eaten by,mangiato da
+Cornus sanguinea,Turdus merula,eaten by,mangiato da
+Cornus sanguinea,Erithacus rubecula,eaten by,mangiato da
+Cornus sanguinea,Polistes dominula,pollinated by,impollinato da
+Cornus sanguinea,Pieris napi,pollinated by,impollinato da
+Cornus sanguinea,Melitaea didyma,pollinated by,impollinato da
+Cornus sanguinea,Apis mellifera,pollinated by,impollinato da
+Cornus sanguinea,Eristalis tenax,pollinated by,impollinato da
+Cornus sanguinea,Eristalis tenax,flowers visited by,fiori visitati da
+Cornus sanguinea,Melitaea didyma,flowers visited by,fiori visitati da
+Cornus sanguinea,Polistes dominula,flowers visited by,fiori visitati da
+Cornus sanguinea,Pieris napi,flowers visited by,fiori visitati da
+Cornus sanguinea,Clytus arietis,flowers visited by,fiori visitati da
+Cornus sanguinea,Vanessa atalanta,flowers visited by,fiori visitati da
+Cornus sanguinea,Apis mellifera,flowers visited by,fiori visitati da
+Cornus sanguinea,Polistes dominula,visited by,visitato da
+Cornus sanguinea,Apis mellifera,visited by,visitato da
+Cornus sanguinea,Celastrina argiolus,visited by,visitato da
+Cornus sanguinea,Turdus merula,has dispersal vector,ha come vettore di dispersione
+Cornus sanguinea,Pica pica,has dispersal vector,ha come vettore di dispersione
+Cornus sanguinea,Sylvia atricapilla,has dispersal vector,ha come vettore di dispersione
+Cornus sanguinea,Erithacus rubecula,has dispersal vector,ha come vettore di dispersione
+Aegithalos caudatus,Ligustrum vulgare,eats,mangia
+Aegithalos caudatus,Rosa canina,eats,mangia
+Aegithalos caudatus,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Aegithalos caudatus,Lacerta bilineata,eaten by,mangiato da
+Aegithalos caudatus,Lacerta viridis,eaten by,mangiato da
+Aegithalos caudatus,Muscardinus avellanarius,eaten by,mangiato da
+Aegithalos caudatus,Sciurus vulgaris,eaten by,mangiato da
+Aegithalos caudatus,Dendrocopos major,eaten by,mangiato da
+Aegithalos caudatus,Eristalis tenax,preys on,preda
+Aegithalos caudatus,Chrysotoxum festivum,preys on,preda
+Ardea ibis,Gallinula chloropus,interacts with,interagisce con
+Ardea ibis,Bufotes viridis,preys on,preda
+Ardea ibis,Pelophylax,preys on,preda
+Columba palumbus,Prunus avium,interacts with,interagisce con
+Columba palumbus,Rosa canina,interacts with,interagisce con
+Columba palumbus,Helianthus tuberosus,eats,mangia
+Columba palumbus,Carex hirta,eats,mangia
+Columba palumbus,Stachys sylvatica,eats,mangia
+Columba palumbus,Trifolium campestre,eats,mangia
+Columba palumbus,Lysimachia vulgaris,eats,mangia
+Columba palumbus,Populus alba,eats,mangia
+Columba palumbus,Iris pseudacorus,eats,mangia
+Columba palumbus,Tussilago farfara,eats,mangia
+Columba palumbus,Salix caprea,eats,mangia
+Sciurus vulgaris,Vulpes vulpes,interacts with,interagisce con
+Sciurus vulgaris,Taraxacum,eats,mangia
+Sciurus vulgaris,Muscardinus avellanarius,eats,mangia
+Sciurus vulgaris,Turdus merula,eats,mangia
+Sciurus vulgaris,Erithacus rubecula,eats,mangia
+Sciurus vulgaris,Dendrocopos major,eats,mangia
+Sciurus vulgaris,Fringilla coelebs,eats,mangia
+Sciurus vulgaris,Luscinia megarhynchos,eats,mangia
+Sciurus vulgaris,Magnoliopsida,eats,mangia
+Sciurus vulgaris,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Sciurus vulgaris,Lacerta viridis,eaten by,mangiato da
+Sciurus vulgaris,Lacerta bilineata,eaten by,mangiato da
+Sciurus vulgaris,Coloeus monedula,eaten by,mangiato da
+Sciurus vulgaris,Garrulus glandarius,eaten by,mangiato da
+Sciurus vulgaris,Buteo buteo,eaten by,mangiato da
+Sciurus vulgaris,Vulpes vulpes,eaten by,mangiato da
+Sciurus vulgaris,Turdus merula,preys on,preda
+Sciurus vulgaris,Fringilla coelebs,preys on,preda
+Sciurus vulgaris,Aegithalos caudatus,preys on,preda
+Sciurus vulgaris,Dendrocopos major,preys on,preda
+Sciurus vulgaris,Sylvia atricapilla,preys on,preda
+Sciurus vulgaris,Luscinia megarhynchos,preys on,preda
+Sciurus vulgaris,Erithacus rubecula,preys on,preda
+Sciurus vulgaris,Muscardinus avellanarius,preys on,preda
+Sciurus vulgaris,Lacerta bilineata,preyed upon by,predato da
+Sciurus vulgaris,Garrulus glandarius,preyed upon by,predato da
+Sciurus vulgaris,Buteo buteo,preyed upon by,predato da
+Sciurus vulgaris,Vulpes vulpes,preyed upon by,predato da
+Rubus,Salix,interacts with,interagisce con
+Rubus,Apis mellifera,flowers visited by,fiori visitati da
+Rubus,Fraxinus,interacts with,interagisce con
+Rubus,Apis mellifera,interacts with,interagisce con
+Rubus,Thyatira batis,eaten by,mangiato da
+Rubus,Celastrina argiolus,flowers visited by,fiori visitati da
+Rubus,Eristalis tenax,flowers visited by,fiori visitati da
+Rubus,Vanessa atalanta,flowers visited by,fiori visitati da
+Rubus,Thyatira batis,host of,ospite di
+Rubus,Polistes dominula,visited by,visitato da
+Rubus,Apis mellifera,visited by,visitato da
+Rubus,Apis mellifera,pollinated by,impollinato da
+Rubus,Carex,interacts with,interagisce con
+Polistes,Magnoliopsida,interacts with,interagisce con
+Polistes,Lonicera japonica,interacts with,interagisce con
+Polistes,Rosa,visits flowers of,visita i fiori di
+Polistes,Magnoliopsida,visits,visita
+Polistes,Rubus,eats,mangia
+Polistes,Alliaria petiolata,visits flowers of,visita i fiori di
+Polistes,Rubus,visits flowers of,visita i fiori di
+Polistes,Ligustrum,visits flowers of,visita i fiori di
+Polistes,Rubus,visits,visita
+Polistes,Apioideae,interacts with,interagisce con
+Polistes,Apis mellifera,interacts with,interagisce con
+Polistes,Allium vineale,eats,mangia
+Polistes,Apioideae,eats,mangia
+Polistes,Taraxacum,eats,mangia
+Polistes,Salix,flowers visited by,fiori visitati da
+Polistes,Artemisia vulgaris,visits flowers of,visita i fiori di
+Calopteryx splendens,Poaceae,interacts with,interagisce con
+Calopteryx splendens,Garrulus glandarius,preyed upon by,predato da
+Calopteryx splendens,Ixobrychus minutus,preyed upon by,predato da
+Calopteryx splendens,Gallinula chloropus,preyed upon by,predato da
+Calopteryx splendens,Ardea ibis,preyed upon by,predato da
+Calopteryx splendens,Pica pica,preyed upon by,predato da
+Calopteryx splendens,Orthetrum cancellatum,preyed upon by,predato da
+Calopteryx splendens,Phragmites australis,visits,visita
+Isodontia mexicana,Polistes dominula,interacts with,interagisce con
+Isodontia mexicana,Poaceae,visits flowers of,visita i fiori di
+Melitaea didyma,Linaria genistifolia,eats,mangia
+Melitaea didyma,Artemisia verlotiorum,eats,mangia
+Melitaea didyma,Artemisia vulgaris,eats,mangia
+Melitaea didyma,Ligustrum vulgare,eats,mangia
+Melitaea didyma,Ardea ibis,preyed upon by,predato da
+Melitaea didyma,Turdus merula,preyed upon by,predato da
+Melitaea didyma,Sylvia atricapilla,preyed upon by,predato da
+Melitaea didyma,Rallus aquaticus,preyed upon by,predato da
+Melitaea didyma,Pica pica,preyed upon by,predato da
+Melitaea didyma,Luscinia megarhynchos,preyed upon by,predato da
+Melitaea didyma,Gallinula chloropus,preyed upon by,predato da
+Melitaea didyma,Fringilla coelebs,preyed upon by,predato da
+Melitaea didyma,Garrulus glandarius,preyed upon by,predato da
+Melitaea didyma,Erithacus rubecula,preyed upon by,predato da
+Melitaea didyma,Emberiza schoeniclus,preyed upon by,predato da
+Melitaea didyma,Aegithalos caudatus,preyed upon by,predato da
+Melitaea didyma,Rubus,visits flowers of,visita i fiori di
+Melitaea didyma,Taraxacum,visits flowers of,visita i fiori di
+Melitaea didyma,Anthemideae,visits,visita
+Trachemys scripta,Anas platyrhynchos,interacts with,interagisce con
+Trachemys scripta,Nycticorax nycticorax,interacts with,interagisce con
+Trachemys scripta,Poaceae,interacts with,interagisce con
+Trachemys scripta,Gallinula chloropus,interacts with,interagisce con
+Trachemys scripta,Ardea alba,interacts with,interagisce con
+Trachemys scripta,Phragmites australis,visits,visita
+Trachemys scripta,Vulpes vulpes,interacts with,interagisce con
+Trachemys scripta,Vulpes vulpes,eaten by,mangiato da
+Pelophylax lessonae lessonae,Lissotriton vulgaris,eats,mangia
+Pelophylax lessonae lessonae,Pelophylax ridibundus,eats,mangia
+Pelophylax lessonae lessonae,Bufotes viridis,eats,mangia
+Pelophylax lessonae lessonae,Rana dalmatina,eats,mangia
+Pelophylax lessonae lessonae,Pelophylax shqipericus,eats,mangia
+Pelophylax lessonae lessonae,Pelophylax cerigensis,eats,mangia
+Pelophylax lessonae lessonae,Triturus carnifex,eats,mangia
+Pelophylax lessonae lessonae,Rana latastei,eats,mangia
+Pelophylax lessonae lessonae,Natrix helvetica,eaten by,mangiato da
+Pelophylax lessonae lessonae,Natrix natrix,eaten by,mangiato da
+Pelophylax lessonae lessonae,Emys orbicularis,eaten by,mangiato da
+Pelophylax lessonae lessonae,Vulpes vulpes,eaten by,mangiato da
+Pelophylax lessonae lessonae,Coloeus monedula,eaten by,mangiato da
+Pelophylax lessonae lessonae,Pica pica,eaten by,mangiato da
+Pelophylax lessonae lessonae,Garrulus glandarius,eaten by,mangiato da
+Pelophylax lessonae lessonae,Lanius collurio,eaten by,mangiato da
+Pelophylax lessonae lessonae,Alcedo atthis,eaten by,mangiato da
+Pelophylax lessonae lessonae,Gallinula chloropus,eaten by,mangiato da
+Pelophylax lessonae lessonae,Rallus aquaticus,eaten by,mangiato da
+Pelophylax lessonae lessonae,Himantopus himantopus,eaten by,mangiato da
+Pelophylax lessonae lessonae,Circus cyaneus,eaten by,mangiato da
+Pelophylax lessonae lessonae,Buteo buteo,eaten by,mangiato da
+Pelophylax lessonae lessonae,Ardea purpurea,eaten by,mangiato da
+Pelophylax lessonae lessonae,Pelophylax ridibundus,eaten by,mangiato da
+Pelophylax lessonae lessonae,Ardea alba,eaten by,mangiato da
+Pelophylax lessonae lessonae,Triturus carnifex,eaten by,mangiato da
+Pelophylax lessonae lessonae,Egretta garzetta,eaten by,mangiato da
+Pelophylax lessonae lessonae,Tachybaptus ruficollis,eaten by,mangiato da
+Pelophylax lessonae lessonae,Anas platyrhynchos,eaten by,mangiato da
+Pelophylax lessonae lessonae,Ardea cinerea,eaten by,mangiato da
+Pelophylax lessonae lessonae,Botaurus stellaris,eaten by,mangiato da
+Pelophylax lessonae lessonae,Nycticorax nycticorax,eaten by,mangiato da
+Pelophylax lessonae lessonae,Ixobrychus minutus,eaten by,mangiato da
+Pelophylax lessonae lessonae,Pelophylax cerigensis,eaten by,mangiato da
+Pelophylax lessonae lessonae,Pelophylax ridibundus,preys on,preda
+Pelophylax lessonae lessonae,Lissotriton vulgaris,preys on,preda
+Pelophylax lessonae lessonae,Triturus carnifex,preys on,preda
+Pelophylax lessonae lessonae,Rana dalmatina,preys on,preda
+Pelophylax lessonae lessonae,Rana latastei,preys on,preda
+Pelophylax lessonae lessonae,Bufotes viridis,preys on,preda
+Pelophylax lessonae lessonae,Natrix helvetica,preyed upon by,predato da
+Pelophylax lessonae lessonae,Vulpes vulpes,preyed upon by,predato da
+Pelophylax lessonae lessonae,Triturus carnifex,preyed upon by,predato da
+Pelophylax lessonae lessonae,Tachybaptus ruficollis,preyed upon by,predato da
+Pelophylax lessonae lessonae,Rallus aquaticus,preyed upon by,predato da
+Pelophylax lessonae lessonae,Pica pica,preyed upon by,predato da
+Pelophylax lessonae lessonae,Pelophylax ridibundus,preyed upon by,predato da
+Pelophylax lessonae lessonae,Nycticorax nycticorax,preyed upon by,predato da
+Pelophylax lessonae lessonae,Lanius collurio,preyed upon by,predato da
+Pelophylax lessonae lessonae,Ixobrychus minutus,preyed upon by,predato da
+Pelophylax lessonae lessonae,Himantopus himantopus,preyed upon by,predato da
+Pelophylax lessonae lessonae,Garrulus glandarius,preyed upon by,predato da
+Pelophylax lessonae lessonae,Gallinula chloropus,preyed upon by,predato da
+Pelophylax lessonae lessonae,Emys orbicularis,preyed upon by,predato da
+Pelophylax lessonae lessonae,Egretta garzetta,preyed upon by,predato da
+Pelophylax lessonae lessonae,Circus cyaneus,preyed upon by,predato da
+Pelophylax lessonae lessonae,Buteo buteo,preyed upon by,predato da
+Pelophylax lessonae lessonae,Botaurus stellaris,preyed upon by,predato da
+Pelophylax lessonae lessonae,Ardea cinerea,preyed upon by,predato da
+Pelophylax lessonae lessonae,Ardea alba,preyed upon by,predato da
+Pelophylax lessonae lessonae,Ardea purpurea,preyed upon by,predato da
+Pelophylax lessonae lessonae,Anas platyrhynchos,preyed upon by,predato da
+Pelophylax lessonae lessonae,Alcedo atthis,preyed upon by,predato da
+Pelophylax lessonae lessonae,Natrix natrix,preyed upon by,predato da
+Pelophylax ridibundus,Pelophylax cerigensis,eats,mangia
+Pelophylax ridibundus,Rana dalmatina,eats,mangia
+Pelophylax ridibundus,Lissotriton vulgaris,eats,mangia
+Pelophylax ridibundus,Bufotes viridis,eats,mangia
+Pelophylax ridibundus,Pelophylax shqipericus,eats,mangia
+Pelophylax ridibundus,Natrix helvetica,eaten by,mangiato da
+Pelophylax ridibundus,Natrix natrix,eaten by,mangiato da
+Pelophylax ridibundus,Vulpes vulpes,eaten by,mangiato da
+Pelophylax ridibundus,Coloeus monedula,eaten by,mangiato da
+Pelophylax ridibundus,Pica pica,eaten by,mangiato da
+Pelophylax ridibundus,Garrulus glandarius,eaten by,mangiato da
+Pelophylax ridibundus,Rallus aquaticus,eaten by,mangiato da
+Pelophylax ridibundus,Gallinula chloropus,eaten by,mangiato da
+Pelophylax ridibundus,Buteo buteo,eaten by,mangiato da
+Pelophylax ridibundus,Ixobrychus minutus,eaten by,mangiato da
+Pelophylax ridibundus,Pelophylax cerigensis,eaten by,mangiato da
+Pelophylax ridibundus,Botaurus stellaris,eaten by,mangiato da
+Pelophylax ridibundus,Anas platyrhynchos,eaten by,mangiato da
+Pelophylax ridibundus,Pelophylax,preys on,preda
+Pelophylax ridibundus,Lissotriton vulgaris,preys on,preda
+Pelophylax ridibundus,Bufotes viridis,preys on,preda
+Pelophylax ridibundus,Rana dalmatina,preys on,preda
+Pelophylax ridibundus,Natrix natrix,preyed upon by,predato da
+Pelophylax ridibundus,Vulpes vulpes,preyed upon by,predato da
+Pelophylax ridibundus,Rallus aquaticus,preyed upon by,predato da
+Pelophylax ridibundus,Pica pica,preyed upon by,predato da
+Pelophylax ridibundus,Ixobrychus minutus,preyed upon by,predato da
+Pelophylax ridibundus,Gallinula chloropus,preyed upon by,predato da
+Pelophylax ridibundus,Garrulus glandarius,preyed upon by,predato da
+Pelophylax ridibundus,Botaurus stellaris,preyed upon by,predato da
+Pelophylax ridibundus,Buteo buteo,preyed upon by,predato da
+Pelophylax ridibundus,Anas platyrhynchos,preyed upon by,predato da
+Pelophylax ridibundus,Natrix helvetica,preyed upon by,predato da
+Pelophylax ridibundus,Tachybaptus ruficollis,preyed upon by,predato da
+Pelophylax,Ardea ibis,eaten by,mangiato da
+Pelophylax,Natrix natrix,eaten by,mangiato da
+Pelophylax,Emys orbicularis,eaten by,mangiato da
+Pelophylax,Vulpes vulpes,eaten by,mangiato da
+Pelophylax,Coloeus monedula,eaten by,mangiato da
+Pelophylax,Pica pica,eaten by,mangiato da
+Pelophylax,Lanius collurio,eaten by,mangiato da
+Pelophylax,Garrulus glandarius,eaten by,mangiato da
+Pelophylax,Alcedo atthis,eaten by,mangiato da
+Lepiota cristata,Salix,interacts with,interagisce con
+Lepiota cristata,Phragmites australis,symbiont of,simbionte di
+Pica pica,Vulpes vulpes,interacts with,interagisce con
+Pica pica,Coloeus monedula,interacts with,interagisce con
+Pica pica,Lepus europaeus,interacts with,interagisce con
+Pica pica,Lysimachia vulgaris,eats,mangia
+Pica pica,Verbena officinalis,eats,mangia
+Pica pica,Phragmites australis,eats,mangia
+Pica pica,Populus alba,eats,mangia
+Pica pica,Helianthus tuberosus,eats,mangia
+Pica pica,Trifolium campestre,eats,mangia
+Pica pica,Salix caprea,eats,mangia
+Pica pica,Stachys sylvatica,eats,mangia
+Pica pica,Trifolium dubium,eats,mangia
+Pica pica,Polygonum aviculare,eats,mangia
+Pica pica,Linaria genistifolia,eats,mangia
+Pica pica,Lonicera japonica,eats,mangia
+Pica pica,Salix alba,eats,mangia
+Pica pica,Iris pseudacorus,eats,mangia
+Fringilla coelebs,Prunus avium,interacts with,interagisce con
+Fringilla coelebs,Salix alba,eats,mangia
+Fringilla coelebs,Trifolium campestre,eats,mangia
+Fringilla coelebs,Populus alba,eats,mangia
+Fringilla coelebs,Polygonum aviculare,eats,mangia
+Fringilla coelebs,Verbena officinalis,eats,mangia
+Fringilla coelebs,Salix caprea,eats,mangia
+Fringilla coelebs,Tussilago farfara,eats,mangia
+Fringilla coelebs,Phragmites australis,eats,mangia
+Fringilla coelebs,Lysimachia vulgaris,eats,mangia
+Fringilla coelebs,Iris pseudacorus,eats,mangia
+Fringilla coelebs,Artemisia vulgaris,eats,mangia
+Anas platyrhynchos,Gallinula chloropus,interacts with,interagisce con
+Anas platyrhynchos,Utricularia macrorhiza,interacts with,interagisce con
+Anas platyrhynchos,Fulica atra,interacts with,interagisce con
+Anas platyrhynchos,Phragmites australis,interacts with,interagisce con
+Anas platyrhynchos,Trifolium dubium,eats,mangia
+Anas platyrhynchos,Phragmites australis,eats,mangia
+Anas platyrhynchos,Trifolium campestre,eats,mangia
+Anas platyrhynchos,Iris pseudacorus,eats,mangia
+Anas platyrhynchos,Verbena officinalis,eats,mangia
+Anas platyrhynchos,Populus alba,eats,mangia
+Anas platyrhynchos,Salix alba,eats,mangia
+Anas platyrhynchos,Stachys sylvatica,eats,mangia
+Anas platyrhynchos,Lonicera japonica,eats,mangia
+Anas platyrhynchos,Rosa canina,eats,mangia
+Anas platyrhynchos,Polygonum aviculare,eats,mangia
+Vanessa atalanta,Apis mellifera,interacts with,interagisce con
+Vanessa atalanta,Prunus avium,interacts with,interagisce con
+Vanessa atalanta,Salix caprea,interacts with,interagisce con
+Vanessa atalanta,Poaceae,interacts with,interagisce con
+Vanessa atalanta,Rosa,interacts with,interagisce con
+Vanessa atalanta,Rubus,interacts with,interagisce con
+Vanessa atalanta,Magnoliopsida,interacts with,interagisce con
+Vanessa atalanta,Lonicera japonica,interacts with,interagisce con
+Vanessa atalanta,Taraxacum,interacts with,interagisce con
+Vanessa atalanta,Verbena officinalis,eats,mangia
+Vanessa atalanta,Rosa canina,eats,mangia
+Vanessa atalanta,Tussilago farfara,eats,mangia
+Vanessa atalanta,Ligustrum vulgare,eats,mangia
+Vanessa atalanta,Salix caprea,eats,mangia
+Vanessa atalanta,Rosa,eats,mangia
+Vanessa atalanta,Magnoliopsida,eats,mangia
+Vanessa atalanta,Salix,eats,mangia
+Vanessa atalanta,Rubus,eats,mangia
+Vanessa atalanta,Taraxacum,eats,mangia
+Vanessa atalanta,Ligustrum,eats,mangia
+Vanessa atalanta,Ardea ibis,preyed upon by,predato da
+Vanessa atalanta,Turdus merula,preyed upon by,predato da
+Vanessa atalanta,Sylvia atricapilla,preyed upon by,predato da
+Vanessa atalanta,Rallus aquaticus,preyed upon by,predato da
+Vanessa atalanta,Pica pica,preyed upon by,predato da
+Vanessa atalanta,Luscinia megarhynchos,preyed upon by,predato da
+Vanessa atalanta,Gallinula chloropus,preyed upon by,predato da
+Vanessa atalanta,Garrulus glandarius,preyed upon by,predato da
+Vanessa atalanta,Fringilla coelebs,preyed upon by,predato da
+Vanessa atalanta,Erithacus rubecula,preyed upon by,predato da
+Vanessa atalanta,Emberiza schoeniclus,preyed upon by,predato da
+Vanessa atalanta,Aegithalos caudatus,preyed upon by,predato da
+Vanessa atalanta,Ligustrum,pollinates,impollina
+Vanessa atalanta,Salix,pollinates,impollina
+Vanessa atalanta,Salix alba,pollinates,impollina
+Vanessa atalanta,Allium vineale,pollinates,impollina
+Vanessa atalanta,Allium ursinum,pollinates,impollina
+Vanessa atalanta,Helianthus tuberosus,pollinates,impollina
+Vanessa atalanta,Lonicera japonica,pollinates,impollina
+Vanessa atalanta,Prunus avium,pollinates,impollina
+Poaceae,Salix,interacts with,interagisce con
+Poaceae,Ochlodes sylvanus,interacts with,interagisce con
+Poaceae,Polistes dominula,interacts with,interagisce con
+Parthenocissus inserta,Apis mellifera,interacts with,interagisce con
+Parthenocissus inserta,Turdus merula,preyed upon by,predato da
+Parthenocissus inserta,Apis mellifera,flowers visited by,fiori visitati da
+Parthenocissus inserta,Apis mellifera,visited by,visitato da
+Thyatira batis,Rubus,interacts with,interagisce con
+Thyatira batis,Rubus,eats,mangia
+Thyatira batis,Rubus,has host,ha come ospite
+Thyatira batis,Rubus,visits,visita
+Prunus avium,Polistes dominula,interacts with,interagisce con
+Prunus avium,Schizophyllum commune,interacts with,interagisce con
+Prunus avium,Sylvia atricapilla,interacts with,interagisce con
+Prunus avium,Turdus merula,interacts with,interagisce con
+Prunus avium,Clytus arietis,eaten by,mangiato da
+Prunus avium,Plagionotus arcuatus,eaten by,mangiato da
+Prunus avium,Fulica atra,eaten by,mangiato da
+Prunus avium,Anas platyrhynchos,eaten by,mangiato da
+Prunus avium,Gallinula chloropus,eaten by,mangiato da
+Prunus avium,Erithacus rubecula,eaten by,mangiato da
+Prunus avium,Dendrocopos major,eaten by,mangiato da
+Prunus avium,Columba palumbus,eaten by,mangiato da
+Prunus avium,Fringilla coelebs,eaten by,mangiato da
+Prunus avium,Vulpes vulpes,eaten by,mangiato da
+Prunus avium,Schizophyllum commune,eaten by,mangiato da
+Prunus avium,Apis mellifera,eaten by,mangiato da
+Prunus avium,Turdus merula,eaten by,mangiato da
+Prunus avium,Pica pica,eaten by,mangiato da
+Prunus avium,Sylvia atricapilla,eaten by,mangiato da
+Prunus avium,Eristalis tenax,pollinated by,impollinato da
+Prunus avium,Pieris rapae,pollinated by,impollinato da
+Prunus avium,Chrysotoxum festivum,pollinated by,impollinato da
+Prunus avium,Apis mellifera,pollinated by,impollinato da
+Prunus avium,Polistes,pollinated by,impollinato da
+Prunus avium,Eristalis tenax,flowers visited by,fiori visitati da
+Prunus avium,Vanessa atalanta,flowers visited by,fiori visitati da
+Prunus avium,Pieris rapae,flowers visited by,fiori visitati da
+Stachys sylvatica,Allium ursinum,interacts with,interagisce con
+Stachys sylvatica,Turdus merula,eaten by,mangiato da
+Stachys sylvatica,Pieris napi,eaten by,mangiato da
+Stachys sylvatica,Fulica atra,eaten by,mangiato da
+Stachys sylvatica,Fringilla coelebs,eaten by,mangiato da
+Stachys sylvatica,Micromys minutus,eaten by,mangiato da
+Stachys sylvatica,Chrysotoxum festivum,pollinated by,impollinato da
+Stachys sylvatica,Apis mellifera,pollinated by,impollinato da
+Stachys sylvatica,Pieris napi,flowers visited by,fiori visitati da
+Stachys sylvatica,Chrysotoxum festivum,flowers visited by,fiori visitati da
+Stachys sylvatica,Apis mellifera,flowers visited by,fiori visitati da
+Lonicera japonica,Alliaria petiolata,interacts with,interagisce con
+Lonicera japonica,Vitis,interacts with,interagisce con
+Lonicera japonica,Apis mellifera,interacts with,interagisce con
+Lonicera japonica,Dendrocopos major,eaten by,mangiato da
+Lonicera japonica,Vulpes vulpes,eaten by,mangiato da
+Lonicera japonica,Fulica atra,eaten by,mangiato da
+Lonicera japonica,Fringilla coelebs,eaten by,mangiato da
+Lonicera japonica,Emberiza schoeniclus,eaten by,mangiato da
+Lonicera japonica,Erithacus rubecula,eaten by,mangiato da
+Lonicera japonica,Columba palumbus,eaten by,mangiato da
+Lonicera japonica,Turdus merula,eaten by,mangiato da
+Lonicera japonica,Pieris rapae,eaten by,mangiato da
+Lonicera japonica,Apis mellifera,eaten by,mangiato da
+Lonicera japonica,Apis mellifera,pollinated by,impollinato da
+Lonicera japonica,Vanessa atalanta,flowers visited by,fiori visitati da
+Lonicera japonica,Apis mellifera,flowers visited by,fiori visitati da
+Lonicera japonica,Pieris rapae,flowers visited by,fiori visitati da
+Trifolium dubium,Arvicola amphibius,eaten by,mangiato da
+Trifolium dubium,Agapeta hamana,eaten by,mangiato da
+Trifolium dubium,Turdus merula,eaten by,mangiato da
+Trifolium dubium,Garrulus glandarius,eaten by,mangiato da
+Trifolium dubium,Fulica atra,eaten by,mangiato da
+Trifolium dubium,Columba palumbus,eaten by,mangiato da
+Trifolium dubium,Fringilla coelebs,eaten by,mangiato da
+Trifolium dubium,Eristalis tenax,pollinated by,impollinato da
+Trifolium dubium,Vanessa atalanta,pollinated by,impollinato da
+Trifolium dubium,Pieris rapae,pollinated by,impollinato da
+Trifolium dubium,Apis mellifera,pollinated by,impollinato da
+Trifolium dubium,Eristalis tenax,flowers visited by,fiori visitati da
+Trifolium dubium,Lycaena phlaeas,flowers visited by,fiori visitati da
+Trifolium dubium,Vanessa atalanta,flowers visited by,fiori visitati da
+Trifolium dubium,Pieris rapae,flowers visited by,fiori visitati da
+Trifolium dubium,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Trifolium dubium,Apis mellifera,flowers visited by,fiori visitati da
+Trifolium campestre,Agapeta hamana,eaten by,mangiato da
+Trifolium campestre,Arvicola amphibius,eaten by,mangiato da
+Trifolium campestre,Turdus merula,eaten by,mangiato da
+Trifolium campestre,Garrulus glandarius,eaten by,mangiato da
+Trifolium campestre,Fulica atra,eaten by,mangiato da
+Trifolium campestre,Eristalis tenax,pollinated by,impollinato da
+Trifolium campestre,Pieris rapae,pollinated by,impollinato da
+Trifolium campestre,Vanessa atalanta,pollinated by,impollinato da
+Trifolium campestre,Apis mellifera,pollinated by,impollinato da
+Trifolium campestre,Vanessa atalanta,flowers visited by,fiori visitati da
+Trifolium campestre,Eristalis tenax,flowers visited by,fiori visitati da
+Trifolium campestre,Pieris rapae,flowers visited by,fiori visitati da
+Trifolium campestre,Lycaena phlaeas,flowers visited by,fiori visitati da
+Trifolium campestre,Pieris napi,flowers visited by,fiori visitati da
+Trifolium campestre,Apis mellifera,flowers visited by,fiori visitati da
+Trifolium campestre,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Trifolium campestre,Apis mellifera,visited by,visitato da
+Salix,Apis mellifera,interacts with,interagisce con
+Salix,Apis mellifera,eaten by,mangiato da
+Salix,Apis mellifera,flowers visited by,fiori visitati da
+Salix,Apis mellifera,visited by,visitato da
+Aphrophorinae,Salix caprea,interacts with,interagisce con
+Aphrophorinae,Salix alba,interacts with,interagisce con
+Aphrophorinae,Salix,interacts with,interagisce con
+Aphrophorinae,Salix,eats,mangia
+Aphrophorinae,Salix caprea,eats,mangia
+Aphrophorinae,Salix alba,eats,mangia
+Aphrophorinae,Salix,parasite of,parassita di
+Aphrophorinae,Rubus,eats,mangia
+Aphrophorinae,Rubus,adjacent to,adiacente a
+Aphrophorinae,Poaceae,interacts with,interagisce con
+Aphrophorinae,Populus nigra,interacts with,interagisce con
+Aphrophorinae,Rubus,interacts with,interagisce con
+Aphrophorinae,Rosa,interacts with,interagisce con
+Aphrophorinae,Taraxacum,eats,mangia
+Aphrophorinae,Trifolium campestre,eats,mangia
+Aphrophorinae,Trifolium dubium,eats,mangia
+Aphrophorinae,Alliaria petiolata,eats,mangia
+Aphrophorinae,Phragmites australis,eats,mangia
+Aphrophorinae,Polygonum aviculare,eats,mangia
+Aphrophorinae,Lysimachia vulgaris,eats,mangia
+Aphrophorinae,Alnus glutinosa,eats,mangia
+Aphrophorinae,Prunus avium,eats,mangia
+Aphrophorinae,Cichorium intybus,eats,mangia
+Aphrophorinae,Linaria vulgaris,eats,mangia
+Aphrophorinae,Cornus sanguinea,eats,mangia
+Aphrophorinae,Artemisia verlotiorum,eats,mangia
+Aphrophorinae,Ligustrum vulgare,eats,mangia
+Aphrophorinae,Artemisia vulgaris,eats,mangia
+Aphrophorinae,Poaceae,eats,mangia
+Ligustrum,Eristalis tenax,interacts with,interagisce con
+Ligustrum,Pieris napi,interacts with,interagisce con
+Ligustrum,Apis mellifera,interacts with,interagisce con
+Ligustrum,Turdus merula,eaten by,mangiato da
+Ligustrum,Apis mellifera,eaten by,mangiato da
+Ligustrum,Apis mellifera,pollinated by,impollinato da
+Ligustrum,Apis mellifera,flowers visited by,fiori visitati da
+Ligustrum,Pieris rapae,flowers visited by,fiori visitati da
+Ligustrum,Pieris napi,flowers visited by,fiori visitati da
+Ligustrum,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Ligustrum,Eristalis tenax,flowers visited by,fiori visitati da
+Ligustrum,Vanessa atalanta,flowers visited by,fiori visitati da
+Ligustrum,Celastrina argiolus,host of,ospite di
+Ligustrum,Schizophyllum commune,host of,ospite di
+Ligustrum,Apis mellifera,visited by,visitato da
+Ligustrum,Vanessa atalanta,interacts with,interagisce con
+Lysimachia vulgaris,Turdus merula,eaten by,mangiato da
+Lysimachia vulgaris,Fulica atra,eaten by,mangiato da
+Lysimachia vulgaris,Emberiza schoeniclus,eaten by,mangiato da
+Lysimachia vulgaris,Anas platyrhynchos,eaten by,mangiato da
+Lysimachia vulgaris,Apis mellifera,pollinated by,impollinato da
+Lysimachia vulgaris,Apis mellifera,flowers visited by,fiori visitati da
+Parasteatoda,Ardea ibis,preyed upon by,predato da
+Polistes dominula,Rosa,interacts with,interagisce con
+Polistes dominula,Magnoliopsida,interacts with,interagisce con
+Polistes dominula,Rubus,interacts with,interagisce con
+Polistes dominula,Allium ursinum,eats,mangia
+Polistes dominula,Allium vineale,eats,mangia
+Polistes dominula,Rubus,eats,mangia
+Polistes dominula,Rosa,eats,mangia
+Polistes dominula,Magnoliopsida,eats,mangia
+Polistes dominula,Apioideae,eats,mangia
+Polistes dominula,Pieris rapae,preys on,preda
+Polistes dominula,Ardea ibis,preyed upon by,predato da
+Polistes dominula,Salix,pollinates,impollina
+Polistes dominula,Salix alba,pollinates,impollina
+Polistes dominula,Salix caprea,pollinates,impollina
+Polistes dominula,Helianthus tuberosus,pollinates,impollina
+Polistes dominula,Poaceae,pollinates,impollina
+Polistes dominula,Rubus,pollinates,impollina
+Polistes dominula,Magnoliopsida,visits flowers of,visita i fiori di
+Polistes dominula,Poaceae,visits flowers of,visita i fiori di
+Carex hirta,Turdus merula,eaten by,mangiato da
+Carex hirta,Pica pica,eaten by,mangiato da
+Carex hirta,Fulica atra,eaten by,mangiato da
+Carex hirta,Garrulus glandarius,eaten by,mangiato da
+Carex hirta,Fringilla coelebs,eaten by,mangiato da
+Carex hirta,Emberiza schoeniclus,eaten by,mangiato da
+Carex hirta,Anas platyrhynchos,eaten by,mangiato da
+Cryptocephalus sericeus,Gallinula chloropus,preyed upon by,predato da
+Cryptocephalus sericeus,Pica pica,preyed upon by,predato da
+Cryptocephalus sericeus,Garrulus glandarius,preyed upon by,predato da
+Cryptocephalus sericeus,Rallus aquaticus,preyed upon by,predato da
+Cryptocephalus sericeus,Ixobrychus minutus,preyed upon by,predato da
+Cryptocephalus sericeus,Emberiza schoeniclus,preyed upon by,predato da
+Cryptocephalus sericeus,Ardea ibis,preyed upon by,predato da
+Vitis,Apis mellifera,interacts with,interagisce con
+Vitis,Apis mellifera,flowers visited by,fiori visitati da
+Vitis,Schizophyllum commune,interacts with,interagisce con
+Vitis,Clytus arietis,eaten by,mangiato da
+Ischnura elegans,Pica pica,preyed upon by,predato da
+Ischnura elegans,Ixobrychus minutus,preyed upon by,predato da
+Ischnura elegans,Garrulus glandarius,preyed upon by,predato da
+Ischnura elegans,Gallinula chloropus,preyed upon by,predato da
+Ischnura elegans,Ardea ibis,preyed upon by,predato da
+Ischnura elegans,Orthetrum cancellatum,preyed upon by,predato da
+Ischnura elegans,Phragmites australis,visits,visita
+Platycnemis pennipes,Garrulus glandarius,preyed upon by,predato da
+Platycnemis pennipes,Gallinula chloropus,preyed upon by,predato da
+Platycnemis pennipes,Pica pica,preyed upon by,predato da
+Platycnemis pennipes,Ixobrychus minutus,preyed upon by,predato da
+Platycnemis pennipes,Orthetrum cancellatum,preyed upon by,predato da
+Ligustrum vulgare,Sylvia atricapilla,interacts with,interagisce con
+Ligustrum vulgare,Muscardinus avellanarius,interacts with,interagisce con
+Ligustrum vulgare,Turdus merula,interacts with,interagisce con
+Ligustrum vulgare,Pieris napi,eaten by,mangiato da
+Ligustrum vulgare,Fulica atra,eaten by,mangiato da
+Ligustrum vulgare,Anas platyrhynchos,eaten by,mangiato da
+Ligustrum vulgare,Gallinula chloropus,eaten by,mangiato da
+Ligustrum vulgare,Dendrocopos major,eaten by,mangiato da
+Ligustrum vulgare,Fringilla coelebs,eaten by,mangiato da
+Ligustrum vulgare,Garrulus glandarius,eaten by,mangiato da
+Ligustrum vulgare,Columba palumbus,eaten by,mangiato da
+Ligustrum vulgare,Vulpes vulpes,eaten by,mangiato da
+Ligustrum vulgare,Pica pica,eaten by,mangiato da
+Ligustrum vulgare,Luscinia megarhynchos,eaten by,mangiato da
+Ligustrum vulgare,Sylvia atricapilla,eaten by,mangiato da
+Ligustrum vulgare,Erithacus rubecula,eaten by,mangiato da
+Ligustrum vulgare,Turdus merula,eaten by,mangiato da
+Ligustrum vulgare,Apis mellifera,pollinated by,impollinato da
+Ligustrum vulgare,Eristalis tenax,pollinated by,impollinato da
+Ligustrum vulgare,Apis mellifera,flowers visited by,fiori visitati da
+Ligustrum vulgare,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Ligustrum vulgare,Vanessa atalanta,flowers visited by,fiori visitati da
+Ligustrum vulgare,Eristalis tenax,flowers visited by,fiori visitati da
+Ligustrum vulgare,Apis mellifera,visited by,visitato da
+Ligustrum vulgare,Sylvia atricapilla,has dispersal vector,ha come vettore di dispersione
+Ligustrum vulgare,Pica pica,has dispersal vector,ha come vettore di dispersione
+Ligustrum vulgare,Erithacus rubecula,has dispersal vector,ha come vettore di dispersione
+Ligustrum vulgare,Turdus merula,has dispersal vector,ha come vettore di dispersione
+Ligustrum vulgare,Columba palumbus,has dispersal vector,ha come vettore di dispersione
+Idaea degeneraria,Taraxacum,eats,mangia
+Idaea degeneraria,Polygonum aviculare,eats,mangia
+Idaea degeneraria,Ardea ibis,preyed upon by,predato da
+Idaea degeneraria,Taraxacum,has host,ha come ospite
+Alliaria petiolata,Rubus,interacts with,interagisce con
+Alliaria petiolata,Apis mellifera,interacts with,interagisce con
+Alliaria petiolata,Allium vineale,interacts with,interagisce con
+Alliaria petiolata,Pieris napi,interacts with,interagisce con
+Alliaria petiolata,Pieris napi,eaten by,mangiato da
+Alliaria petiolata,Turdus merula,eaten by,mangiato da
+Alliaria petiolata,Pica pica,eaten by,mangiato da
+Alliaria petiolata,Garrulus glandarius,eaten by,mangiato da
+Alliaria petiolata,Fulica atra,eaten by,mangiato da
+Alliaria petiolata,Fringilla coelebs,eaten by,mangiato da
+Alliaria petiolata,Erithacus rubecula,eaten by,mangiato da
+Alliaria petiolata,Emberiza schoeniclus,eaten by,mangiato da
+Alliaria petiolata,Columba palumbus,eaten by,mangiato da
+Alliaria petiolata,Anas platyrhynchos,eaten by,mangiato da
+Alliaria petiolata,Pieris rapae,eaten by,mangiato da
+Alliaria petiolata,Vanessa atalanta,pollinated by,impollinato da
+Alliaria petiolata,Pieris rapae,flowers visited by,fiori visitati da
+Alliaria petiolata,Vanessa atalanta,flowers visited by,fiori visitati da
+Alliaria petiolata,Apis mellifera,flowers visited by,fiori visitati da
+Alliaria petiolata,Pieris napi,flowers visited by,fiori visitati da
+Alliaria petiolata,Eristalis tenax,flowers visited by,fiori visitati da
+Chrysotoxum festivum,Emberiza schoeniclus,preyed upon by,predato da
+Chrysotoxum festivum,Rallus aquaticus,preyed upon by,predato da
+Chrysotoxum festivum,Luscinia megarhynchos,preyed upon by,predato da
+Chrysotoxum festivum,Erithacus rubecula,preyed upon by,predato da
+Chrysotoxum festivum,Garrulus glandarius,preyed upon by,predato da
+Chrysotoxum festivum,Gallinula chloropus,preyed upon by,predato da
+Chrysotoxum festivum,Fringilla coelebs,preyed upon by,predato da
+Chrysotoxum festivum,Sylvia atricapilla,preyed upon by,predato da
+Chrysotoxum festivum,Pica pica,preyed upon by,predato da
+Chrysotoxum festivum,Ixobrychus minutus,preyed upon by,predato da
+Chrysotoxum festivum,Ardea ibis,preyed upon by,predato da
+Chrysotoxum festivum,Turdus merula,preyed upon by,predato da
+Chrysotoxum festivum,Taraxacum,pollinates,impollina
+Chrysotoxum festivum,Salix,pollinates,impollina
+Chrysotoxum festivum,Salix alba,pollinates,impollina
+Chrysotoxum festivum,Salix caprea,pollinates,impollina
+Chrysotoxum festivum,Salix alba,visits flowers of,visita i fiori di
+Chrysotoxum festivum,Rubus,visits flowers of,visita i fiori di
+Chrysotoxum festivum,Prunus avium,visits flowers of,visita i fiori di
+Chrysotoxum festivum,Salix caprea,visits flowers of,visita i fiori di
+Chrysotoxum festivum,Taraxacum,visits flowers of,visita i fiori di
+Chrysotoxum festivum,Rubus,adjacent to,adiacente a
+Xanthogramma,Erithacus rubecula,preyed upon by,predato da
+Xanthogramma,Ixobrychus minutus,preyed upon by,predato da
+Xanthogramma,Fringilla coelebs,preyed upon by,predato da
+Xanthogramma,Turdus merula,preyed upon by,predato da
+Xanthogramma,Sylvia atricapilla,preyed upon by,predato da
+Xanthogramma,Rallus aquaticus,preyed upon by,predato da
+Xanthogramma,Luscinia megarhynchos,preyed upon by,predato da
+Xanthogramma,Garrulus glandarius,preyed upon by,predato da
+Xanthogramma,Aegithalos caudatus,preyed upon by,predato da
+Xanthogramma,Emberiza schoeniclus,preyed upon by,predato da
+Xanthogramma,Pica pica,preyed upon by,predato da
+Xanthogramma,Ardea ibis,preyed upon by,predato da
+Xanthogramma,Gallinula chloropus,preyed upon by,predato da
+Calyptratae,Helianthus tuberosus,eats,mangia
+Calyptratae,Taraxacum,visits flowers of,visita i fiori di
+Calyptratae,Taraxacum,visits,visita
+Calyptratae,Magnoliopsida,interacts with,interagisce con
+Calyptratae,Pieris rapae,parasite of,parassita di
+Verbena officinalis,Turdus merula,eaten by,mangiato da
+Verbena officinalis,Fulica atra,eaten by,mangiato da
+Verbena officinalis,Columba palumbus,eaten by,mangiato da
+Verbena officinalis,Eristalis tenax,pollinated by,impollinato da
+Verbena officinalis,Pieris rapae,pollinated by,impollinato da
+Verbena officinalis,Apis mellifera,pollinated by,impollinato da
+Verbena officinalis,Apis mellifera,flowers visited by,fiori visitati da
+Verbena officinalis,Pieris rapae,flowers visited by,fiori visitati da
+Verbena officinalis,Eristalis tenax,flowers visited by,fiori visitati da
+Verbena officinalis,Pieris napi,flowers visited by,fiori visitati da
+Verbena officinalis,Pieris napi,visited by,visitato da
+Fraxinus,Lonicera japonica,interacts with,interagisce con
+Fraxinus,Prunus avium,interacts with,interagisce con
+Fraxinus,Schizophyllum commune,interacts with,interagisce con
+Fraxinus,Apis mellifera,flowers visited by,fiori visitati da
+Ectobius,Ardea ibis,preyed upon by,predato da
+Ectobius,Ardea ibis,eaten by,mangiato da
+Ectobius,Cornus sanguinea,visits,visita
+Araneus,Ardea ibis,preyed upon by,predato da
+Araneus,Pica pica,preyed upon by,predato da
+Araneus,Emberiza schoeniclus,preyed upon by,predato da
+Araneus,Anthemideae,visits,visita
+Araneus,Vanessa atalanta,interacts with,interagisce con
+Araneus,Rosa,interacts with,interagisce con
+Araneus,Eristalis tenax,interacts with,interagisce con
+Araneus,Vanessa atalanta,eats,mangia
+Araneus,Apis mellifera,eats,mangia
+Araneus,Polistes dominula,preys on,preda
+Araneus,Cicadellidae,preys on,preda
+Araneus,Pieris rapae,preys on,preda
+Araneus,Pieris napi,preys on,preda
+Araneus,Vanessa atalanta,preys on,preda
+Chrysopilus,Rubus,visits,visita
+Araneidae,Apis mellifera,preys on,preda
+Araneidae,Pica pica,preyed upon by,predato da
+Araneidae,Ardea ibis,preyed upon by,predato da
+Araneidae,Emberiza schoeniclus,preyed upon by,predato da
+Tipulinae,Emberiza schoeniclus,preyed upon by,predato da
+Tipulinae,Sympetrum striolatum,preyed upon by,predato da
+Tipulinae,Anas platyrhynchos,preyed upon by,predato da
+Tipulinae,Taraxacum,pollinates,impollina
+Tipulinae,Geranium,interacts with,interagisce con
+Tipulinae,Ardea ibis,preyed upon by,predato da
+Tipulinae,Poaceae,interacts with,interagisce con
+Tipulinae,Artemisia vulgaris,visits,visita
+Tipulinae,Cornus sanguinea,visits,visita
+Tipulinae,Poaceae,visits,visita
+Tipulinae,Phragmites australis,visits flowers of,visita i fiori di
+Rosa,Apis mellifera,interacts with,interagisce con
+Rosa,Apis mellifera,flowers visited by,fiori visitati da
+Rosa,Eristalis tenax,interacts with,interagisce con
+Macrophya annulata,Salix,interacts with,interagisce con
+Geranium,Apis mellifera,interacts with,interagisce con
+Geranium,Apis mellifera,pollinated by,impollinato da
+Geranium,Apis mellifera,flowers visited by,fiori visitati da
+Geranium,Vanessa atalanta,interacts with,interagisce con
+Geranium,Cupido argiades,flowers visited by,fiori visitati da
+Geranium,Vanessa atalanta,flowers visited by,fiori visitati da
+Geranium,Pieris rapae,flowers visited by,fiori visitati da
+Caryophyllaceae,Vitis,interacts with,interagisce con
+Caryophyllaceae,Allium vineale,interacts with,interagisce con
+Caryophyllaceae,Lonicera japonica,interacts with,interagisce con
+Caryophyllaceae,Polistes dominula,interacts with,interagisce con
+Caryophyllaceae,Pieris rapae,interacts with,interagisce con
+Caryophyllaceae,Eristalis tenax,interacts with,interagisce con
+Caryophyllaceae,Apis mellifera,interacts with,interagisce con
+Caryophyllaceae,Celastrina argiolus,interacts with,interagisce con
+Caryophyllaceae,Turdus merula,eaten by,mangiato da
+Caryophyllaceae,Pica pica,eaten by,mangiato da
+Caryophyllaceae,Pieris napi,eaten by,mangiato da
+Caryophyllaceae,Lycaena phlaeas,eaten by,mangiato da
+Caryophyllaceae,Garrulus glandarius,eaten by,mangiato da
+Caryophyllaceae,Fulica atra,eaten by,mangiato da
+Caryophyllaceae,Erithacus rubecula,eaten by,mangiato da
+Caryophyllaceae,Emberiza schoeniclus,eaten by,mangiato da
+Caryophyllaceae,Anas platyrhynchos,eaten by,mangiato da
+Caryophyllaceae,Apis mellifera,eaten by,mangiato da
+Caryophyllaceae,Fringilla coelebs,eaten by,mangiato da
+Caryophyllaceae,Columba palumbus,eaten by,mangiato da
+Caryophyllaceae,Pieris rapae,pollinated by,impollinato da
+Caryophyllaceae,Polyommatus icarus,pollinated by,impollinato da
+Caryophyllaceae,Coenonympha pamphilus,pollinated by,impollinato da
+Caryophyllaceae,Polyommatus icarus,flowers visited by,fiori visitati da
+Caryophyllaceae,Pieris rapae,flowers visited by,fiori visitati da
+Caryophyllaceae,Lycaena phlaeas,flowers visited by,fiori visitati da
+Caryophyllaceae,Pieris napi,flowers visited by,fiori visitati da
+Caryophyllaceae,Apis mellifera,flowers visited by,fiori visitati da
+Caryophyllaceae,Coenonympha pamphilus,flowers visited by,fiori visitati da
+Philodromus aureolus,Alnus glutinosa,interacts with,interagisce con
+Philodromus aureolus,Salix,interacts with,interagisce con
+Philodromus aureolus,Emberiza schoeniclus,preyed upon by,predato da
+Artemisia vulgaris,Eristalis tenax,flowers visited by,fiori visitati da
+Artemisia vulgaris,Apis mellifera,flowers visited by,fiori visitati da
+Artemisia vulgaris,Pieris rapae,flowers visited by,fiori visitati da
+Coprinus comatus,Salix,has host,ha come ospite
+Coprinus comatus,Phragmites australis,symbiont of,simbionte di
+Lauxaniidae,Taraxacum,pollinates,impollina
+Lauxaniidae,Rosa,eats,mangia
+Lauxaniidae,Helianthus tuberosus,pollinates,impollina
+Lauxaniidae,Fraxinus,interacts with,interagisce con
+Lauxaniidae,Prunus avium,visits flowers of,visita i fiori di
+Lauxaniidae,Alnus glutinosa,interacts with,interagisce con
+Lauxaniidae,Sympetrum striolatum,preyed upon by,predato da
+Lauxaniidae,Phragmites australis,eats,mangia
+Lauxaniidae,Rubus,interacts with,interagisce con
+Lauxaniidae,Poaceae,visits flowers of,visita i fiori di
+Anthemideae,Poaceae,interacts with,interagisce con
+Anthemideae,Rosa,interacts with,interagisce con
+Anthemideae,Lauxaniidae,interacts with,interagisce con
+Anthemideae,Cicadellidae,interacts with,interagisce con
+Anthemideae,Polygonum aviculare,interacts with,interagisce con
+Anthemideae,Apis mellifera,interacts with,interagisce con
+Pieris napi,Taraxacum,interacts with,interagisce con
+Pieris napi,Geranium,interacts with,interagisce con
+Pieris napi,Salix caprea,eats,mangia
+Pieris napi,Tussilago farfara,eats,mangia
+Pieris napi,Rubus,eats,mangia
+Pieris napi,Geranium,eats,mangia
+Pieris napi,Taraxacum,eats,mangia
+Pieris napi,Ardea ibis,preyed upon by,predato da
+Pieris napi,Orthetrum cancellatum,preyed upon by,predato da
+Pieris napi,Turdus merula,preyed upon by,predato da
+Pieris napi,Sylvia atricapilla,preyed upon by,predato da
+Pieris napi,Rallus aquaticus,preyed upon by,predato da
+Pieris napi,Pica pica,preyed upon by,predato da
+Pieris napi,Luscinia megarhynchos,preyed upon by,predato da
+Pieris napi,Fringilla coelebs,preyed upon by,predato da
+Pieris napi,Gallinula chloropus,preyed upon by,predato da
+Pieris napi,Garrulus glandarius,preyed upon by,predato da
+Pieris napi,Erithacus rubecula,preyed upon by,predato da
+Pieris napi,Emberiza schoeniclus,preyed upon by,predato da
+Pieris napi,Aegithalos caudatus,preyed upon by,predato da
+Pieris napi,Geranium,pollinates,impollina
+Pieris napi,Ajuga reptans,pollinates,impollina
+Pieris napi,Taraxacum,pollinates,impollina
+Pieris napi,Rubus,pollinates,impollina
+Pieris napi,Taraxacum,visits flowers of,visita i fiori di
+Pieris napi,Tussilago farfara,visits flowers of,visita i fiori di
+Pieris napi,Calystegia,visits flowers of,visita i fiori di
+Pieris napi,Geranium,visits flowers of,visita i fiori di
+Pieris napi,Rubus,visits flowers of,visita i fiori di
+Pieris napi,Allium ursinum,visits flowers of,visita i fiori di
+Pieris napi,Ajuga reptans,visits flowers of,visita i fiori di
+Eristalis tenax,Rubus,interacts with,interagisce con
+Eristalis tenax,Taraxacum,interacts with,interagisce con
+Eristalis tenax,Salix,interacts with,interagisce con
+Eristalis tenax,Caryophyllaceae,interacts with,interagisce con
+Eristalis tenax,Helianthus tuberosus,interacts with,interagisce con
+Eristalis tenax,Rubus,eats,mangia
+Eristalis tenax,Salix,eats,mangia
+Eristalis tenax,Taraxacum,eats,mangia
+Eristalis tenax,Magnoliopsida,eats,mangia
+Eristalis tenax,Rosa,eats,mangia
+Eristalis tenax,Turdus merula,preyed upon by,predato da
+Eristalis tenax,Luscinia megarhynchos,preyed upon by,predato da
+Eristalis tenax,Ixobrychus minutus,preyed upon by,predato da
+Eristalis tenax,Rallus aquaticus,preyed upon by,predato da
+Eristalis tenax,Erithacus rubecula,preyed upon by,predato da
+Eristalis tenax,Garrulus glandarius,preyed upon by,predato da
+Eristalis tenax,Fringilla coelebs,preyed upon by,predato da
+Eristalis tenax,Gallinula chloropus,preyed upon by,predato da
+Eristalis tenax,Sylvia atricapilla,preyed upon by,predato da
+Eristalis tenax,Pica pica,preyed upon by,predato da
+Eristalis tenax,Emberiza schoeniclus,preyed upon by,predato da
+Eristalis tenax,Ardea ibis,preyed upon by,predato da
+Allium vineale,Turdus merula,eaten by,mangiato da
+Allium vineale,Pica pica,eaten by,mangiato da
+Allium vineale,Garrulus glandarius,eaten by,mangiato da
+Allium vineale,Fulica atra,eaten by,mangiato da
+Allium vineale,Fringilla coelebs,eaten by,mangiato da
+Allium vineale,Erithacus rubecula,eaten by,mangiato da
+Allium vineale,Emberiza schoeniclus,eaten by,mangiato da
+Allium vineale,Columba palumbus,eaten by,mangiato da
+Allium vineale,Anas platyrhynchos,eaten by,mangiato da
+Allium vineale,Apis mellifera,eaten by,mangiato da
+Allium vineale,Vanessa atalanta,visited by,visitato da
+Allium vineale,Apis mellifera,visited by,visitato da
+Tussilago farfara,Apis mellifera,interacts with,interagisce con
+Tussilago farfara,Turdus merula,eaten by,mangiato da
+Tussilago farfara,Pica pica,eaten by,mangiato da
+Tussilago farfara,Garrulus glandarius,eaten by,mangiato da
+Tussilago farfara,Fulica atra,eaten by,mangiato da
+Tussilago farfara,Anas platyrhynchos,eaten by,mangiato da
+Tussilago farfara,Apis mellifera,eaten by,mangiato da
+Tussilago farfara,Eristalis tenax,pollinated by,impollinato da
+Tussilago farfara,Vanessa atalanta,flowers visited by,fiori visitati da
+Tussilago farfara,Apis mellifera,flowers visited by,fiori visitati da
+Tussilago farfara,Eristalis tenax,flowers visited by,fiori visitati da
+Tussilago farfara,Pieris rapae,flowers visited by,fiori visitati da
+Tussilago farfara,Pieris napi,visited by,visitato da
+Orthetrum cancellatum,Pieris rapae,preys on,preda
+Orthetrum cancellatum,Ochlodes sylvanus,preys on,preda
+Orthetrum cancellatum,Orthetrum albistylum,preyed upon by,predato da
+Orthetrum cancellatum,Ardea ibis,preyed upon by,predato da
+Orthetrum cancellatum,Emberiza schoeniclus,preyed upon by,predato da
+Helianthus tuberosus,Turdus merula,eaten by,mangiato da
+Helianthus tuberosus,Fulica atra,eaten by,mangiato da
+Helianthus tuberosus,Fringilla coelebs,eaten by,mangiato da
+Helianthus tuberosus,Erithacus rubecula,eaten by,mangiato da
+Helianthus tuberosus,Anas platyrhynchos,eaten by,mangiato da
+Helianthus tuberosus,Apis mellifera,eaten by,mangiato da
+Helianthus tuberosus,Eristalis tenax,pollinated by,impollinato da
+Helianthus tuberosus,Vanessa atalanta,flowers visited by,fiori visitati da
+Helianthus tuberosus,Pieris rapae,flowers visited by,fiori visitati da
+Helianthus tuberosus,Apis mellifera,flowers visited by,fiori visitati da
+Helianthus tuberosus,Eristalis tenax,flowers visited by,fiori visitati da
+Helianthus tuberosus,Apis mellifera,visited by,visitato da
+Helianthus tuberosus,Eristalis tenax,visited by,visitato da
+Apioideae,Sciurus vulgaris,interacts with,interagisce con
+Apioideae,Rubus,interacts with,interagisce con
+Apioideae,Allium ursinum,interacts with,interagisce con
+Apioideae,Clytus arietis,interacts with,interagisce con
+Apioideae,Turdus merula,eaten by,mangiato da
+Apioideae,Pica pica,eaten by,mangiato da
+Apioideae,Melitaea athalia,eaten by,mangiato da
+Apioideae,Fulica atra,eaten by,mangiato da
+Apioideae,Garrulus glandarius,eaten by,mangiato da
+Apioideae,Fringilla coelebs,eaten by,mangiato da
+Apioideae,Erithacus rubecula,eaten by,mangiato da
+Apioideae,Emberiza schoeniclus,eaten by,mangiato da
+Apioideae,Columba palumbus,eaten by,mangiato da
+Apioideae,Coenonympha pamphilus,eaten by,mangiato da
+Apioideae,Anas platyrhynchos,eaten by,mangiato da
+Apioideae,Clytus arietis,eaten by,mangiato da
+Apioideae,Polistes dominula,eaten by,mangiato da
+Apioideae,Platycnemis pennipes,eaten by,mangiato da
+Apioideae,Apis mellifera,eaten by,mangiato da
+Apioideae,Chrysotoxum festivum,eaten by,mangiato da
+Apioideae,Lycaena dispar,eaten by,mangiato da
+Apioideae,Vanessa atalanta,pollinated by,impollinato da
+Apioideae,Chrysotoxum festivum,pollinated by,impollinato da
+Apioideae,Apis mellifera,pollinated by,impollinato da
+Apioideae,Eristalis tenax,pollinated by,impollinato da
+Apioideae,Vanessa atalanta,flowers visited by,fiori visitati da
+Apioideae,Eristalis tenax,flowers visited by,fiori visitati da
+Apioideae,Pieris napi,flowers visited by,fiori visitati da
+Apioideae,Melitaea athalia,flowers visited by,fiori visitati da
+Apioideae,Coenonympha pamphilus,flowers visited by,fiori visitati da
+Apioideae,Clytus arietis,flowers visited by,fiori visitati da
+Apioideae,Lycaena dispar,flowers visited by,fiori visitati da
+Apioideae,Polistes dominula,flowers visited by,fiori visitati da
+Apioideae,Apis mellifera,flowers visited by,fiori visitati da
+Apioideae,Chrysotoxum festivum,flowers visited by,fiori visitati da
+Apioideae,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Phalaris,Phragmites australis,interacts with,interagisce con
+Phalaris,Typha latifolia,interacts with,interagisce con
+Phalaris,Turdus merula,eaten by,mangiato da
+Phalaris,Pica pica,eaten by,mangiato da
+Phalaris,Garrulus glandarius,eaten by,mangiato da
+Phalaris,Fulica atra,eaten by,mangiato da
+Phalaris,Fringilla coelebs,eaten by,mangiato da
+Phalaris,Erithacus rubecula,eaten by,mangiato da
+Phalaris,Emberiza schoeniclus,eaten by,mangiato da
+Phalaris,Columba palumbus,eaten by,mangiato da
+Phalaris,Anas platyrhynchos,eaten by,mangiato da
+Phalaris,Apis mellifera,flowers visited by,fiori visitati da
+Phalaris,Ochlodes sylvanus,host of,ospite di
+Clytus arietis,Rosa,visits flowers of,visita i fiori di
+Clytus arietis,Rubus,eats,mangia
+Clytus arietis,Fraxinus,eats,mangia
+Clytus arietis,Rosa,eats,mangia
+Clytus arietis,Salix,eats,mangia
+Clytus arietis,Rosa canina,eats,mangia
+Clytus arietis,Populus alba,eats,mangia
+Clytus arietis,Salix caprea,eats,mangia
+Clytus arietis,Salix alba,eats,mangia
+Clytus arietis,Alnus glutinosa,eats,mangia
+Clytus arietis,Ardea ibis,preyed upon by,predato da
+Cettia cetti,Botaurus stellaris,eaten by,mangiato da
+Cettia cetti,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Cettia cetti,Lacerta viridis,eaten by,mangiato da
+Cettia cetti,Lacerta bilineata,eaten by,mangiato da
+Cettia cetti,Vulpes vulpes,eaten by,mangiato da
+Cettia cetti,Rallus aquaticus,eaten by,mangiato da
+Cettia cetti,Fulica atra,eaten by,mangiato da
+Cettia cetti,Ixobrychus minutus,eaten by,mangiato da
+Cettia cetti,Vulpes vulpes,preyed upon by,predato da
+Cettia cetti,Rallus aquaticus,preyed upon by,predato da
+Cettia cetti,Lacerta bilineata,preyed upon by,predato da
+Cettia cetti,Ixobrychus minutus,preyed upon by,predato da
+Cettia cetti,Fulica atra,preyed upon by,predato da
+Cettia cetti,Botaurus stellaris,preyed upon by,predato da
+Buteo buteo,Coloeus monedula,interacts with,interagisce con
+Buteo buteo,Arvicola amphibius,interacts with,interagisce con
+Buteo buteo,Turdus merula,eats,mangia
+Buteo buteo,Fulica atra,eats,mangia
+Buteo buteo,Coloeus monedula,eats,mangia
+Buteo buteo,Columba palumbus,eats,mangia
+Buteo buteo,Emberiza schoeniclus,eats,mangia
+Buteo buteo,Arvicola amphibius,eats,mangia
+Buteo buteo,Natrix natrix,eats,mangia
+Buteo buteo,Lepus europaeus,eats,mangia
+Buteo buteo,Lacerta viridis,eats,mangia
+Buteo buteo,Talpa europaea,eats,mangia
+Buteo buteo,Lacerta bilineata,eats,mangia
+Buteo buteo,Rana dalmatina,eats,mangia
+Buteo buteo,Fringilla coelebs,eats,mangia
+Buteo buteo,Micromys minutus,eats,mangia
+Buteo buteo,Pica pica,eats,mangia
+Buteo buteo,Pelophylax cerigensis,eats,mangia
+Buteo buteo,Garrulus glandarius,eats,mangia
+Buteo buteo,Pelophylax shqipericus,eats,mangia
+Buteo buteo,Dendrocopos major,eats,mangia
+Buteo buteo,Bufotes viridis,eats,mangia
+Buteo buteo,Muscardinus avellanarius,eats,mangia
+Buteo buteo,Sylvia atricapilla,eats,mangia
+Buteo buteo,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Buteo buteo,Pica pica,preys on,preda
+Buteo buteo,Muscardinus avellanarius,preys on,preda
+Buteo buteo,Rana dalmatina,preys on,preda
+Buteo buteo,Fringilla coelebs,preys on,preda
+Buteo buteo,Lepus europaeus,preys on,preda
+Buteo buteo,Natrix natrix,preys on,preda
+Buteo buteo,Bufotes viridis,preys on,preda
+Buteo buteo,Garrulus glandarius,preys on,preda
+Buteo buteo,Dendrocopos major,preys on,preda
+Buteo buteo,Arvicola amphibius,preys on,preda
+Buteo buteo,Micromys minutus,preys on,preda
+Buteo buteo,Emberiza schoeniclus,preys on,preda
+Buteo buteo,Talpa europaea,preys on,preda
+Buteo buteo,Lacerta bilineata,preys on,preda
+Buteo buteo,Fulica atra,preys on,preda
+Buteo buteo,Columba palumbus,preys on,preda
+Buteo buteo,Turdus merula,preys on,preda
+Buteo buteo,Sylvia atricapilla,preys on,preda
+Buteo buteo,Pelophylax,preys on,preda
+Coloeus monedula,Magnoliopsida,interacts with,interagisce con
+Coloeus monedula,Turdus merula,eats,mangia
+Coloeus monedula,Emberiza schoeniclus,eats,mangia
+Coloeus monedula,Botaurus stellaris,eats,mangia
+Coloeus monedula,Ardea ibis,eats,mangia
+Coloeus monedula,Pelophylax shqipericus,eats,mangia
+Coloeus monedula,Lepus europaeus,eats,mangia
+Coloeus monedula,Micromys minutus,eats,mangia
+Coloeus monedula,Lacerta bilineata,eats,mangia
+Coloeus monedula,Fringilla coelebs,eats,mangia
+Coloeus monedula,Ixobrychus minutus,eats,mangia
+Coloeus monedula,Arvicola amphibius,eats,mangia
+Coloeus monedula,Sylvia atricapilla,eats,mangia
+Coloeus monedula,Erithacus rubecula,eats,mangia
+Coloeus monedula,Columba palumbus,eats,mangia
+Coloeus monedula,Lacerta viridis,eats,mangia
+Coloeus monedula,Talpa europaea,eats,mangia
+Coloeus monedula,Muscardinus avellanarius,eats,mangia
+Coloeus monedula,Luscinia megarhynchos,eats,mangia
+Coloeus monedula,Pelophylax cerigensis,eats,mangia
+Coloeus monedula,Bufotes viridis,eats,mangia
+Coloeus monedula,Rana dalmatina,eats,mangia
+Coloeus monedula,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Coloeus monedula,Lacerta bilineata,eaten by,mangiato da
+Coloeus monedula,Lacerta viridis,eaten by,mangiato da
+Coloeus monedula,Vulpes vulpes,eaten by,mangiato da
+Sylvia atricapilla,Salix,interacts with,interagisce con
+Sylvia atricapilla,Alnus glutinosa,interacts with,interagisce con
+Sylvia atricapilla,Rosa canina,interacts with,interagisce con
+Sylvia atricapilla,Rosa canina,eats,mangia
+Sylvia atricapilla,Rubus,eats,mangia
+Sylvia atricapilla,Apis mellifera,eats,mangia
+Sylvia atricapilla,Hierophis viridiflavus carbonarius,eaten by,mangiato da
+Sylvia atricapilla,Lacerta viridis,eaten by,mangiato da
+Sylvia atricapilla,Lacerta bilineata,eaten by,mangiato da
+Sylvia atricapilla,Vulpes vulpes,eaten by,mangiato da
+Sylvia atricapilla,Garrulus glandarius,eaten by,mangiato da
+Sylvia atricapilla,Pica pica,eaten by,mangiato da
+Sylvia atricapilla,Turdus merula,eaten by,mangiato da
+Apis mellifera,Rubus,interacts with,interagisce con
+Apis mellifera,Magnoliopsida,interacts with,interagisce con
+Apis mellifera,Calystegia,interacts with,interagisce con
+Apis mellifera,Allium ursinum,interacts with,interagisce con
+Schizophyllum commune,Fraxinus,interacts with,interagisce con
+Schizophyllum commune,Magnoliopsida,interacts with,interagisce con
+Schizophyllum commune,Populus alba,interacts with,interagisce con
+Schizophyllum commune,Salix,interacts with,interagisce con
+Schizophyllum commune,Alnus glutinosa,interacts with,interagisce con
+Schizophyllum commune,Poaceae,interacts with,interagisce con
+Schizophyllum commune,Magnoliopsida,parasite of,parassita di
+Schizophyllum commune,Fraxinus,has host,ha come ospite
+Schizophyllum commune,Salix,has host,ha come ospite
+Schizophyllum commune,Populus alba,has host,ha come ospite
+Schizophyllum commune,Prunus avium,has host,ha come ospite
+Schizophyllum commune,Rubus,symbiont of,simbionte di
+Schizophyllum commune,Vitis,symbiont of,simbionte di
+Schizophyllum commune,Poaceae,symbiont of,simbionte di
+Schizophyllum commune,Phragmites australis,symbiont of,simbionte di
+Schizophyllum commune,Populus nigra,visits,visita
+Ajuga reptans,Apis mellifera,interacts with,interagisce con
+Ajuga reptans,Turdus merula,eaten by,mangiato da
+Ajuga reptans,Pica pica,eaten by,mangiato da
+Ajuga reptans,Garrulus glandarius,eaten by,mangiato da
+Ajuga reptans,Fulica atra,eaten by,mangiato da
+Ajuga reptans,Fringilla coelebs,eaten by,mangiato da
+Ajuga reptans,Emberiza schoeniclus,eaten by,mangiato da
+Ajuga reptans,Columba palumbus,eaten by,mangiato da
+Ajuga reptans,Anas platyrhynchos,eaten by,mangiato da
+Ajuga reptans,Eristalis tenax,pollinated by,impollinato da
+Ajuga reptans,Apis mellifera,pollinated by,impollinato da
+Ajuga reptans,Pieris rapae,flowers visited by,fiori visitati da
+Ajuga reptans,Eristalis tenax,flowers visited by,fiori visitati da
+Ajuga reptans,Apis mellifera,flowers visited by,fiori visitati da
+Ajuga reptans,Celastrina argiolus,flowers visited by,fiori visitati da
+Ajuga reptans,Pieris rapae,visited by,visitato da
+Ajuga reptans,Apis mellifera,visited by,visitato da
+Hierophis viridiflavus carbonarius,Ardea ibis,eats,mangia
+Hierophis viridiflavus carbonarius,Fulica atra,eats,mangia
+Hierophis viridiflavus carbonarius,Arvicola amphibius,eats,mangia
+Hierophis viridiflavus carbonarius,Pica pica,eats,mangia
+Hierophis viridiflavus carbonarius,Dendrocopos major,eats,mangia
+Hierophis viridiflavus carbonarius,Anas platyrhynchos,eats,mangia
+Hierophis viridiflavus carbonarius,Erithacus rubecula,eats,mangia
+Hierophis viridiflavus carbonarius,Turdus merula,eats,mangia
+Hierophis viridiflavus carbonarius,Luscinia megarhynchos,eats,mangia
+Hierophis viridiflavus carbonarius,Emberiza schoeniclus,eats,mangia
+Hierophis viridiflavus carbonarius,Lacerta bilineata,eats,mangia
+Hierophis viridiflavus carbonarius,Columba palumbus,eats,mangia
+Hierophis viridiflavus carbonarius,Muscardinus avellanarius,eats,mangia
+Hierophis viridiflavus carbonarius,Ixobrychus minutus,eats,mangia
+Hierophis viridiflavus carbonarius,Garrulus glandarius,eats,mangia
+Hierophis viridiflavus carbonarius,Rallus aquaticus,eats,mangia
+Hierophis viridiflavus carbonarius,Fringilla coelebs,eats,mangia
+Hierophis viridiflavus carbonarius,Micromys minutus,eats,mangia
+Hierophis viridiflavus carbonarius,Gallinula chloropus,eats,mangia
+Hierophis viridiflavus carbonarius,Botaurus stellaris,eats,mangia
+Hierophis viridiflavus carbonarius,Lacerta viridis,eats,mangia
+Hierophis viridiflavus carbonarius,Natrix natrix,eats,mangia
+Hierophis viridiflavus carbonarius,Lacerta bilineata,eaten by,mangiato da
+Hierophis viridiflavus carbonarius,Lacerta viridis,eaten by,mangiato da
+Hierophis viridiflavus carbonarius,Vulpes vulpes,eaten by,mangiato da
+Hierophis viridiflavus carbonarius,Pica pica,eaten by,mangiato da
+Hierophis viridiflavus carbonarius,Ardea ibis,eaten by,mangiato da
+Hierophis viridiflavus carbonarius,Lacerta bilineata,preys on,preda
+Talpa europaea,Vulpes vulpes,interacts with,interagisce con
+Talpa europaea,Pica pica,eaten by,mangiato da
+Talpa europaea,Ixobrychus minutus,eaten by,mangiato da
+Talpa europaea,Vulpes vulpes,eaten by,mangiato da
+Talpa europaea,Vulpes vulpes,preyed upon by,predato da
+Talpa europaea,Pica pica,preyed upon by,predato da
+Talpa europaea,Ixobrychus minutus,preyed upon by,predato da
+Talpa,Coloeus monedula,eaten by,mangiato da
+Talpa,Pica pica,eaten by,mangiato da
+Talpa,Buteo buteo,eaten by,mangiato da
+Talpa,Ardea purpurea,eaten by,mangiato da
+Talpa,Ardea alba,eaten by,mangiato da
+Talpa,Ardea cinerea,eaten by,mangiato da
+Talpa,Ixobrychus minutus,eaten by,mangiato da
+Talpa,Nycticorax nycticorax,eaten by,mangiato da
+Talpa,Vulpes vulpes,eaten by,mangiato da
+Talpa,Vulpes vulpes,preyed upon by,predato da
+Talpa,Pica pica,preyed upon by,predato da
+Talpa,Nycticorax nycticorax,preyed upon by,predato da
+Talpa,Ixobrychus minutus,preyed upon by,predato da
+Talpa,Buteo buteo,preyed upon by,predato da
+Talpa,Ardea purpurea,preyed upon by,predato da
+Talpa,Ardea cinerea,preyed upon by,predato da
+Talpa,Ardea alba,preyed upon by,predato da
+Micropterix calthella,Carex,eats,mangia
+Turdus merula,Salix,interacts with,interagisce con
+Turdus merula,Rosa canina,interacts with,interagisce con
+Turdus merula,Rosa,interacts with,interagisce con
+Turdus merula,Linaria genistifolia,eats,mangia
+Turdus merula,Salix alba,eats,mangia
+Turdus merula,Phragmites australis,eats,mangia
+Turdus merula,Artemisia verlotiorum,eats,mangia
+Turdus merula,Polygonum aviculare,eats,mangia
+Laothoe populi,Salix,interacts with,interagisce con
+Laothoe populi,Rubus,interacts with,interagisce con
+Laothoe populi,Fraxinus,eats,mangia
+Laothoe populi,Rosa,eats,mangia
+Laothoe populi,Rosa canina,eats,mangia
+Laothoe populi,Alnus glutinosa,eats,mangia
+Laothoe populi,Salix alba,eats,mangia
+Laothoe populi,Populus alba,eats,mangia
+Laothoe populi,Salix caprea,eats,mangia
+Laothoe populi,Salix,eats,mangia
+Laothoe populi,Ardea ibis,preyed upon by,predato da
+Laothoe populi,Salix caprea,has host,ha come ospite
+Laothoe populi,Populus alba,has host,ha come ospite
+Laothoe populi,Salix,has host,ha come ospite
+Laothoe populi,Salix alba,has host,ha come ospite
+Calopterygidae,Poaceae,interacts with,interagisce con
+Calopterygidae,Magnoliopsida,interacts with,interagisce con
+Calopterygidae,Salix,visits flowers of,visita i fiori di
+Calopterygidae,Alnus glutinosa,interacts with,interagisce con
+Calopterygidae,Ardea ibis,preyed upon by,predato da
+Calopterygidae,Pica pica,preyed upon by,predato da
+Calopterygidae,Garrulus glandarius,preyed upon by,predato da
+Calopterygidae,Tachybaptus ruficollis,preyed upon by,predato da
+Calopterygidae,Gallinula chloropus,preyed upon by,predato da
+Calopterygidae,Ixobrychus minutus,preyed upon by,predato da
+Calopterygidae,Emys orbicularis,preyed upon by,predato da
+Calopterygidae,Salix,visits,visita
+Calopterygidae,Ardea ibis,eaten by,mangiato da
+Calopterygidae,Rallus aquaticus,preyed upon by,predato da
+Vulpes vulpes,Lepus europaeus,interacts with,interagisce con
+Vulpes vulpes,Arvicola amphibius,interacts with,interagisce con
+Vulpes vulpes,Rubus,eats,mangia
+Vulpes vulpes,Rosa canina,eats,mangia
+Vulpes vulpes,Pelophylax shqipericus,eats,mangia
+Vulpes vulpes,Rallus aquaticus,eats,mangia
+Vulpes vulpes,Lacerta viridis,eats,mangia
+Vulpes vulpes,Fulica atra,eats,mangia
+Vulpes vulpes,Rana dalmatina,eats,mangia
+Vulpes vulpes,Lacerta bilineata,eats,mangia
+Vulpes vulpes,Pica pica,eats,mangia
+Vulpes vulpes,Luscinia megarhynchos,eats,mangia
+Vulpes vulpes,Erithacus rubecula,eats,mangia
+Vulpes vulpes,Fringilla coelebs,eats,mangia
+Vulpes vulpes,Gallinula chloropus,eats,mangia
+Vulpes vulpes,Anas platyrhynchos,eats,mangia
+Vulpes vulpes,Muscardinus avellanarius,eats,mangia
+Vulpes vulpes,Turdus merula,eats,mangia
+Vulpes vulpes,Arvicola amphibius,eats,mangia
+Muscardinus avellanarius,Vulpes vulpes,interacts with,interagisce con
+Muscardinus avellanarius,Magnoliopsida,eats,mangia
+Muscardinus avellanarius,Salix,eats,mangia
+Muscardinus avellanarius,Salix caprea,eats,mangia
+Muscardinus avellanarius,Salix alba,eats,mangia
+Muscardinus avellanarius,Erithacus rubecula,eats,mangia
+Muscardinus avellanarius,Dendrocopos major,eats,mangia
+Muscardinus avellanarius,Turdus merula,eats,mangia
+Muscardinus avellanarius,Luscinia megarhynchos,eats,mangia
+Muscardinus avellanarius,Fringilla coelebs,eats,mangia
+Muscardinus avellanarius,Natrix natrix,eaten by,mangiato da
+Muscardinus avellanarius,Lacerta viridis,eaten by,mangiato da
+Muscardinus avellanarius,Lacerta bilineata,eaten by,mangiato da
+Muscardinus avellanarius,Pica pica,eaten by,mangiato da
+Muscardinus avellanarius,Garrulus glandarius,eaten by,mangiato da
+Muscardinus avellanarius,Dendrocopos major,eaten by,mangiato da
+Muscardinus avellanarius,Erithacus rubecula,preys on,preda
+Muscardinus avellanarius,Luscinia megarhynchos,preys on,preda
+Muscardinus avellanarius,Aegithalos caudatus,preys on,preda
+Muscardinus avellanarius,Turdus merula,preys on,preda
+Muscardinus avellanarius,Fringilla coelebs,preys on,preda
+Muscardinus avellanarius,Dendrocopos major,preys on,preda
+Muscardinus avellanarius,Vulpes vulpes,preyed upon by,predato da
+Muscardinus avellanarius,Pica pica,preyed upon by,predato da
+Muscardinus avellanarius,Natrix natrix,preyed upon by,predato da
+Muscardinus avellanarius,Lacerta bilineata,preyed upon by,predato da
+Muscardinus avellanarius,Garrulus glandarius,preyed upon by,predato da
+Muscardinus avellanarius,Dendrocopos major,preyed upon by,predato da
+Arvicola amphibius,Taraxacum,eats,mangia
+Arvicola amphibius,Magnoliopsida,eats,mangia
+Arvicola amphibius,Natrix natrix,eaten by,mangiato da
+Arvicola amphibius,Lacerta viridis,eaten by,mangiato da
+Arvicola amphibius,Lacerta bilineata,eaten by,mangiato da
+Arvicola amphibius,Pica pica,eaten by,mangiato da
+Arvicola amphibius,Garrulus glandarius,eaten by,mangiato da
+Arvicola amphibius,Fulica atra,eaten by,mangiato da
+Arvicola amphibius,Rallus aquaticus,eaten by,mangiato da
+Arvicola amphibius,Ixobrychus minutus,eaten by,mangiato da
+Arvicola amphibius,Botaurus stellaris,eaten by,mangiato da
+Arvicola amphibius,Ardea ibis,eaten by,mangiato da
+Arvicola amphibius,Rallus aquaticus,preyed upon by,predato da
+Arvicola amphibius,Pica pica,preyed upon by,predato da
+Arvicola amphibius,Natrix natrix,preyed upon by,predato da
+Arvicola amphibius,Ixobrychus minutus,preyed upon by,predato da
+Arvicola amphibius,Lacerta bilineata,preyed upon by,predato da
+Arvicola amphibius,Fulica atra,preyed upon by,predato da
+Arvicola amphibius,Garrulus glandarius,preyed upon by,predato da
+Arvicola amphibius,Ardea ibis,preyed upon by,predato da
+Arvicola amphibius,Botaurus stellaris,preyed upon by,predato da
+Arvicola amphibius,Vulpes vulpes,preyed upon by,predato da
+Micromys minutus,Poaceae,eats,mangia
+Micromys minutus,Magnoliopsida,eats,mangia
+Micromys minutus,Natrix natrix,eaten by,mangiato da
+Micromys minutus,Lacerta viridis,eaten by,mangiato da
+Micromys minutus,Lacerta bilineata,eaten by,mangiato da
+Micromys minutus,Pica pica,eaten by,mangiato da
+Micromys minutus,Garrulus glandarius,eaten by,mangiato da
+Micromys minutus,Ardea ibis,eaten by,mangiato da
+Micromys minutus,Vulpes vulpes,eaten by,mangiato da
+Micromys minutus,Vulpes vulpes,preyed upon by,predato da
+Micromys minutus,Pica pica,preyed upon by,predato da
+Micromys minutus,Natrix natrix,preyed upon by,predato da
+Micromys minutus,Lacerta bilineata,preyed upon by,predato da
+Micromys minutus,Garrulus glandarius,preyed upon by,predato da
+Micromys minutus,Ardea ibis,preyed upon by,predato da
+Lepus europaeus,Poaceae,eats,mangia
+Lepus europaeus,Magnoliopsida,eats,mangia
+Lepus europaeus,Pica pica,eaten by,mangiato da
+Lepus europaeus,Vulpes vulpes,eaten by,mangiato da
+Lepus europaeus,Pica pica,preyed upon by,predato da
+Lepus europaeus,Vulpes vulpes,preyed upon by,predato da
+Bufotes viridis,Buteo buteo,preyed upon by,predato da
+Bufotes viridis,Natrix helvetica,eaten by,mangiato da
+Bufotes viridis,Natrix natrix,eaten by,mangiato da
+Bufotes viridis,Vulpes vulpes,eaten by,mangiato da
+Bufotes viridis,Garrulus glandarius,eaten by,mangiato da
+Bufotes viridis,Pica pica,eaten by,mangiato da
+Bufotes viridis,Gallinula chloropus,eaten by,mangiato da
+Bufotes viridis,Rallus aquaticus,eaten by,mangiato da
+Bufotes viridis,Ardea ibis,eaten by,mangiato da
+Bufotes viridis,Anas platyrhynchos,eaten by,mangiato da
+Bufotes viridis,Pelophylax cerigensis,eaten by,mangiato da
+Bufotes viridis,Vulpes vulpes,preyed upon by,predato da
+Bufotes viridis,Rallus aquaticus,preyed upon by,predato da
+Bufotes viridis,Pica pica,preyed upon by,predato da
+Bufotes viridis,Garrulus glandarius,preyed upon by,predato da
+Bufotes viridis,Gallinula chloropus,preyed upon by,predato da
+Bufotes viridis,Ardea ibis,preyed upon by,predato da
+Bufotes viridis,Anas platyrhynchos,preyed upon by,predato da
+Bufotes viridis,Natrix natrix,preyed upon by,predato da
+Bufotes viridis,Coloeus monedula,eaten by,mangiato da
+Bufotes viridis,Himantopus himantopus,eaten by,mangiato da
+Bufotes viridis,Buteo buteo,eaten by,mangiato da
+Bufotes viridis,Ardea purpurea,eaten by,mangiato da
+Bufotes viridis,Ardea cinerea,eaten by,mangiato da
+Bufotes viridis,Pelophylax ridibundus,eaten by,mangiato da
+Bufotes viridis,Triturus carnifex,eaten by,mangiato da
+Bufotes viridis,Ardea alba,eaten by,mangiato da
+Lacerta bilineata,Garrulus glandarius,eats,mangia
+Lacerta bilineata,Fringilla coelebs,eats,mangia
+Lacerta bilineata,Lacerta viridis,eats,mangia
+Lacerta bilineata,Luscinia megarhynchos,eats,mangia
+Lacerta bilineata,Erithacus rubecula,eats,mangia
+Lacerta bilineata,Turdus merula,eats,mangia
+Lacerta bilineata,Pica pica,eats,mangia
+Lacerta bilineata,Emberiza schoeniclus,eats,mangia
+Lacerta bilineata,Natrix natrix,eats,mangia
+Lacerta bilineata,Lacerta viridis,eaten by,mangiato da
+Lacerta bilineata,Pica pica,eaten by,mangiato da
+Lacerta bilineata,Garrulus glandarius,eaten by,mangiato da
+Lacerta bilineata,Erithacus rubecula,eaten by,mangiato da
+Lacerta bilineata,Turdus merula,eaten by,mangiato da
+Lacerta bilineata,Ardea ibis,eaten by,mangiato da
+Lacerta bilineata,Botaurus stellaris,eaten by,mangiato da
+Lacerta bilineata,Pica pica,preys on,preda
+Lacerta bilineata,Turdus merula,preys on,preda
+Lacerta bilineata,Fringilla coelebs,preys on,preda
+Lacerta bilineata,Luscinia megarhynchos,preys on,preda
+Lacerta bilineata,Emberiza schoeniclus,preys on,preda
+Lacerta bilineata,Garrulus glandarius,preys on,preda
+Lacerta bilineata,Sylvia atricapilla,preys on,preda
+Lacerta bilineata,Erithacus rubecula,preys on,preda
+Lacerta bilineata,Natrix natrix,preys on,preda
+Lacerta bilineata,Aegithalos caudatus,preys on,preda
+Lacerta bilineata,Vulpes vulpes,preyed upon by,predato da
+Lacerta bilineata,Turdus merula,preyed upon by,predato da
+Lacerta bilineata,Pica pica,preyed upon by,predato da
+Lacerta bilineata,Garrulus glandarius,preyed upon by,predato da
+Lacerta bilineata,Erithacus rubecula,preyed upon by,predato da
+Lacerta bilineata,Botaurus stellaris,preyed upon by,predato da
+Lacerta bilineata,Ardea ibis,preyed upon by,predato da
+Natrix natrix,Pelophylax,eats,mangia
+Natrix natrix,Lissotriton vulgaris,eats,mangia
+Natrix natrix,Pelophylax shqipericus,eats,mangia
+Natrix natrix,Rana dalmatina,eats,mangia
+Natrix natrix,Pelophylax cerigensis,eats,mangia
+Natrix natrix,Lacerta viridis,eaten by,mangiato da
+Natrix natrix,Vulpes vulpes,eaten by,mangiato da
+Natrix natrix,Pica pica,eaten by,mangiato da
+Natrix natrix,Turdus merula,eaten by,mangiato da
+Natrix natrix,Garrulus glandarius,eaten by,mangiato da
+Natrix natrix,Ardea ibis,eaten by,mangiato da
+Natrix natrix,Botaurus stellaris,eaten by,mangiato da
+Natrix natrix,Pelophylax lessonae lessonae,preys on,preda
+Natrix natrix,Lissotriton vulgaris,preys on,preda
+Natrix natrix,Rana dalmatina,preys on,preda
+Natrix natrix,Pelophylax,preys on,preda
+Natrix natrix,Vulpes vulpes,preyed upon by,predato da
+Natrix natrix,Turdus merula,preyed upon by,predato da
+Natrix natrix,Pica pica,preyed upon by,predato da
+Natrix natrix,Garrulus glandarius,preyed upon by,predato da
+Natrix natrix,Ardea ibis,preyed upon by,predato da
+Natrix natrix,Botaurus stellaris,preyed upon by,predato da
+Natrix natrix,Pelophylax ridibundus,eats,mangia
+Natrix natrix,Pelophylax ridibundus,preys on,preda
+Natrix helvetica,Rana dalmatina,eats,mangia
+Natrix helvetica,Pelophylax,eats,mangia
+Natrix helvetica,Rana dalmatina,preys on,preda
+Natrix helvetica,Pelophylax,preys on,preda
+Lissotriton vulgaris,Garrulus glandarius,eaten by,mangiato da
+Lissotriton vulgaris,Pica pica,eaten by,mangiato da
+Lissotriton vulgaris,Rallus aquaticus,eaten by,mangiato da
+Lissotriton vulgaris,Botaurus stellaris,eaten by,mangiato da
+Lissotriton vulgaris,Pelophylax cerigensis,eaten by,mangiato da
+Lissotriton vulgaris,Anas platyrhynchos,eaten by,mangiato da
+Lissotriton vulgaris,Rallus aquaticus,preyed upon by,predato da
+Lissotriton vulgaris,Pica pica,preyed upon by,predato da
+Lissotriton vulgaris,Garrulus glandarius,preyed upon by,predato da
+Lissotriton vulgaris,Botaurus stellaris,preyed upon by,predato da
+Lissotriton vulgaris,Anas platyrhynchos,preyed upon by,predato da
+Lissotriton vulgaris,Tachybaptus ruficollis,preyed upon by,predato da
+Lissotriton vulgaris,Natrix helvetica,preyed upon by,predato da
+Rana dalmatina,Garrulus glandarius,eaten by,mangiato da
+Rana dalmatina,Pica pica,eaten by,mangiato da
+Rana dalmatina,Gallinula chloropus,eaten by,mangiato da
+Rana dalmatina,Rallus aquaticus,eaten by,mangiato da
+Rana dalmatina,Anas platyrhynchos,eaten by,mangiato da
+Rana dalmatina,Botaurus stellaris,eaten by,mangiato da
+Rana dalmatina,Ixobrychus minutus,eaten by,mangiato da
+Rana dalmatina,Pelophylax cerigensis,eaten by,mangiato da
+Rana dalmatina,Ardea ibis,preyed upon by,predato da
+Rana dalmatina,Vulpes vulpes,preyed upon by,predato da
+Rana dalmatina,Rallus aquaticus,preyed upon by,predato da
+Rana dalmatina,Pica pica,preyed upon by,predato da
+Rana dalmatina,Ixobrychus minutus,preyed upon by,predato da
+Rana dalmatina,Gallinula chloropus,preyed upon by,predato da
+Rana dalmatina,Garrulus glandarius,preyed upon by,predato da
+Rana dalmatina,Botaurus stellaris,preyed upon by,predato da
+Rana dalmatina,Anas platyrhynchos,preyed upon by,predato da
+Utricularia macrorhiza,Utricularia vulgaris,interacts with,interagisce con
+Iris pseudacorus,Turdus merula,eaten by,mangiato da
+Iris pseudacorus,Fulica atra,eaten by,mangiato da
+Iris pseudacorus,Erithacus rubecula,eaten by,mangiato da
+Iris pseudacorus,Apis mellifera,eaten by,mangiato da
+Iris pseudacorus,Apis mellifera,pollinated by,impollinato da
+Iris pseudacorus,Apis mellifera,flowers visited by,fiori visitati da
+Iris pseudacorus,Apis mellifera,host of,ospite di
+Iris pseudacorus,Apis mellifera,visited by,visitato da
+Alnus glutinosa,Turdus merula,eaten by,mangiato da
+Alnus glutinosa,Pica pica,eaten by,mangiato da
+Alnus glutinosa,Fulica atra,eaten by,mangiato da
+Alnus glutinosa,Garrulus glandarius,eaten by,mangiato da
+Alnus glutinosa,Fringilla coelebs,eaten by,mangiato da
+Alnus glutinosa,Erithacus rubecula,eaten by,mangiato da
+Alnus glutinosa,Emberiza schoeniclus,eaten by,mangiato da
+Alnus glutinosa,Columba palumbus,eaten by,mangiato da
+Alnus glutinosa,Anas platyrhynchos,eaten by,mangiato da
+Rosa canina,Apis mellifera,interacts with,interagisce con
+Rosa canina,Fulica atra,eaten by,mangiato da
+Rosa canina,Gallinula chloropus,eaten by,mangiato da
+Rosa canina,Luscinia megarhynchos,eaten by,mangiato da
+Rosa canina,Erithacus rubecula,eaten by,mangiato da
+Rosa canina,Columba palumbus,eaten by,mangiato da
+Rosa canina,Dendrocopos major,eaten by,mangiato da
+Rosa canina,Fringilla coelebs,eaten by,mangiato da
+Rosa canina,Garrulus glandarius,eaten by,mangiato da
+Rosa canina,Pica pica,eaten by,mangiato da
+Rosa canina,Turdus merula,eaten by,mangiato da
+Rosa canina,Pieris rapae,pollinated by,impollinato da
+Rosa canina,Apis mellifera,pollinated by,impollinato da
+Rosa canina,Eristalis tenax,pollinated by,impollinato da
+Rosa canina,Apis mellifera,flowers visited by,fiori visitati da
+Rosa canina,Eristalis tenax,flowers visited by,fiori visitati da
+Rosa canina,Celastrina argiolus,flowers visited by,fiori visitati da
+Rosa canina,Ochlodes sylvanus,flowers visited by,fiori visitati da
+Salix alba,Araneus,interacts with,interagisce con
+Salix alba,Plagionotus arcuatus,eaten by,mangiato da
+Salix alba,Garrulus glandarius,eaten by,mangiato da
+Salix alba,Fulica atra,eaten by,mangiato da
+Salix alba,Columba palumbus,eaten by,mangiato da
+Pelophylax,Rana dalmatina,eats,mangia
+Pelophylax,Bufotes viridis,eats,mangia
+Pelophylax,Pelophylax shqipericus,eats,mangia
+Pelophylax,Pelophylax ridibundus,eats,mangia
+Pelophylax,Rana latastei,eats,mangia
+Pelophylax,Triturus carnifex,eats,mangia
+Pelophylax,Lissotriton vulgaris,eats,mangia
+Pelophylax,Pelophylax cerigensis,eats,mangia
+Pelophylax,Pelophylax cerigensis,eaten by,mangiato da
+Pelophylax,Gallinula chloropus,eaten by,mangiato da
+Pelophylax,Rallus aquaticus,eaten by,mangiato da
+Pelophylax,Himantopus himantopus,eaten by,mangiato da
+Pelophylax,Circus cyaneus,eaten by,mangiato da
+Pelophylax,Buteo buteo,eaten by,mangiato da
+Pelophylax,Ixobrychus minutus,eaten by,mangiato da
+Pelophylax,Ardea purpurea,eaten by,mangiato da
+Pelophylax,Botaurus stellaris,eaten by,mangiato da
+Pelophylax,Nycticorax nycticorax,eaten by,mangiato da
+Pelophylax,Egretta garzetta,eaten by,mangiato da
+Pelophylax,Triturus carnifex,eaten by,mangiato da
+Pelophylax,Tachybaptus ruficollis,eaten by,mangiato da
+Pelophylax,Anas platyrhynchos,eaten by,mangiato da
+Pelophylax,Pelophylax ridibundus,eaten by,mangiato da
+Pelophylax,Ardea cinerea,eaten by,mangiato da
+Pelophylax,Ardea alba,eaten by,mangiato da
+Pelophylax cerigensis,Pelophylax shqipericus,eats,mangia
+Pelophylax cerigensis,Ixobrychus minutus,eaten by,mangiato da
+Pelophylax cerigensis,Garrulus glandarius,eaten by,mangiato da
+Pelophylax cerigensis,Pica pica,eaten by,mangiato da
+Pelophylax shqipericus,Garrulus glandarius,eaten by,mangiato da
+Pelophylax shqipericus,Pica pica,eaten by,mangiato da
+Pelophylax shqipericus,Rallus aquaticus,eaten by,mangiato da
+Pelophylax shqipericus,Gallinula chloropus,eaten by,mangiato da
+Pelophylax shqipericus,Ixobrychus minutus,eaten by,mangiato da
+Pelophylax shqipericus,Anas platyrhynchos,eaten by,mangiato da
+Pelophylax shqipericus,Botaurus stellaris,eaten by,mangiato da
+Pelophylax cerigensis,Gallinula chloropus,eaten by,mangiato da
+Pelophylax cerigensis,Rallus aquaticus,eaten by,mangiato da
+Pelophylax cerigensis,Anas platyrhynchos,eaten by,mangiato da
+Pelophylax cerigensis,Botaurus stellaris,eaten by,mangiato da
+Salix caprea,Apis mellifera,interacts with,interagisce con
+Salix caprea,Turdus merula,eaten by,mangiato da
+Salix caprea,Plagionotus arcuatus,eaten by,mangiato da
+Ardea ibis,Ardea alba,interacts with,interagisce con
+Ardea ibis,Himantopus himantopus,interacts with,interagisce con
+Ardea ibis,Egretta garzetta,interacts with,interagisce con
+Ardea ibis,Nycticorax nycticorax,interacts with,interagisce con
+Ardea ibis,Ardea cinerea,interacts with,interagisce con
+Rallus aquaticus,Gallinula chloropus,interacts with,interagisce con
+Rallus aquaticus,Gallinula chloropus,eats,mangia
+Rallus aquaticus,Fulica atra,eats,mangia
+Rallus aquaticus,Pica pica,eaten by,mangiato da
+Rallus aquaticus,Fulica atra,eaten by,mangiato da
+Luscinia megarhynchos,Lacerta viridis,eaten by,mangiato da
+Luscinia megarhynchos,Garrulus glandarius,eaten by,mangiato da
+Botaurus stellaris,Lacerta viridis,eats,mangia
+Botaurus stellaris,Vulpes vulpes,eaten by,mangiato da
+Botaurus stellaris,Vulpes vulpes,preyed upon by,predato da
+Fulica atra,Gallinula chloropus,interacts with,interagisce con
+Fulica atra,Populus alba,eats,mangia
+Fulica atra,Artemisia vulgaris,eats,mangia
+Fulica atra,Linaria genistifolia,eats,mangia
+Fulica atra,Artemisia verlotiorum,eats,mangia
+Fulica atra,Allium ursinum,eats,mangia
+Gallinula chloropus,Rosa,eats,mangia
+Gallinula chloropus,Fulica atra,eaten by,mangiato da
+Allium ursinum,Columba palumbus,eaten by,mangiato da
+Allium ursinum,Turdus merula,eaten by,mangiato da
+Allium ursinum,Pica pica,eaten by,mangiato da
+Allium ursinum,Garrulus glandarius,eaten by,mangiato da
+Allium ursinum,Fringilla coelebs,eaten by,mangiato da
+Allium ursinum,Erithacus rubecula,eaten by,mangiato da
+Allium ursinum,Emberiza schoeniclus,eaten by,mangiato da
+Allium ursinum,Anas platyrhynchos,eaten by,mangiato da
+Allium ursinum,Apis mellifera,pollinated by,impollinato da
+Allium ursinum,Apis mellifera,flowers visited by,fiori visitati da
+Allium ursinum,Pieris rapae,flowers visited by,fiori visitati da
+Allium ursinum,Apis mellifera,visited by,visitato da
+Phragmites australis,Fulica atra,eaten by,mangiato da
+Phragmites australis,Columba palumbus,eaten by,mangiato da
+Phragmites australis,Apis mellifera,eaten by,mangiato da
+Phragmites australis,Apis mellifera,flowers visited by,fiori visitati da
+Phragmites australis,Poaceae,visits flowers of,visita i fiori di
+Lacerta viridis,Turdus merula,eats,mangia
+Lacerta viridis,Garrulus glandarius,eats,mangia
+Lacerta viridis,Fringilla coelebs,eats,mangia
+Lacerta viridis,Pica pica,eats,mangia
+Lacerta viridis,Erithacus rubecula,eats,mangia
+Lacerta viridis,Emberiza schoeniclus,eats,mangia
+Lacerta viridis,Pica pica,eaten by,mangiato da
+Lacerta viridis,Erithacus rubecula,eaten by,mangiato da
+Lacerta viridis,Turdus merula,eaten by,mangiato da
+Lacerta viridis,Garrulus glandarius,eaten by,mangiato da
+Lacerta viridis,Ardea ibis,eaten by,mangiato da
+Cichorium intybus,Polyommatus icarus,flowers visited by,fiori visitati da
+Platycnemis pennipes,Cornus sanguinea,eats,mangia
+Platycnemis pennipes,Tachybaptus ruficollis,preyed upon by,predato da
+Equisetum telmateia telmateia,Carex,interacts with,interagisce con
+Equisetum telmateia telmateia,Turdus merula,eaten by,mangiato da
+Equisetum telmateia telmateia,Pica pica,eaten by,mangiato da
+Equisetum telmateia telmateia,Garrulus glandarius,eaten by,mangiato da
+Equisetum telmateia telmateia,Fringilla coelebs,eaten by,mangiato da
+Equisetum telmateia telmateia,Erithacus rubecula,eaten by,mangiato da
+Equisetum telmateia telmateia,Columba palumbus,eaten by,mangiato da
+Equisetum telmateia telmateia,Anas platyrhynchos,eaten by,mangiato da
