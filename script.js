@@ -3642,6 +3642,14 @@ function scaleAndCenter(nodes) {
 }
 
 function drag(simulation) {
+  // Il "riscaldamento" della simulazione (che fa muovere TUTTA la rete)
+  // parte solo quando il nodo viene davvero spostato, non al semplice
+  // click o tenendo premuto: finché il puntatore resta fermo (o si muove
+  // meno di DRAG_HEAT_THRESHOLD_PX pixel di schermo) la rete sta ferma.
+  const DRAG_HEAT_THRESHOLD_PX = 4;
+  let startX = 0;
+  let startY = 0;
+  let heated = false;
   return (
     d3
       .drag()
@@ -3650,18 +3658,37 @@ function drag(simulation) {
       // resta libero, l'evento passa all'svg).
       .filter((event) => !tourLockPolicy && !event.ctrlKey && !event.button)
       .on("start", (event, d) => {
-        if (!event.active) simulation.alphaTarget(0.1).restart();
-        d.fx = d.x;
-        d.fy = d.y;
+        heated = false;
+        // soglia misurata in pixel di schermo (non in unità del grafo, che
+        // dipendono dallo zoom)
+        startX = event.sourceEvent.clientX;
+        startY = event.sourceEvent.clientY;
       })
       .on("drag", (event, d) => {
+        if (
+          !heated &&
+          Math.hypot(
+            event.sourceEvent.clientX - startX,
+            event.sourceEvent.clientY - startY
+          ) < DRAG_HEAT_THRESHOLD_PX
+        ) {
+          return;
+        }
+        if (!heated) {
+          heated = true;
+          // (nel gesto "drag" event.active vale già 1: si riscalda sempre)
+          simulation.alphaTarget(0.1).restart();
+        }
         d.fx = event.x;
         d.fy = event.y;
       })
       .on("end", (event, d) => {
-        if (!event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
+        if (heated) {
+          if (!event.active) simulation.alphaTarget(0);
+          d.fx = null;
+          d.fy = null;
+        }
+        heated = false;
       })
   );
 }
