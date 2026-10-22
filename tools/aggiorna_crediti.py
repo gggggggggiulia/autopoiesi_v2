@@ -78,9 +78,18 @@ def da_foto_del_taxon(taxon, photo_id):
 
 
 def da_osservazioni_noale(nome_scientifico, photo_id):
-    """Cerca la foto tra le osservazioni della specie a Cave di Noale: (licenza, crediti) o None."""
+    """Cerca la foto tra le osservazioni della specie a Cave di Noale, poi in un
+    raggio più ampio (le coordinate di alcune osservazioni sono oscurate)."""
+    for raggio in (NOALE["radius"], 40):
+        trovata = _cerca_in_raggio(nome_scientifico, photo_id, raggio)
+        if trovata:
+            return trovata
+    return None
+
+
+def _cerca_in_raggio(nome_scientifico, photo_id, raggio):
     q = urllib.parse.urlencode({"taxon_name": nome_scientifico, "photos": "true",
-                                "per_page": 200, **NOALE})
+                                "per_page": 200, **NOALE, "radius": raggio})
     for pagina in range(1, 6):  # al massimo 1000 osservazioni per specie
         time.sleep(PAUSA)
         data = get_json(f"https://api.inaturalist.org/v1/observations?{q}&page={pagina}")
