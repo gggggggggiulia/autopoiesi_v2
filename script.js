@@ -97,7 +97,7 @@ syncInfoBoxClosed();
 
 infoBox.node().addEventListener("click", (event) => {
   const img = event.target.closest("img");
-  if (!img) return;
+  if (!img || img.closest(".ei-node")) return; // le specie dell'edge inspector aprono il nodo, non la lightbox
   if (infoBox.node().classList.contains("is-closed")) return;
   event.stopPropagation();
   openLightbox(img.getAttribute("src"), img.getAttribute("alt"));
@@ -1164,13 +1164,9 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
           <div class="ei-name">${otherNode.name}</div>
         </div>
         <div class="ei-photos">
-          <img class="ei-photo" src="${viewpointNode.image}" alt="${
-            viewpointNode.name
-          }" />
+          ${edgeNodeHTML(viewpointNode)}
           <span class="ei-icon-slot">${interactionIconHTML(interaction)}</span>
-          <img class="ei-photo" src="${otherNode.image}" alt="${
-            otherNode.name
-          }" />
+          ${edgeNodeHTML(otherNode)}
         </div>
         ${description ? `<div class="ei-description">${description}</div>` : ""}
         ${note ? `<div class="ei-note">${note}</div>` : ""}
@@ -1178,6 +1174,28 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
     `
         )
         .style("opacity", 1);
+
+      // Le due specie sono nodi: cliccandone una si apre il suo inspector.
+      infoBox.selectAll(".ei-node").on("click", function (event) {
+        event.stopPropagation();
+        if (tourLockPolicy) return;
+        const target = nodes.find(
+          (n) => n.scientific_name === this.dataset.species
+        );
+        if (!target) return;
+        selectNode(target);
+        focusOnNode(target);
+      });
+    }
+
+    // Una specie nell'edge inspector, disegnata come il suo nodo nel grafo:
+    // foto tonda, bordo sottile, tratteggio e grigio se non osservata.
+    function edgeNodeHTML(n) {
+      return `<button type="button" class="ei-node${
+        n.notObserved ? " is-not-observed" : ""
+      }" data-species="${n.scientific_name}" title="Apri ${n.name}">
+            <img src="${n.image}" alt="${n.name}" />
+          </button>`;
     }
 
     linkHitAreas

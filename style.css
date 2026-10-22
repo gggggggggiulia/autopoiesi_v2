@@ -286,14 +286,43 @@ button#reset:hover {
   gap: 4px;
   width: 100%;
 }
-.ei-photo {
+/* Le due specie come nodi del grafo: stessa dimensione per entrambe,
+   indipendente dal numero di interazioni. */
+.ei-node {
   flex: 1 1 0;
   min-width: 0;
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.ei-node img {
+  box-sizing: border-box;
+  width: 96px;
   height: 96px;
+  border-radius: 50%;
   object-fit: cover;
   display: block;
-  background: rgba(217, 217, 217, 0.2);
+  background: #8a8a8c; /* stesso segnaposto dei nodi */
+  color: transparent; /* niente testo alt sopra il segnaposto se la foto non carica */
+  font-size: 0;
+  border: 1px solid #646466;
+  transition: border-color 0.2s ease;
+}
+.ei-node:hover img,
+.ei-node:focus-visible img {
+  border-color: #f4f4f4; /* come il nodo selezionato */
+}
+.ei-node:focus-visible {
+  outline: none;
+}
+/* Specie senza osservazioni: tratteggio e foto desaturata e schiarita,
+   con lo stesso filtro SVG usato per i nodi. */
+.ei-node.is-not-observed img {
+  border-style: dashed;
+  filter: url(#grayscale-filter);
 }
 .ei-icon-slot {
   box-sizing: border-box;
