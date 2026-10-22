@@ -2,14 +2,12 @@
 """Recupera e verifica i crediti delle foto di nodes.csv da iNaturalist.
 
 Uso (dalla cartella del sito):
-    python3 tools/aggiorna_crediti.py            # controlla e aggiorna nodes.csv
-    python3 tools/aggiorna_crediti.py --prova    # solo report, non tocca nodes.csv
+    python3 tools/aggiorna_crediti.py
 
-Per ogni specie legge l'id della foto dall'URL in "image", chiede a iNaturalist
-autore e licenza, e:
-  - riempie/corregge le colonne image_credit e image_license;
-  - aggiunge la colonna image_page (pagina della foto su iNaturalist);
-  - scrive crediti_report.csv con lo stato di ogni foto.
+nodes.csv viene solo letto, mai modificato. Per ogni specie lo script legge
+l'id della foto dall'URL in "image", chiede a iNaturalist autore e licenza e
+scrive tutto in crediti_report.csv: crediti attuali, crediti corretti, licenza,
+pagina della foto e stato (ok / da aggiungere / da correggere / da sostituire).
 
 Le foto senza licenza Creative Commons ("tutti i diritti riservati") non si
 possono usare senza permesso dell'autore: per quelle il report propone la foto
@@ -24,8 +22,6 @@ per 177 specie servono circa 4-5 minuti.
 import csv
 import json
 import re
-import shutil
-import sys
 import time
 import urllib.parse
 import urllib.request
@@ -80,34 +76,28 @@ def foto_alternativa(nome_scientifico):
 
 
 def main():
-    prova = "--prova" in sys.argv
     with open(NODES, encoding="utf-8-sig", newline="") as f:
-        reader = csv.DictReader(f)
-        campi = list(reader.fieldnames)
-        righe = list(reader)
-    for c in ("image_credit", "image_license", "image_page"):
-        if c not in campi:
-            campi.append(c)
+        righe = list(csv.DictReader(f))
 
     report = []
     for i, r in enumerate(righe, 1):
         nome = r["scientific_name"]
         m = re.search(r"/photos/(\d+)/", r.get("image", ""))
-        stato, alt = "", ""
+        stato, alt, pagina = "", "", ""
+        attr, lic = "", ""
+        vecchi = (r.get("image_credit", ""), r.get("image_license", ""))
         if not m:
             stato = "url foto non riconosciuto"
         else:
             pid = m.group(1)
-            r["image_page"] = f"https://www.inaturalist.org/photos/{pid}"
+            pagina = f"https://www.inaturalist.org/photos/{pid}"
             try:
                 lic, attr = info_foto(pid)
             except Exception as e:
                 stato = f"errore: {e}"
             else:
-                vecchi = (r.get("image_credit", ""), r.get("image_license", ""))
-                r["image_credit"], r["image_license"] = attr, lic
                 if lic not in LICENZE_LIBERE:
-                    stato = "TUTTI I DIRITTI RISERVATI: da sostituire"
+                    stato = "da sostituire: tutti i diritti riservati"
                     time.sleep(PAUSA)
                     try:
                         a = foto_alternativa(nome)
@@ -115,17 +105,19 @@ def main():
                     except Exception as e:
                         alt = f"errore ricerca alternativa: {e}"
                 elif not any(vecchi):
-                    stato = "crediti aggiunti"
+                    stato = "da aggiungere"
                 elif vecchi != (attr, lic):
-                    stato = "crediti corretti"
+                    stato = "da correggere"
                 else:
                     stato = "ok"
             time.sleep(PAUSA)
         print(f"[{i}/{len(righe)}] {nome}: {stato}")
         report.append({"scientific_name": nome, "stato": stato,
-                       "image_credit": r.get("image_credit", ""),
-                       "image_license": r.get("image_license", ""),
-                       "image_page": r.get("image_page", ""),
+                       "credit_attuale": vecchi[0],
+                       "licenza_attuale": vecchi[1],
+                       "credit_inaturalist": attr,
+                       "licenza_inaturalist": lic,
+                       "pagina_foto": pagina,
                        "foto_alternativa (url | crediti | licenza)": alt})
 
     with open(REPORT, "w", encoding="utf-8", newline="") as f:
@@ -133,19 +125,12 @@ def main():
         w.writeheader()
         w.writerows(report)
 
-    if not prova:
-        shutil.copyfile(NODES, NODES + ".bak")
-        with open(NODES, "w", encoding="utf-8", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=campi, lineterminator="\r\n")
-            w.writeheader()
-            w.writerows(righe)
-
     conta = {}
     for x in report:
         k = x["stato"].split(":")[0]
         conta[k] = conta.get(k, 0) + 1
     print("\nRiepilogo:", conta)
-    print(f"Report: {REPORT}" + ("" if prova else f" · nodes.csv aggiornato (copia in {NODES}.bak)"))
+    print(f"Report salvato in {REPORT} (nodes.csv non è stato modificato)")
 
 
 if __name__ == "__main__":
