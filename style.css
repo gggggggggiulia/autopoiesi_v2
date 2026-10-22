@@ -312,6 +312,15 @@ button#reset:hover {
   color: var(--text);
 }
 
+/* Nota facoltativa sotto la descrizione: stessa voce, più piccola e attenuata. */
+.ei-note {
+  width: 100%;
+  margin-top: -16px; /* più vicina alla descrizione del gap standard */
+  font-size: 13px;
+  line-height: 15px;
+  color: var(--text-dim);
+}
+
 .node {
   cursor: pointer;
 }
