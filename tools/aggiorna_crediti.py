@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Recupera e verifica i crediti delle foto di nodes.csv da iNaturalist.
 
-Uso (dalla cartella del sito):
-    python3 tools/aggiorna_crediti.py
+Uso (dalla cartella che contiene nodes.csv):
+    python3 aggiorna_crediti.py --prova   # prova veloce sulle prime 3 specie
+    python3 aggiorna_crediti.py           # tutte le specie
 
 nodes.csv viene solo letto, mai modificato. Per ogni specie lo script legge
 l'id della foto dall'URL in "image", chiede a iNaturalist autore e licenza e
@@ -20,8 +21,10 @@ per 177 specie servono circa 4-5 minuti.
 """
 
 import csv
+import html
 import json
 import re
+import sys
 import time
 import urllib.parse
 import urllib.request
@@ -35,55 +38,84 @@ UA = "autopoiesi-crediti/1.0 (sito autopoiesi, verifica crediti foto)"
 LICENZE_LIBERE = {"cc0", "cc-by", "cc-by-sa", "cc-by-nc", "cc-by-nc-sa", "cc-by-nd", "cc-by-nc-nd"}
 
 
-def get_json(url):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
+def get(url, accept="application/json"):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
     with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+        return r.read().decode("utf-8", "replace")
 
 
-def info_foto(photo_id):
-    """Restituisce (license_code, attribution) della foto, o solleva un errore."""
-    tentativi = [
-        f"https://api.inaturalist.org/v1/photos/{photo_id}",
-        f"https://www.inaturalist.org/photos/{photo_id}.json",
-    ]
-    ultimo_errore = None
-    for url in tentativi:
-        try:
-            data = get_json(url)
-        except Exception as e:  # prova l'indirizzo successivo
-            ultimo_errore = e
-            time.sleep(PAUSA)
-            continue
-        if isinstance(data, dict) and "results" in data:
-            data = data["results"][0] if data["results"] else {}
-        lic = (data.get("license_code") or "").lower()
-        attr = data.get("attribution") or ""
-        return lic, attr
-    raise RuntimeError(f"foto {photo_id} non trovata ({ultimo_errore})")
+def get_json(url):
+    return json.loads(get(url))
+
+
+def cerca_taxon(nome_scientifico):
+    """Il taxon iNaturalist con quel nome (o il primo risultato), o None."""
+    q = urllib.parse.quote(nome_scientifico)
+    risultati = get_json(f"https://api.inaturalist.org/v1/taxa?q={q}&per_page=10").get("results", [])
+    for t in risultati:
+        if t.get("name", "").lower() == nome_scientifico.lower():
+            return t
+    return risultati[0] if risultati else None
+
+
+def da_foto_del_taxon(taxon, photo_id):
+    """Cerca la foto tra quelle del taxon: (licenza, crediti) o None."""
+    time.sleep(PAUSA)
+    dettagli = get_json(f"https://api.inaturalist.org/v1/taxa/{taxon['id']}").get("results", [])
+    foto = [tp.get("photo", {}) for tp in (dettagli[0].get("taxon_photos", []) if dettagli else [])]
+    foto.append(taxon.get("default_photo") or {})
+    for p in foto:
+        if str(p.get("id")) == str(photo_id):
+            return (p.get("license_code") or "").lower(), p.get("attribution") or ""
+    return None
+
+
+def da_pagina_foto(photo_id):
+    """Legge licenza e crediti dalla pagina web della foto: (licenza, crediti)."""
+    time.sleep(PAUSA)
+    pagina = html.unescape(get(f"https://www.inaturalist.org/photos/{photo_id}", "text/html"))
+    m = re.search(r"\(c\)[^<>\n]{1,150}?(?:all rights reserved|some rights reserved(?: \([^)<>]*\))?|no rights reserved)", pagina, re.I)
+    attr = m.group(0).strip() if m else ""
+    lic = ""
+    cc = re.search(r"creativecommons\.org/(?:licenses|publicdomain)/([a-z-]+)/", pagina)
+    if cc:
+        lic = "cc0" if cc.group(1) == "zero" else "cc-" + cc.group(1)
+    if not attr and not cc:
+        raise RuntimeError("crediti non trovati nella pagina della foto")
+    return lic, attr
+
+
+def info_foto(nome_scientifico, photo_id):
+    """(licenza, crediti, fonte) della foto, o solleva un errore."""
+    taxon = cerca_taxon(nome_scientifico)
+    if taxon:
+        trovata = da_foto_del_taxon(taxon, photo_id)
+        if trovata:
+            return trovata + ("foto del taxon",)
+    return da_pagina_foto(photo_id) + ("pagina della foto (da ricontrollare)",)
 
 
 def foto_alternativa(nome_scientifico):
     """Foto predefinita del taxon, se ha licenza libera: (url, crediti, licenza) o None."""
-    q = urllib.parse.quote(nome_scientifico)
-    data = get_json(f"https://api.inaturalist.org/v1/taxa?q={q}&per_page=1")
-    for t in data.get("results", []):
-        p = t.get("default_photo") or {}
-        lic = (p.get("license_code") or "").lower()
-        if lic in LICENZE_LIBERE and p.get("medium_url"):
-            return p["medium_url"], p.get("attribution", ""), lic
+    t = cerca_taxon(nome_scientifico)
+    p = (t or {}).get("default_photo") or {}
+    lic = (p.get("license_code") or "").lower()
+    if lic in LICENZE_LIBERE and p.get("medium_url"):
+        return p["medium_url"], p.get("attribution", ""), lic
     return None
 
 
 def main():
     with open(NODES, encoding="utf-8-sig", newline="") as f:
         righe = list(csv.DictReader(f))
+    if "--prova" in sys.argv:
+        righe = righe[:3]
 
     report = []
     for i, r in enumerate(righe, 1):
         nome = r["scientific_name"]
         m = re.search(r"/photos/(\d+)/", r.get("image", ""))
-        stato, alt, pagina = "", "", ""
+        stato, alt, pagina, fonte = "", "", "", ""
         attr, lic = "", ""
         vecchi = (r.get("image_credit", ""), r.get("image_license", ""))
         if not m:
@@ -92,7 +124,7 @@ def main():
             pid = m.group(1)
             pagina = f"https://www.inaturalist.org/photos/{pid}"
             try:
-                lic, attr = info_foto(pid)
+                lic, attr, fonte = info_foto(nome, pid)
             except Exception as e:
                 stato = f"errore: {e}"
             else:
@@ -111,13 +143,14 @@ def main():
                 else:
                     stato = "ok"
             time.sleep(PAUSA)
-        print(f"[{i}/{len(righe)}] {nome}: {stato}")
+        print(f"[{i}/{len(righe)}] {nome}: {stato}" + (f" · {attr} [{lic or 'nessuna licenza'}]" if attr else ""))
         report.append({"scientific_name": nome, "stato": stato,
                        "credit_attuale": vecchi[0],
                        "licenza_attuale": vecchi[1],
                        "credit_inaturalist": attr,
                        "licenza_inaturalist": lic,
                        "pagina_foto": pagina,
+                       "fonte": fonte,
                        "foto_alternativa (url | crediti | licenza)": alt})
 
     with open(REPORT, "w", encoding="utf-8", newline="") as f:
