@@ -851,8 +851,22 @@ function loadCsv(url) {
     });
 }
 
-Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
-  ([nodes, allLinks]) => {
+// crediti.csv completa i crediti delle foto che in nodes.csv mancano
+// (generato da tools/aggiorna_crediti.py); se non c'è, il sito funziona uguale.
+Promise.all([
+  loadCsv("nodes.csv"),
+  loadCsv("edges.csv"),
+  loadCsv("crediti.csv").catch(() => []),
+]).then(
+  ([nodes, allLinks, crediti]) => {
+    const creditiPerSpecie = new Map(crediti.map((c) => [c.scientific_name, c]));
+    nodes.forEach((n) => {
+      const c = creditiPerSpecie.get(n.scientific_name);
+      if (c && !n.image_credit) {
+        n.image_credit = c.image_credit;
+        n.image_license = c.image_license;
+      }
+    });
     if (!nodes.length || nodes[0].scientific_name === undefined) {
       console.error(
         "nodes.csv: colonna 'scientific_name' non trovata. Colonne lette:",
