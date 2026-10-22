@@ -10,6 +10,64 @@ document.addEventListener("gesturestart", (event) => event.preventDefault());
 document.addEventListener("gesturechange", (event) => event.preventDefault());
 document.addEventListener("gestureend", (event) => event.preventDefault());
 
+// ---- Modalità mostra (index.html?mostra=1) ----
+// Per lo schermo touch in esposizione: i link verso altri siti non si
+// aprono, il menu contestuale (tocco lungo) è disattivato, le foto arrivano
+// da img/foto/ se sono state scaricate (tools/scarica_foto.py) e dopo
+// MOSTRA_INATTIVITA_MS senza tocchi la pagina si ricarica da capo.
+// Senza ?mostra=1 il sito si comporta come sempre.
+const MOSTRA = new URLSearchParams(location.search).has("mostra");
+const MOSTRA_INATTIVITA_MS = 5 * 60 * 1000;
+const fotoRemote = new Map(); // percorso locale -> URL originale, per il ripiego
+
+if (MOSTRA) {
+  document.documentElement.classList.add("mostra");
+
+  document.addEventListener(
+    "click",
+    (event) => {
+      const a = event.target.closest && event.target.closest("a[href]");
+      if (a && a.host !== location.host) event.preventDefault();
+    },
+    true
+  );
+  document.addEventListener("contextmenu", (event) => event.preventDefault());
+
+  // Foto locale mancante: si torna all'URL di iNaturalist.
+  document.addEventListener(
+    "error",
+    (event) => {
+      const el = event.target;
+      if (!el || (el.tagName !== "IMG" && el.tagName !== "image")) return;
+      const attr = el.tagName === "IMG" ? "src" : "href";
+      const remota = fotoRemote.get(el.getAttribute(attr));
+      if (remota) el.setAttribute(attr, remota);
+    },
+    true
+  );
+
+  let timerInattivita;
+  const rimandaRicarica = () => {
+    clearTimeout(timerInattivita);
+    timerInattivita = setTimeout(() => location.reload(), MOSTRA_INATTIVITA_MS);
+  };
+  ["pointerdown", "pointermove", "wheel", "keydown"].forEach((type) =>
+    document.addEventListener(type, rimandaRicarica, { passive: true })
+  );
+  rimandaRicarica();
+}
+
+// URL della foto di una specie: in modalità mostra la copia in img/foto/
+// (nome = id della foto su iNaturalist), altrimenti quello di nodes.csv.
+function photoSrc(n) {
+  if (!MOSTRA || !n.image) return n.image;
+  const m = n.image.match(/\/photos\/(\d+)\/[^/?]*?(\.\w+)(?:\?|$)/);
+  if (!m) return n.image;
+  const locale = `img/foto/${m[1]}${m[2]}`;
+  fotoRemote.set(locale, n.image);
+  return locale;
+}
+
 const width = window.innerWidth;
 const height = window.innerHeight;
 
@@ -1261,7 +1319,7 @@ Promise.all([
       }" data-species="${escapeHtml(n.scientific_name)}" title="${escapeHtml(
         `Apri ${n.name}` + (photoCreditText(n) ? `\n${photoCreditText(n)}` : "")
       )}">
-            <img src="${escapeHtml(n.image)}" alt="${escapeHtml(n.name)}" />
+            <img src="${escapeHtml(photoSrc(n))}" alt="${escapeHtml(n.name)}" />
           </button>`;
     }
 
@@ -1403,7 +1461,7 @@ Promise.all([
         const show = () =>
           img.transition().duration(700).ease(d3.easeCubicOut).style("opacity", 1);
         img.on("load", show).on("error", () => img.style("opacity", 0));
-        img.attr("href", d.image); // il listener va prima dell'href, così non perde le foto in cache
+        img.attr("href", photoSrc(d)); // il listener va prima dell'href, così non perde le foto in cache
       });
 
     container
@@ -1952,7 +2010,7 @@ Promise.all([
             <div class="ni-sci">${escapeHtml(d.scientific_name)}</div>
           </div>
           <figure class="ni-figure">
-            <img class="ni-photo" src="${escapeHtml(d.image)}" alt="${escapeHtml(d.name)}" />
+            <img class="ni-photo" src="${escapeHtml(photoSrc(d))}" alt="${escapeHtml(d.name)}" />
             ${
               photoCreditHTML(d)
                 ? `<figcaption class="ni-credit">${photoCreditHTML(d)}</figcaption>`
@@ -2367,7 +2425,7 @@ Promise.all([
         <div class="search-result${i === activeIndex ? " is-active" : ""}${
               d.notObserved ? " not-observed" : ""
             }" data-index="${i}">
-          <img src="${escapeHtml(d.image)}" alt="" />
+          <img src="${escapeHtml(photoSrc(d))}" alt="" />
           <div class="sr-text">
             <div class="sr-name">${highlightMatch(d.name, query)}</div>
             <div class="sr-sci">${highlightMatch(
