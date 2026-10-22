@@ -71,6 +71,15 @@ function openLightbox(src, alt, creditHTML) {
   lightbox.style("display", "flex");
 }
 
+// Testi dai CSV dentro l'HTML: niente < & " interpretati come codice.
+function escapeHtml(value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 // ---- Crediti delle foto (iNaturalist) ----
 // "(c) Ana Molina, some rights reserved (CC BY-NC)" + "cc-by-nc"
 //   -> { author: "Ana Molina", license: "CC BY-NC", page: "https://www.inaturalist.org/photos/…" }
@@ -100,9 +109,9 @@ function photoCreditText(n) {
 function photoCreditHTML(n) {
   const c = photoCredit(n);
   if (!c) return "";
-  const text = `© ${c.author} · ${c.license}`;
+  const text = escapeHtml(`© ${c.author} · ${c.license}`);
   return c.page
-    ? `<a href="${c.page}" target="_blank" rel="noopener">${text}</a>`
+    ? `<a href="${escapeHtml(c.page)}" target="_blank" rel="noopener">${text}</a>`
     : text;
 }
 
@@ -986,10 +995,10 @@ Promise.all([
         </div>
         <div class="tsc-divider"></div>
         <div class="tsc-section tsc-top" role="button" tabindex="0"
-             aria-label="Apri ${maxDegreeNode.name}, la specie più connessa">
+             aria-label="Apri ${escapeHtml(maxDegreeNode.name)}, la specie più connessa">
           <div class="tsc-eyebrow">Specie più connessa</div>
-          <div class="tsc-name">${maxDegreeNode.name}</div>
-          <div class="tsc-sci">${maxDegreeNode.scientific_name}</div>
+          <div class="tsc-name">${escapeHtml(maxDegreeNode.name)}</div>
+          <div class="tsc-sci">${escapeHtml(maxDegreeNode.scientific_name)}</div>
           <div class="tsc-count">
             <span class="ni-count-badge">${maxDegreeNode.degree}</span>
             <span>specie</span>
@@ -1187,11 +1196,7 @@ Promise.all([
     }
 
     function openEdgeInfo(d) {
-      if (selectedEdgeDatum && selectedEdgeDatum !== d) {
-        d3.select(`#link-path-${links.indexOf(selectedEdgeDatum)}`)
-          .attr("stroke", EDGE_COLOR)
-          .attr("stroke-width", 0.4);
-      }
+      if (selectedEdgeDatum !== d) clearSelectedEdge();
       selectedEdgeDatum = d;
       d3.select(`#link-path-${links.indexOf(d)}`)
         .attr("stroke", EDGE_COLOR_ACTIVE)
@@ -1217,11 +1222,11 @@ Promise.all([
           `
       <div class="ei-root">
         <div class="ei-header">
-          <div class="ei-name">${viewpointNode.name}</div>
+          <div class="ei-name">${escapeHtml(viewpointNode.name)}</div>
           <div class="ei-type" style="color:${interactionColor(
             interaction
           )}">${interaction}</div>
-          <div class="ei-name">${otherNode.name}</div>
+          <div class="ei-name">${escapeHtml(otherNode.name)}</div>
         </div>
         <div class="ei-photos">
           ${edgeNodeHTML(viewpointNode)}
@@ -1253,10 +1258,10 @@ Promise.all([
     function edgeNodeHTML(n) {
       return `<button type="button" class="ei-node${
         n.notObserved ? " is-not-observed" : ""
-      }" data-species="${n.scientific_name}" title="Apri ${n.name}${
-        photoCreditText(n) ? `\n${photoCreditText(n)}` : ""
-      }">
-            <img src="${n.image}" alt="${n.name}" />
+      }" data-species="${escapeHtml(n.scientific_name)}" title="${escapeHtml(
+        `Apri ${n.name}` + (photoCreditText(n) ? `\n${photoCreditText(n)}` : "")
+      )}">
+            <img src="${escapeHtml(n.image)}" alt="${escapeHtml(n.name)}" />
           </button>`;
     }
 
@@ -1943,11 +1948,11 @@ Promise.all([
       <div class="ni-root">
         <div class="ni-header">
           <div class="ni-name-block">
-            <div class="ni-name">${d.name}</div>
-            <div class="ni-sci">${d.scientific_name}</div>
+            <div class="ni-name">${escapeHtml(d.name)}</div>
+            <div class="ni-sci">${escapeHtml(d.scientific_name)}</div>
           </div>
           <figure class="ni-figure">
-            <img class="ni-photo" src="${d.image}" alt="${d.name}" />
+            <img class="ni-photo" src="${escapeHtml(d.image)}" alt="${escapeHtml(d.name)}" />
             ${
               photoCreditHTML(d)
                 ? `<figcaption class="ni-credit">${photoCreditHTML(d)}</figcaption>`
@@ -2258,14 +2263,6 @@ Promise.all([
     nodes.forEach((d) => {
       d.__search = searchFields.map((f) => normalizeForSearch(d[f]));
     });
-
-    function escapeHtml(value) {
-      return String(value == null ? "" : value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
 
     function highlightMatch(raw, query) {
       const text = String(raw == null ? "" : raw);
@@ -2898,9 +2895,9 @@ Promise.all([
       const flow = (from, label, to) => {
         const dir = interactionRole(label) === "passive" ? "in" : "out";
         return `<div class="guide-flow-row">
-          <span class="guide-flow-name">${from.name}</span>
+          <span class="guide-flow-name">${escapeHtml(from.name)}</span>
           <span class="guide-flow-arrow guide-flow-arrow--${dir}"><span class="guide-flow-label">${label}</span></span>
-          <span class="guide-flow-name">${to.name}</span>
+          <span class="guide-flow-name">${escapeHtml(to.name)}</span>
         </div>`;
       };
       return `
