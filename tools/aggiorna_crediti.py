@@ -33,13 +33,16 @@ NODES = "nodes.csv"
 REPORT = "crediti_report.csv"
 PAUSA = 1.1  # secondi tra una richiesta e l'altra
 UA = "autopoiesi-crediti/1.0 (sito autopoiesi, verifica crediti foto)"
+# La pagina web delle foto rifiuta i client che non sembrano un browser.
+UA_BROWSER = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
+              "(KHTML, like Gecko) Version/17.0 Safari/605.1.15")
 
 # Licenze che permettono di usare la foto citando l'autore.
 LICENZE_LIBERE = {"cc0", "cc-by", "cc-by-sa", "cc-by-nc", "cc-by-nc-sa", "cc-by-nd", "cc-by-nc-nd"}
 
 
-def get(url, accept="application/json"):
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
+def get(url, accept="application/json", ua=UA):
+    req = urllib.request.Request(url, headers={"User-Agent": ua, "Accept": accept})
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read().decode("utf-8", "replace")
 
@@ -70,10 +73,22 @@ def da_foto_del_taxon(taxon, photo_id):
     return None
 
 
+def da_osservazione(photo_id):
+    """Cerca l'osservazione che contiene la foto: (licenza, crediti) o None."""
+    time.sleep(PAUSA)
+    data = get_json(f"https://api.inaturalist.org/v1/observations?photo_id={photo_id}&per_page=5")
+    for oss in data.get("results", []):
+        for p in oss.get("photos", []):
+            if str(p.get("id")) == str(photo_id):  # controlla che sia davvero la foto giusta
+                return (p.get("license_code") or "").lower(), p.get("attribution") or ""
+    return None
+
+
 def da_pagina_foto(photo_id):
     """Legge licenza e crediti dalla pagina web della foto: (licenza, crediti)."""
     time.sleep(PAUSA)
-    pagina = html.unescape(get(f"https://www.inaturalist.org/photos/{photo_id}", "text/html"))
+    pagina = html.unescape(get(f"https://www.inaturalist.org/photos/{photo_id}",
+                               "text/html,application/xhtml+xml", UA_BROWSER))
     m = re.search(r"\(c\)[^<>\n]{1,150}?(?:all rights reserved|some rights reserved(?: \([^)<>]*\))?|no rights reserved)", pagina, re.I)
     attr = m.group(0).strip() if m else ""
     lic = ""
@@ -87,12 +102,27 @@ def da_pagina_foto(photo_id):
 
 def info_foto(nome_scientifico, photo_id):
     """(licenza, crediti, fonte) della foto, o solleva un errore."""
-    taxon = cerca_taxon(nome_scientifico)
-    if taxon:
-        trovata = da_foto_del_taxon(taxon, photo_id)
+    problemi = []
+    try:
+        taxon = cerca_taxon(nome_scientifico)
+        trovata = da_foto_del_taxon(taxon, photo_id) if taxon else None
         if trovata:
             return trovata + ("foto del taxon",)
-    return da_pagina_foto(photo_id) + ("pagina della foto (da ricontrollare)",)
+        problemi.append("taxon: foto non tra quelle della specie")
+    except Exception as e:
+        problemi.append(f"taxon: {e}")
+    try:
+        trovata = da_osservazione(photo_id)
+        if trovata:
+            return trovata + ("osservazione",)
+        problemi.append("osservazione: non trovata")
+    except Exception as e:
+        problemi.append(f"osservazione: {e}")
+    try:
+        return da_pagina_foto(photo_id) + ("pagina della foto (da ricontrollare)",)
+    except Exception as e:
+        problemi.append(f"pagina foto: {e}")
+    raise RuntimeError(" / ".join(problemi))
 
 
 def foto_alternativa(nome_scientifico):
