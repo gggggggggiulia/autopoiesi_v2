@@ -79,9 +79,7 @@ button#reset:hover {
   border-style: solid;
   border-color: var(--text);
   border-width: 1px;
-  background-color: var(
-    --panel
-  ); /* colore originale, NON quello del Figma (rgba(30,30,30,0.7)) */
+  background-color: var(--panel); /* colore originale, NON quello del Figma (rgba(30,30,30,0.7)) */
   color: var(--text);
   font-size: 14px;
   font-family: var(--font);
@@ -595,6 +593,48 @@ button#not-observed-toggle.active:hover {
   color: var(--on-active);
 }
 
+/* ---- Bottone "Vista per osservazioni": accanto agli altri due in basso a sinistra. ---- */
+button#view-toggle {
+  position: fixed;
+  bottom: 20px;
+  left: 112px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: var(--font);
+  cursor: pointer;
+  border: 1px solid var(--border-ctrl);
+  background-color: var(--panel);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  transition: background-color var(--t), border-color var(--t);
+  z-index: 15000;
+}
+button#view-toggle:hover {
+  border-color: var(--border-strong);
+  background-color: var(--hover-bg);
+}
+button#view-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  background: none; /* lo svg globale ha sfondo nero */
+}
+button#view-toggle.active,
+button#view-toggle.active:hover {
+  background-color: var(--text);
+  color: var(--on-active);
+}
+
 /* ---- Navigazione del carosello: freccette + puntini ---- */
 #guide-nav {
   flex: 0 0 auto;
@@ -741,9 +781,7 @@ button#guide-next:disabled {
   [data-tooltip]:focus-visible:not(:disabled)::after {
     transform: translate(-50%, 0);
   }
-  [data-tooltip][data-tooltip-align="start"]:focus-visible:not(
-      :disabled
-    )::after,
+  [data-tooltip][data-tooltip-align="start"]:focus-visible:not(:disabled)::after,
   [data-tooltip][data-tooltip-align="end"]:focus-visible:not(:disabled)::after {
     transform: translate(0, 0);
   }
@@ -753,12 +791,14 @@ button#guide-next:disabled {
    script.js): ricerca e filtro "solo non osservate" restano visibili ma
    spenti, così è chiaro che in questo momento non rispondono. */
 #search-box,
-button#not-observed-toggle {
+button#not-observed-toggle,
+button#view-toggle {
   transition: opacity 0.2s ease;
 }
 body.tour-locked #search-box,
 body.tour-locked #top-species-counter,
-body.tour-locked button#not-observed-toggle {
+body.tour-locked button#not-observed-toggle,
+body.tour-locked button#view-toggle {
   opacity: 0.4;
 }
 
@@ -782,11 +822,13 @@ body.tour-locked button#not-observed-toggle {
   position: absolute;
   inset: 0;
   --w: var(--edge-blur-size);
-  -webkit-mask-image: linear-gradient(to bottom, #000, transparent var(--w)),
+  -webkit-mask-image:
+    linear-gradient(to bottom, #000, transparent var(--w)),
     linear-gradient(to top, #000, transparent var(--w)),
     linear-gradient(to right, #000, transparent var(--w)),
     linear-gradient(to left, #000, transparent var(--w));
-  mask-image: linear-gradient(to bottom, #000, transparent var(--w)),
+  mask-image:
+    linear-gradient(to bottom, #000, transparent var(--w)),
     linear-gradient(to top, #000, transparent var(--w)),
     linear-gradient(to right, #000, transparent var(--w)),
     linear-gradient(to left, #000, transparent var(--w));
@@ -975,12 +1017,8 @@ body.is-moving #edge-blur {
   min-width: 0;
   line-height: 1.25;
 }
-.guide-flow-row > .guide-flow-name:first-child {
-  text-align: left;
-}
-.guide-flow-row > .guide-flow-name:last-child {
-  text-align: right;
-}
+.guide-flow-row > .guide-flow-name:first-child { text-align: left; }
+.guide-flow-row > .guide-flow-name:last-child { text-align: right; }
 .guide-flow-eq {
   line-height: 1;
   margin-block: 8px 6px;
@@ -994,8 +1032,7 @@ body.is-moving #edge-blur {
   min-width: 100px;
   /* la linea si ferma dentro i chevron, non sporge mai oltre le punte;
      posizione e lunghezza cambiano col verso (vedi --out / --in) */
-  background: linear-gradient(var(--edge-line), var(--edge-line)) right center /
-    calc(100% - 3px) 1px no-repeat;
+  background: linear-gradient(var(--edge-line), var(--edge-line)) right center / calc(100% - 3px) 1px no-repeat;
 }
 .guide-flow-arrow--in {
   background-position: left center;
@@ -1022,22 +1059,10 @@ body.is-moving #edge-blur {
   border-top: 1.5px solid var(--text);
   border-right: 1.5px solid var(--text);
 }
-.guide-flow-arrow--out::before {
-  left: 0;
-  transform: rotate(45deg);
-}
-.guide-flow-arrow--out::after {
-  right: 1.2px;
-  transform: rotate(45deg);
-}
-.guide-flow-arrow--in::before {
-  left: 1.2px;
-  transform: rotate(-135deg);
-}
-.guide-flow-arrow--in::after {
-  right: 0;
-  transform: rotate(-135deg);
-}
+.guide-flow-arrow--out::before { left: 0; transform: rotate(45deg); }
+.guide-flow-arrow--out::after { right: 1.2px; transform: rotate(45deg); }
+.guide-flow-arrow--in::before { left: 1.2px; transform: rotate(-135deg); }
+.guide-flow-arrow--in::after { right: 0; transform: rotate(-135deg); }
 
 /* Link della guida: stesso stile dei link delle pagine info (.cliccabile) */
 .guide-link,
@@ -1051,4 +1076,24 @@ body.is-moving #edge-blur {
 }
 .guide-link:hover {
   border-bottom-color: #f4f4f4;
+}
+
+/* ---- Vista "Sguardo": anelli guida e relative etichette ---- */
+.view-ring {
+  fill: none;
+  stroke: var(--text);
+  stroke-opacity: 0.25;
+  stroke-width: 1;
+  stroke-dasharray: 3 7;
+  vector-effect: non-scaling-stroke;
+}
+.view-ring-label {
+  fill: var(--text);
+  fill-opacity: 0.55;
+  font-family: var(--font);
+  text-anchor: middle;
+  letter-spacing: 0.04em;
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 6px;
 }

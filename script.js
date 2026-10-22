@@ -128,6 +128,7 @@ let nodeChevrons; // piccoli chevron direzionali intorno al nodo selezionato (un
 let nodeFarChevrons; // stessi chevron, grigi, vicino al vicino (l'altro estremo di ogni edge)
 let nodeNeutralDots; // pallini per le interazioni SIMMETRICHE (senza verso) intorno al nodo selezionato
 let nodeFarNeutralDots; // stessi pallini, grigi, vicino al vicino
+let viewMode = "rete"; // "rete" (disposizione libera) o "sguardo" (anelli per numero di osservazioni)
 let hasAutoFitted = false; // evita che la vista si "resetti" ogni volta che la simulazione si stabilizza
 let selectedNodeId = null; // id del nodo attualmente aperto, per tenere il bordo/i chevron agganciati
 let selectedEdgeDatum = null; // edge il cui inspector è aperto in questo momento: resta bianco anche fuori hover
@@ -1021,11 +1022,20 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       .attr("width", 1)
       .attr("height", 1)
       .append("image")
-      .attr("href", (d) => d.image)
       .attr("preserveAspectRatio", "xMidYMid slice")
       .attr("width", (d) => sizeScale(d.degree) * 2)
       .attr("height", (d) => sizeScale(d.degree) * 2)
-      .attr("filter", (d) => (d.notObserved ? "url(#grayscale-filter)" : null));
+      .attr("filter", (d) => (d.notObserved ? "url(#grayscale-filter)" : null))
+      .style("opacity", 0)
+      // Ogni foto compare con una dissolvenza appena è pronta (il nodo
+      // intanto mostra un grigio scuro neutro, non il nero).
+      .each(function (d) {
+        const img = d3.select(this);
+        const show = () =>
+          img.transition().duration(700).ease(d3.easeCubicOut).style("opacity", 1);
+        img.on("load", show).on("error", () => img.style("opacity", 0));
+        img.attr("href", d.image); // il listener va prima dell'href, così non perde le foto in cache
+      });
 
     container
       .selectAll("circle.bg")
@@ -1034,7 +1044,7 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       .append("circle")
       .attr("class", "bg")
       .attr("r", (d) => sizeScale(d.degree))
-      .attr("fill", (d) => d.color)
+      .attr("fill", "#8a8a8c") // segnaposto delle foto in caricamento
       .attr("fill-opacity", 1);
 
     node = container
@@ -1311,6 +1321,7 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       nodes.forEach((d) => {
         if (d.fx != null || d.fy != null) return; // non toccare un nodo che si sta trascinando
         if (d.isMainComponent) return;
+        if (viewMode === "sguardo") return;
 
         const dx = d.x - cx;
         const dy = d.y - cy;
@@ -2157,6 +2168,9 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       })
       .on("zoom", (event) => {
         container.attr("transform", event.transform);
+        updateViewLabels(event.transform.k);
+        if (lastBoundary)
+          updateTextPath(lastBoundary.radius, lastBoundary.cx, lastBoundary.cy);
       })
       .on("end", () => {
         setMoving(false);
@@ -2167,6 +2181,22 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
     svg.call(zoom);
 
     svg.on("dblclick.zoom", null);
+
+    // Pre-assestamento: la rete si calcola subito (senza mostrarsi) e la
+    // vista parte già inquadrata, senza il salto di zoom dopo la pausa.
+    simulation.stop();
+    // (in un microtask: parte appena finita l'inizializzazione, prima del primo disegno)
+    Promise.resolve().then(() => {
+      const tickHandler = simulation.on("tick");
+      for (let i = 0; i < 300; i++) {
+        simulation.tick();
+        if (tickHandler && i % 50 === 49) tickHandler();
+      }
+      if (tickHandler) tickHandler();
+      scaleAndCenter(nodes, false);
+      hasAutoFitted = true;
+      simulation.alpha(0.05).restart();
+    });
 
     simulation.on("end", () => {
       if (!hasAutoFitted) {
@@ -2201,8 +2231,14 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       updateTextPath(radius, centerX, centerY);
     }
 
+    // Il testo ha dimensione fissa a schermo (indipendente dallo zoom).
+    const BOUNDARY_LABEL_PX = 20;
+    let lastBoundary = null;
     function updateTextPath(radius, cx, cy) {
-      const rText = radius - 60;
+      lastBoundary = { radius, cx, cy };
+      const k = d3.zoomTransform(svg.node()).k || 1;
+      textElement.attr("font-size", BOUNDARY_LABEL_PX / k);
+      const rText = radius - 10 / k - BOUNDARY_LABEL_PX / k;
       const d = `
       M ${cx + rText} ${cy}
       A ${rText} ${rText} 0 1 1 ${cx - rText} ${cy}
@@ -2593,6 +2629,184 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       applyNotObservedSpotlight(!notObservedSpotlightActive)
     );
 
+    // ---- Vista "Sguardo": stessa rete, stessa dimensione dei nodi, ma
+    // disposti in anelli per numero di osservazioni a Cave di Noale ----
+    const VIEW_RING_LABELS = [
+      "3+ osservazioni",
+      "2 osservazioni",
+      "1 osservazione",
+      "nessuna osservazione",
+    ];
+    const VIEW_TOOLTIP = {
+      off: "Disponi le specie per numero di osservazioni",
+      on: "Torna alla rete",
+    };
+    const obsRing = (d) => {
+      const o = Number.isFinite(d.observations) ? d.observations : 0;
+      return o >= 3 ? 0 : o === 2 ? 1 : o === 1 ? 2 : 3;
+    };
+    const linkForce = simulation.force("link");
+    const chargeForce = simulation.force("charge");
+    const labelGapForce = simulation.force("labelGap");
+    const linkStrengthRete = linkForce.strength();
+    const viewRings = container
+      .insert("g", ":first-child")
+      .attr("id", "view-rings")
+      .style("pointer-events", "none")
+      .style("opacity", 0);
+
+    // Fasce: ogni fascia ha un'area proporzionale ai nodi che contiene, così
+    // le fasce affollate si allargano in spessore invece di spingere lontano
+    // l'anello e lasciare vuoti tra una fascia e l'altra.
+    function computeViewRings() {
+      const pad = 8;
+      const gap = 300; // distanza tra una fascia e la successiva
+      const groups = [[], [], [], []];
+      nodes.forEach((d) => groups[obsRing(d)].push(d));
+      const target = new Map();
+      const R = [];
+      let rIn = 0;
+      groups.forEach((g, k) => {
+        const area = g.reduce(
+          (sum, d) => sum + Math.PI * Math.pow(sizeScale(d.degree) + pad, 2) * 1.7,
+          0
+        );
+        const rOut = Math.sqrt(rIn * rIn + area / Math.PI);
+        g.sort((p, q) => q.degree - p.degree).forEach((d, i) => {
+          const t = (i + 0.5) / g.length;
+          target.set(d, Math.sqrt(rIn * rIn + t * (rOut * rOut - rIn * rIn)));
+        });
+        R[k] = rOut;
+        rIn = rOut + gap;
+      });
+      R.target = target;
+      return R;
+    }
+    const VIEW_LABEL_PX = 15; // dimensione a schermo, indipendente dallo zoom
+    let viewRingRadii = [];
+    function updateViewLabels(k) {
+      if (!viewRingRadii.length) return;
+      viewRings
+        .selectAll("text.view-ring-label")
+        .attr("font-size", VIEW_LABEL_PX / k)
+        .style("stroke-width", 6 / k)
+        .attr("y", (d, i) => height / 2 - viewRingRadii[i] - 10 / k);
+    }
+    function drawViewRings(R) {
+      viewRings.selectAll("*").remove();
+      viewRingRadii = R.slice();
+      R.forEach((r, k) => {
+        viewRings
+          .append("circle")
+          .attr("class", "view-ring")
+          .attr("cx", width / 2)
+          .attr("cy", height / 2)
+          .attr("r", r);
+        viewRings
+          .append("text")
+          .datum(k)
+          .attr("class", "view-ring-label")
+          .attr("x", width / 2)
+          .text(VIEW_RING_LABELS[k]);
+      });
+      updateViewLabels(d3.zoomTransform(svg.node()).k);
+    }
+
+    let viewFitTimer = null;
+    let viewRampTimer = null;
+    let viewW = 0; // 0 = rete, 1 = sguardo (valore attuale della transizione)
+    let viewMidFitTimer = null;
+    const VIEW_DECAY_BASE = simulation.velocityDecay();
+    let pendingViewFit = false;
+    function setViewMode(mode) {
+      if (mode === viewMode) return;
+      viewMode = mode;
+      const sguardo = mode === "sguardo";
+      d3.select("#view-toggle")
+        .classed("active", sguardo)
+        .attr("data-tooltip", VIEW_TOOLTIP[sguardo ? "on" : "off"]);
+      // Transizione morbida: invece di cambiare di colpo le forze, le
+      // faccio scorrere piano dal valore attuale a quello di arrivo.
+      const RAMP_MS = 800;
+      const ease = d3.easeCubicInOut;
+      let radialForce = simulation.force("radial");
+      if (sguardo) {
+        const R = computeViewRings();
+        drawViewRings(R);
+        radialForce = d3
+          .forceRadial((d) => R.target.get(d), width / 2, height / 2)
+          .strength(0);
+        simulation.force("radial", radialForce).force("labelGap", null);
+      }
+      const w0 = viewW;
+      const w1 = sguardo ? 1 : 0;
+      simulation.velocityDecay(0.62); // più attrito: i nodi scivolano
+      if (viewRampTimer) viewRampTimer.stop();
+      viewRampTimer = d3.timer((elapsed) => {
+        const t = ease(Math.min(1, elapsed / RAMP_MS));
+        viewW = w0 + (w1 - w0) * t;
+        const w = viewW;
+        if (radialForce) radialForce.strength(0.9 * w);
+        linkForce.strength(
+          (l, i, ls) => linkStrengthRete(l, i, ls) * (1 - w) + 0.004 * w
+        );
+        chargeForce.strength(-600 * (1 - w) - 60 * w);
+        const xy = 0.02 * (1 - w) + 0.004 * w;
+        simulation
+          .force("x", d3.forceX(width / 2).strength(xy))
+          .force("y", d3.forceY(height / 2).strength(xy));
+        if (elapsed >= RAMP_MS) {
+          viewRampTimer.stop();
+          viewRampTimer = null;
+          if (!sguardo) {
+            simulation.force("radial", null).force("labelGap", labelGapForce);
+            linkForce.strength(linkStrengthRete);
+          }
+          simulation.velocityDecay(VIEW_DECAY_BASE).alphaTarget(0);
+          simulation.alpha(0.3).restart();
+        }
+      });
+      viewRings
+        .transition()
+        .duration(600)
+        .style("opacity", sguardo ? 1 : 0);
+      hasAutoFitted = true;
+      simulation.alphaTarget(0.3).restart(); // resta viva durante la transizione
+      // Inquadra di nuovo quando i nodi si sono assestati.
+      pendingViewFit = true;
+      clearTimeout(viewFitTimer);
+      clearTimeout(viewMidFitTimer);
+      viewMidFitTimer = setTimeout(() => {
+        if (pendingViewFit && viewMode === mode && !selectedNodeId && !tourLockPolicy)
+          scaleAndCenter(nodes); // primo avvicinamento mentre i nodi si muovono
+      }, 900);
+      viewFitTimer = setTimeout(() => {
+        if (pendingViewFit && viewMode === mode && !selectedNodeId && !tourLockPolicy) {
+          pendingViewFit = false;
+          scaleAndCenter(nodes);
+        }
+      }, 3200);
+    }
+    simulation.on("end.view", () => {
+      if (pendingViewFit && !selectedNodeId && !tourLockPolicy) {
+        pendingViewFit = false;
+        scaleAndCenter(nodes);
+      }
+    });
+
+    let viewToggle = d3.select("body").select("#view-toggle");
+    if (viewToggle.empty()) {
+      viewToggle = d3.select("body").append("button").attr("id", "view-toggle");
+    }
+    viewToggle
+      .attr("aria-label", "Vista per osservazioni")
+      .html(
+        `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>`
+      )
+      .attr("data-tooltip", VIEW_TOOLTIP.off)
+      .attr("data-tooltip-align", "start")
+      .on("click", () => setViewMode(viewMode === "rete" ? "sguardo" : "rete"));
+
     let tourClickExampleNode = null; // nodo aperto dallo step "click-species"
     // ---- I 7 step del tour ----
     const GUIDE_STEPS = [
@@ -2771,6 +2985,9 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
       topSpeciesCounter.node().inert = locked;
       const noBtn = document.getElementById("not-observed-toggle");
       if (noBtn) noBtn.inert = locked;
+      const viewBtn = document.getElementById("view-toggle");
+      if (viewBtn) viewBtn.inert = locked;
+      if (locked && viewMode !== "rete") setViewMode("rete");
       if (
         locked &&
         document.activeElement &&
@@ -2911,7 +3128,7 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
   }
 );
 
-function scaleAndCenter(nodes) {
+function scaleAndCenter(nodes, animate = true) {
   const padding = 40;
   const nodesX = nodes.map((d) => d.x);
   const nodesY = nodes.map((d) => d.y);
@@ -2934,6 +3151,10 @@ function scaleAndCenter(nodes) {
 
   const t = d3.zoomIdentity.translate(translateX, translateY).scale(scale);
 
+  if (!animate) {
+    svg.call(zoom.transform, t);
+    return;
+  }
   svg.transition().duration(1000).ease(d3.easeCubicOut).call(zoom.transform, t); // stessa istanza di zoom usata da svg.call(zoom) sopra,
   // così l'evento "zoom" viene ricevuto dall'handler che
   // aggiorna container.attr("transform", ...) ad ogni frame
@@ -2945,12 +3166,16 @@ function drag(simulation) {
   let startX = 0;
   let startY = 0;
   let heated = false;
+  let homeX = 0;
+  let homeY = 0;
   return (
     d3
       .drag()
       .filter((event) => !tourLockPolicy && !event.ctrlKey && !event.button)
       .on("start", (event, d) => {
         heated = false;
+        homeX = d.x;
+        homeY = d.y;
         startX = event.sourceEvent.clientX;
         startY = event.sourceEvent.clientY;
       })
@@ -2967,7 +3192,7 @@ function drag(simulation) {
         if (!heated) {
           heated = true;
           // (nel gesto "drag" event.active vale già 1: si riscalda sempre)
-          simulation.alphaTarget(0.1).restart();
+          simulation.alphaTarget(viewMode === "sguardo" ? 0.02 : 0.1).restart();
         }
         d.fx = event.x;
         d.fy = event.y;
@@ -2975,8 +3200,30 @@ function drag(simulation) {
       .on("end", (event, d) => {
         if (heated) {
           if (!event.active) simulation.alphaTarget(0);
-          d.fx = null;
-          d.fy = null;
+          if (viewMode === "sguardo") {
+            // nella vista ad anelli la struttura resta fissa: il nodo
+            // torna al suo posto con un movimento morbido
+            const fromX = d.fx;
+            const fromY = d.fy;
+            const ix = d3.interpolate(fromX, homeX);
+            const iy = d3.interpolate(fromY, homeY);
+            simulation.alphaTarget(0.02).restart();
+            d3.transition()
+              .duration(450)
+              .ease(d3.easeCubicOut)
+              .tween("home" + d.index, () => (t) => {
+                d.fx = ix(t);
+                d.fy = iy(t);
+              })
+              .on("end", () => {
+                d.fx = null;
+                d.fy = null;
+                simulation.alphaTarget(0);
+              });
+          } else {
+            d.fx = null;
+            d.fy = null;
+          }
         }
         heated = false;
       })
