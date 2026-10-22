@@ -37,6 +37,10 @@ UA = "autopoiesi-crediti/1.0 (sito autopoiesi, verifica crediti foto)"
 UA_BROWSER = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 "
               "(KHTML, like Gecko) Version/17.0 Safari/605.1.15")
 
+# Zona dell'Oasi delle Cave di Noale: le foto delle specie osservate lì vengono
+# dalle osservazioni iNaturalist in quest'area (raggio in km).
+NOALE = {"lat": 45.548, "lng": 12.068, "radius": 10}
+
 # Licenze che permettono di usare la foto citando l'autore.
 LICENZE_LIBERE = {"cc0", "cc-by", "cc-by-sa", "cc-by-nc", "cc-by-nc-sa", "cc-by-nd", "cc-by-nc-nd"}
 
@@ -73,14 +77,19 @@ def da_foto_del_taxon(taxon, photo_id):
     return None
 
 
-def da_osservazione(photo_id):
-    """Cerca l'osservazione che contiene la foto: (licenza, crediti) o None."""
-    time.sleep(PAUSA)
-    data = get_json(f"https://api.inaturalist.org/v1/observations?photo_id={photo_id}&per_page=5")
-    for oss in data.get("results", []):
-        for p in oss.get("photos", []):
-            if str(p.get("id")) == str(photo_id):  # controlla che sia davvero la foto giusta
-                return (p.get("license_code") or "").lower(), p.get("attribution") or ""
+def da_osservazioni_noale(nome_scientifico, photo_id):
+    """Cerca la foto tra le osservazioni della specie a Cave di Noale: (licenza, crediti) o None."""
+    q = urllib.parse.urlencode({"taxon_name": nome_scientifico, "photos": "true",
+                                "per_page": 200, **NOALE})
+    for pagina in range(1, 6):  # al massimo 1000 osservazioni per specie
+        time.sleep(PAUSA)
+        data = get_json(f"https://api.inaturalist.org/v1/observations?{q}&page={pagina}")
+        for oss in data.get("results", []):
+            for p in oss.get("photos", []):
+                if str(p.get("id")) == str(photo_id):
+                    return (p.get("license_code") or "").lower(), p.get("attribution") or ""
+        if pagina * 200 >= data.get("total_results", 0):
+            break
     return None
 
 
@@ -112,12 +121,12 @@ def info_foto(nome_scientifico, photo_id):
     except Exception as e:
         problemi.append(f"taxon: {e}")
     try:
-        trovata = da_osservazione(photo_id)
+        trovata = da_osservazioni_noale(nome_scientifico, photo_id)
         if trovata:
-            return trovata + ("osservazione",)
-        problemi.append("osservazione: non trovata")
+            return trovata + ("osservazione a Cave di Noale",)
+        problemi.append("osservazioni Noale: foto non trovata")
     except Exception as e:
-        problemi.append(f"osservazione: {e}")
+        problemi.append(f"osservazioni Noale: {e}")
     try:
         return da_pagina_foto(photo_id) + ("pagina della foto (da ricontrollare)",)
     except Exception as e:
@@ -138,8 +147,10 @@ def foto_alternativa(nome_scientifico):
 def main():
     with open(NODES, encoding="utf-8-sig", newline="") as f:
         righe = list(csv.DictReader(f))
-    if "--prova" in sys.argv:
-        righe = righe[:3]
+    if "--prova" in sys.argv:  # 2 specie osservate a Noale + 1 no
+        oss = [r for r in righe if r.get("observations", "") not in ("", "Nessuna")]
+        altre = [r for r in righe if r not in oss]
+        righe = oss[:2] + altre[:1]
 
     report = []
     for i, r in enumerate(righe, 1):
@@ -156,7 +167,8 @@ def main():
             try:
                 lic, attr, fonte = info_foto(nome, pid)
             except Exception as e:
-                stato = f"errore: {e}"
+                stato = (f"non verificato, crediti già presenti ({e})" if vecchi[0]
+                         else f"errore: {e}")
             else:
                 if lic not in LICENZE_LIBERE:
                     stato = "da sostituire: tutti i diritti riservati"
@@ -190,7 +202,7 @@ def main():
 
     conta = {}
     for x in report:
-        k = x["stato"].split(":")[0]
+        k = re.split(r"[:(]", x["stato"])[0].strip()
         conta[k] = conta.get(k, 0) + 1
     print("\nRiepilogo:", conta)
     print(f"Report salvato in {REPORT} (nodes.csv non è stato modificato)")
