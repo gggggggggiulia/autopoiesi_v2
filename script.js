@@ -60,12 +60,50 @@ if (lightbox.empty()) {
     .attr("id", "lightbox-overlay")
     .style("display", "none");
   lightbox.append("img");
+  lightbox.append("div").attr("class", "lightbox-credit");
 }
 const lightboxImg = lightbox.select("img");
+const lightboxCredit = lightbox.select(".lightbox-credit");
 
-function openLightbox(src, alt) {
+function openLightbox(src, alt, creditHTML) {
   lightboxImg.attr("src", src).attr("alt", alt || "");
+  lightboxCredit.html(creditHTML || "");
   lightbox.style("display", "flex");
+}
+
+// ---- Crediti delle foto (iNaturalist) ----
+// "(c) Ana Molina, some rights reserved (CC BY-NC)" + "cc-by-nc"
+//   -> { author: "Ana Molina", license: "CC BY-NC", page: "https://www.inaturalist.org/photos/…" }
+function photoCredit(n) {
+  if (!n || !n.image_credit) return null;
+  const author = n.image_credit
+    .replace(/^\(c\)\s*/i, "")
+    .replace(/,?\s*(some|all|no) rights reserved.*$/i, "")
+    .trim();
+  const code = (n.image_license || "").toLowerCase();
+  const license = !code
+    ? "tutti i diritti riservati"
+    : code === "cc0"
+    ? "CC0"
+    : code.toUpperCase().replace(/^CC-/, "CC ");
+  const id = (n.image || "").match(/\/photos\/(\d+)\//);
+  return {
+    author,
+    license,
+    page: id ? `https://www.inaturalist.org/photos/${id[1]}` : null,
+  };
+}
+function photoCreditText(n) {
+  const c = photoCredit(n);
+  return c ? `© ${c.author} · ${c.license}` : "";
+}
+function photoCreditHTML(n) {
+  const c = photoCredit(n);
+  if (!c) return "";
+  const text = `© ${c.author} · ${c.license}`;
+  return c.page
+    ? `<a href="${c.page}" target="_blank" rel="noopener">${text}</a>`
+    : text;
 }
 
 function closeLightbox() {
@@ -100,10 +138,18 @@ infoBox.node().addEventListener("click", (event) => {
   if (!img || img.closest(".ei-node")) return; // le specie dell'edge inspector aprono il nodo, non la lightbox
   if (infoBox.node().classList.contains("is-closed")) return;
   event.stopPropagation();
-  openLightbox(img.getAttribute("src"), img.getAttribute("alt"));
+  const credit = img.parentElement.querySelector(".ni-credit");
+  openLightbox(
+    img.getAttribute("src"),
+    img.getAttribute("alt"),
+    credit ? credit.innerHTML : ""
+  );
 });
 
-lightbox.on("click", closeLightbox);
+lightbox.on("click", (event) => {
+  if (event.target.closest("a")) return; // il link ai crediti si apre senza chiudere
+  closeLightbox();
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeLightbox();
@@ -805,8 +851,22 @@ function loadCsv(url) {
     });
 }
 
-Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
-  ([nodes, allLinks]) => {
+// crediti.csv completa i crediti delle foto che in nodes.csv mancano
+// (generato da tools/aggiorna_crediti.py); se non c'è, il sito funziona uguale.
+Promise.all([
+  loadCsv("nodes.csv"),
+  loadCsv("edges.csv"),
+  loadCsv("crediti.csv").catch(() => []),
+]).then(
+  ([nodes, allLinks, crediti]) => {
+    const creditiPerSpecie = new Map(crediti.map((c) => [c.scientific_name, c]));
+    nodes.forEach((n) => {
+      const c = creditiPerSpecie.get(n.scientific_name);
+      if (c && !n.image_credit) {
+        n.image_credit = c.image_credit;
+        n.image_license = c.image_license;
+      }
+    });
     if (!nodes.length || nodes[0].scientific_name === undefined) {
       console.error(
         "nodes.csv: colonna 'scientific_name' non trovata. Colonne lette:",
@@ -1193,7 +1253,9 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
     function edgeNodeHTML(n) {
       return `<button type="button" class="ei-node${
         n.notObserved ? " is-not-observed" : ""
-      }" data-species="${n.scientific_name}" title="Apri ${n.name}">
+      }" data-species="${n.scientific_name}" title="Apri ${n.name}${
+        photoCreditText(n) ? `\n${photoCreditText(n)}` : ""
+      }">
             <img src="${n.image}" alt="${n.name}" />
           </button>`;
     }
@@ -1884,7 +1946,14 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
             <div class="ni-name">${d.name}</div>
             <div class="ni-sci">${d.scientific_name}</div>
           </div>
-          <img class="ni-photo" src="${d.image}" alt="${d.name}" />
+          <figure class="ni-figure">
+            <img class="ni-photo" src="${d.image}" alt="${d.name}" />
+            ${
+              photoCreditHTML(d)
+                ? `<figcaption class="ni-credit">${photoCreditHTML(d)}</figcaption>`
+                : ""
+            }
+          </figure>
         </div>
         <div class="ni-stats">
           ${
