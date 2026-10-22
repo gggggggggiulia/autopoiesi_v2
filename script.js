@@ -247,6 +247,9 @@ let selectedNodeId = null; // id del nodo attualmente aperto, per tenere il bord
 let selectedEdgeDatum = null; // edge il cui inspector è aperto in questo momento: resta bianco anche fuori hover
 
 let tourLockPolicy = null;
+// Gestori della rotella (tieni premuto un nodo e ruota): li imposta la rete
+// quando è pronta, drag() li chiama. Vedi "ROTELLA" più sotto.
+let rotella = null;
 function tourAllowsNodeClick(d) {
   const p = tourLockPolicy;
   if (!p) return true;
@@ -1323,34 +1326,29 @@ Promise.all([
           </button>`;
     }
 
+    // Evidenzia un edge come al passaggio del mouse (on) o lo riporta a riposo.
+    function setEdgeHover(d, on) {
+      d3.select(`#link-path-${links.indexOf(d)}`)
+        .attr("stroke", on ? EDGE_COLOR_ACTIVE : edgeRestStroke(d))
+        .attr("stroke-width", on ? 1.4 : edgeRestWidth(d));
+      nodeFarChevrons
+        .selectAll("path")
+        .filter((p) => p === d)
+        .attr("marker-end", (p) => roleMarkerId(p, on || p === selectedEdgeDatum));
+      nodeFarNeutralDots
+        .selectAll("circle")
+        .filter((p) => p === d)
+        .attr("fill", on ? "#F4F4F4" : farDotFill(d));
+    }
+
     linkHitAreas
       .on("mouseenter", (event, d) => {
-        if (tourLockPolicy) return; // guida aperta: l'evidenziazione dello step non si tocca
-        d3.select(`#link-path-${links.indexOf(d)}`)
-          .attr("stroke", EDGE_COLOR_ACTIVE)
-          .attr("stroke-width", 1.4);
-        nodeFarChevrons
-          .selectAll("path")
-          .filter((p) => p === d)
-          .attr("marker-end", (p) => roleMarkerId(p, true));
-        nodeFarNeutralDots
-          .selectAll("circle")
-          .filter((p) => p === d)
-          .attr("fill", "#F4F4F4");
+        if (tourLockPolicy || rotellaState) return; // guida aperta: l'evidenziazione dello step non si tocca
+        setEdgeHover(d, true);
       })
       .on("mouseleave", (event, d) => {
-        if (tourLockPolicy) return;
-        d3.select(`#link-path-${links.indexOf(d)}`)
-          .attr("stroke", edgeRestStroke(d))
-          .attr("stroke-width", edgeRestWidth(d));
-        nodeFarChevrons
-          .selectAll("path")
-          .filter((p) => p === d)
-          .attr("marker-end", farChevronMarker(d));
-        nodeFarNeutralDots
-          .selectAll("circle")
-          .filter((p) => p === d)
-          .attr("fill", farDotFill(d));
+        if (tourLockPolicy || rotellaState) return;
+        setEdgeHover(d, false);
       })
       .on("click", (event, d) => {
         event.stopPropagation();
@@ -2137,14 +2135,163 @@ Promise.all([
       );
     }
 
+    // ======================================================================
+    // ROTELLA
+    // Tenendo premuto un nodo senza muoversi (ROTELLA_HOLD_MS in drag()) la
+    // specie si apre e si evidenzia il suo collegamento più in alto. Ruotando
+    // il dito attorno al nodo si passa agli altri collegamenti in ordine di
+    // angolo, uno scatto ogni ROTELLA_STEP_DEG. Sollevando il dito fuori dal
+    // nodo si apre l'edge inspector di quello evidenziato; sollevandolo sopra
+    // il nodo non si apre niente.
+
+    const ROTELLA_STEP_DEG = 18;
+    const ROTELLA_RING_GAP_PX = 22; // distanza dell'anello dal bordo del nodo, sullo schermo
+    const ROTELLA_MIN_RADIUS_PX = 28; // sotto questa distanza il dito è "sul nodo"
+    let rotellaState = null;
+    let rotellaEndedAt = 0; // per ignorare il click che il browser manda al rilascio
+
+    const rotellaLabel = d3
+      .select("body")
+      .append("div")
+      .attr("id", "rotella-label");
+
+    // Angolo di (x, y) attorno a (cx, cy): 0 = in alto, crescente in senso orario.
+    function rotellaAngle(cx, cy, x, y) {
+      return (Math.atan2(x - cx, cy - y) + 2 * Math.PI) % (2 * Math.PI);
+    }
+
+    function rotellaRender() {
+      const s = rotellaState;
+      const edge = s.edges[s.index];
+      s.edges.forEach((e) => setEdgeHover(e, e === edge));
+      const a = s.angles[s.index];
+      s.dot
+        .attr("cx", s.node.x + s.r * Math.sin(a))
+        .attr("cy", s.node.y - s.r * Math.cos(a));
+      const id = s.node.scientific_name;
+      const other = nodeByName.get(otherNodeIdOf(edge, id));
+      if (other) {
+        s.target
+          .attr("cx", other.x)
+          .attr("cy", other.y)
+          .attr("r", sizeScale(other.degree) + 6 / s.k);
+      }
+      rotellaLabel
+        .classed("is-inside", !s.outside)
+        .style("display", "block")
+        .html(
+          `<span class="rl-count">${s.index + 1}/${s.edges.length}</span>` +
+            `${escapeHtml(labelForViewpoint(edge, id))} ` +
+            `<strong>${escapeHtml(other ? other.name : "")}</strong>` +
+            (s.outside
+              ? ""
+              : `<span class="rl-hint">ruota il dito attorno alla specie</span>`)
+        );
+    }
+
+    rotella = {
+      start(d, el) {
+        if (tourLockPolicy) return false;
+        const edges = links.filter((l) => l.source === d || l.target === d);
+        if (!edges.length) return false;
+        selectNode(d);
+        const angleOf = (l) => {
+          const o = l.source === d ? l.target : l.source;
+          return rotellaAngle(d.x, d.y, o.x, o.y);
+        };
+        edges.sort((a, b) => angleOf(a) - angleOf(b));
+        // anello e pallino hanno la stessa misura sullo schermo a ogni zoom
+        const k = d3.zoomTransform(svg.node()).k;
+        const r = sizeScale(d.degree) + ROTELLA_RING_GAP_PX / k;
+        rotellaState = {
+          node: d,
+          el,
+          edges,
+          angles: edges.map(angleOf),
+          index: 0,
+          outside: false,
+          lastAngle: null,
+          acc: 0,
+          wasFixed: d.fx != null,
+          k,
+          r,
+          ring: container
+            .append("circle")
+            .attr("class", "rotella-ring")
+            .attr("cx", d.x)
+            .attr("cy", d.y)
+            .attr("r", r),
+          dot: container
+            .append("circle")
+            .attr("class", "rotella-dot")
+            .attr("r", 5 / k),
+          target: container.append("circle").attr("class", "rotella-target"),
+        };
+        d.fx = d.x; // il nodo resta fermo mentre si ruota
+        d.fy = d.y;
+        rotellaRender();
+        return true;
+      },
+      move(clientX, clientY) {
+        const s = rotellaState;
+        if (!s) return;
+        const box = s.el.getBoundingClientRect();
+        const cx = box.left + box.width / 2;
+        const cy = box.top + box.height / 2;
+        const inner = Math.max(box.width / 2, ROTELLA_MIN_RADIUS_PX);
+        s.outside = Math.hypot(clientX - cx, clientY - cy) > inner;
+        if (!s.outside) {
+          s.lastAngle = null; // al rientro riparte senza scatti
+          rotellaRender();
+          return;
+        }
+        const angle = rotellaAngle(cx, cy, clientX, clientY);
+        if (s.lastAngle !== null) {
+          let delta = angle - s.lastAngle;
+          if (delta > Math.PI) delta -= 2 * Math.PI;
+          if (delta < -Math.PI) delta += 2 * Math.PI;
+          s.acc += delta;
+          const step = (ROTELLA_STEP_DEG * Math.PI) / 180;
+          const steps = Math.trunc(s.acc / step);
+          if (steps) {
+            s.acc -= steps * step;
+            const n = s.edges.length;
+            s.index = (((s.index + steps) % n) + n) % n;
+            if (navigator.vibrate) navigator.vibrate(5);
+          }
+        }
+        s.lastAngle = angle;
+        rotellaRender();
+      },
+      end() {
+        const s = rotellaState;
+        if (!s) return;
+        rotellaState = null;
+        rotellaEndedAt = Date.now();
+        s.edges.forEach((e) => setEdgeHover(e, false));
+        s.ring.remove();
+        s.dot.remove();
+        s.target.remove();
+        rotellaLabel.style("display", "none");
+        if (!s.wasFixed) {
+          s.node.fx = null;
+          s.node.fy = null;
+        }
+        if (s.outside) openEdgeInfo(s.edges[s.index]);
+      },
+    };
+
+    node.on("contextmenu", (event) => event.preventDefault());
+
     node.on("click", (event, d) => {
       event.stopPropagation();
+      if (Date.now() - rotellaEndedAt < 500) return;
       if (!tourAllowsNodeClick(d)) return;
       selectNode(d);
     });
 
     svg.on("click", () => {
-      if (tourLockPolicy) return;
+      if (tourLockPolicy || Date.now() - rotellaEndedAt < 500) return;
       resetHighlightAndLabels();
       infoBox.style("opacity", 0);
       closeSearchResults();
@@ -3587,36 +3734,52 @@ function scaleAndCenter(nodes, animate = true) {
   // della transizione, invece di scattare di colpo alla fine
 }
 
+// Coordinate di schermo di un evento mouse o touch (il touch le ha in touches).
+function clientXY(e) {
+  const p = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]) || e;
+  return [p.clientX, p.clientY];
+}
+
 function drag(simulation) {
-  const DRAG_HEAT_THRESHOLD_PX = 4;
+  const DRAG_HEAT_THRESHOLD_PX = MOSTRA ? 10 : 4; // col dito serve più margine
+  const ROTELLA_HOLD_MS = 450; // pressione ferma sul nodo che apre la rotella
   let startX = 0;
   let startY = 0;
   let heated = false;
+  let holdTimer = null;
+  let rotellaOn = false;
   let homeX = 0;
   let homeY = 0;
   return (
     d3
       .drag()
       .filter((event) => !tourLockPolicy && !event.ctrlKey && !event.button)
-      .on("start", (event, d) => {
+      .on("start", function (event, d) {
         heated = false;
+        rotellaOn = false;
         homeX = d.x;
         homeY = d.y;
-        startX = event.sourceEvent.clientX;
-        startY = event.sourceEvent.clientY;
+        [startX, startY] = clientXY(event.sourceEvent);
+        clearTimeout(holdTimer);
+        if (rotella) {
+          const el = this;
+          holdTimer = setTimeout(() => {
+            if (!heated) rotellaOn = rotella.start(d, el);
+          }, ROTELLA_HOLD_MS);
+        }
       })
       .on("drag", (event, d) => {
-        if (
-          !heated &&
-          Math.hypot(
-            event.sourceEvent.clientX - startX,
-            event.sourceEvent.clientY - startY
-          ) < DRAG_HEAT_THRESHOLD_PX
-        ) {
+        const [x, y] = clientXY(event.sourceEvent);
+        if (rotellaOn) {
+          rotella.move(x, y);
+          return;
+        }
+        if (!heated && Math.hypot(x - startX, y - startY) < DRAG_HEAT_THRESHOLD_PX) {
           return;
         }
         if (!heated) {
           heated = true;
+          clearTimeout(holdTimer);
           // (nel gesto "drag" event.active vale già 1: si riscalda sempre)
           simulation.alphaTarget(viewMode === "sguardo" ? 0.02 : 0.1).restart();
         }
@@ -3624,6 +3787,12 @@ function drag(simulation) {
         d.fy = event.y;
       })
       .on("end", (event, d) => {
+        clearTimeout(holdTimer);
+        if (rotellaOn) {
+          rotellaOn = false;
+          rotella.end();
+          return;
+        }
         if (heated) {
           if (!event.active) simulation.alphaTarget(0);
           if (viewMode === "sguardo") {
