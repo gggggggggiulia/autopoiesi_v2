@@ -147,282 +147,597 @@ const NODE_CHEVRON_GAP = 5;
 const INVERSE_TYPE = {
   mangia: "mangiato da",
   "mangiato da": "mangia",
+  "si nutre di": "consumato da",
+  "consumato da": "si nutre di",
   preda: "predato da",
   "predato da": "preda",
   impollina: "impollinato da",
-  impollinato: "impollina",
   "impollinato da": "impollina",
-  "fiore visitato da": "visita il fiore di",
-  "visita il fiore di": "fiore visitato da",
-  "fiori visitati da": "visita i fiori di",
   "visita i fiori di": "fiori visitati da",
+  "fiori visitati da": "visita i fiori di",
+  visita: "visitato da",
+  "visitato da": "visita",
+  "ospite di": "ha come ospite",
   "ha come ospite": "ospite di",
   "parassita di": "ha come parassita",
   "ha come parassita": "parassita di",
+  "vettore di dispersione di": "ha come vettore di dispersione",
+  "ha come vettore di dispersione": "vettore di dispersione di",
+  "fornisce nutrienti a": "acquisisce nutrienti da",
+  "acquisisce nutrienti da": "fornisce nutrienti a",
+  uccide: "ucciso da",
+  "ucciso da": "uccide",
+  "causa la morte di": "ucciso da",
+  "parassitoide di": "ha come parassitoide",
+  "ha come parassitoide": "parassitoide di",
   "ectoparassita di": "ha come ectoparassita",
   "ha come ectoparassita": "ectoparassita di",
   "endoparassita di": "ha come endoparassita",
   "ha come endoparassita": "endoparassita di",
-  "parassitoide di": "ha come parassitoide",
-  "ha come parassitoide": "parassitoide di",
+  "emiparassita di": "ha come parassita",
+  "parassita radicale di": "ha come parassita",
   "patogeno di": "ha come patogeno",
   "ha come patogeno": "patogeno di",
+  "vettore di": "ha come vettore",
+  "ha come vettore": "vettore di",
   "epifita di": "ha come epifita",
   "ha come epifita": "epifita di",
-  "visitato da": "visita",
-  visita: "visitato da",
-  "ospite di": "ha come ospite",
-  "ha ospite": "ospite di",
-  "ha come vettore di dispersione": "vettore di dispersione di",
-  "vettore di dispersione di": "ha come vettore di dispersione",
-  uccide: "ucciso da",
-  "ucciso da": "uccide",
   "crea habitat per": "ha come habitat",
   "ha come habitat": "crea habitat per",
-  "ha vettore": "è vettore di",
-  "è vettore di": "ha vettore",
+  "fornisce habitat a": "occupa l'habitat di",
+  "occupa l'habitat di": "fornisce habitat a",
+  "ospite di micorrize arbuscolari per": "ha come ospite una specie micorrizata arbuscolarmente",
+  "ha come ospite una specie micorrizata arbuscolarmente": "ospite di micorrize arbuscolari per",
+  "ospite di ectomicorrize di": "ha come ospite ectomicorrizico",
+  "ha come ospite ectomicorrizico": "ospite di ectomicorrize di",
+  "specie allelopatica nei confronti di": "ha come specie allelopatica",
+  "ha come specie allelopatica": "specie allelopatica nei confronti di",
+  danneggia: "danneggiato da",
+  "danneggiato da": "danneggia",
+  aggredisce: "aggredito da",
+  "aggredito da": "aggredisce",
+  alleva: "allevato da",
+  "allevato da": "alleva",
+  "cleptoparassita di": "ha come cleptoparassita",
+  "ha come cleptoparassita": "cleptoparassita di",
+  "iperparassita di": "ha come iperparassita",
+  "ha come iperparassita": "iperparassita di",
+  "endoparassitoide di": "ha come endoparassitoide",
+  "ha come endoparassitoide": "endoparassitoide di",
+  "ectoparassitoide di": "ha come ectoparassitoide",
+  "ha come ectoparassitoide": "ectoparassitoide di",
+  "ospite serbatoio di": "ha come ospite serbatoio",
+  "ha come ospite serbatoio": "ospite serbatoio di",
+  "depone le uova su": "riceve le uova di",
+  "riceve le uova di": "depone le uova su",
+  "depone le uova in": "accoglie le uova di",
+  "accoglie le uova di": "depone le uova in",
+  abita: "abitato da",
+  "abitato da": "abita",
+  "vive su": "ospita sulla superficie",
+  "ospita sulla superficie": "vive su",
+  "vive dentro": "ospita all'interno",
+  "ospita all'interno": "vive dentro",
+  "vive sotto": "ripara sotto di sé",
+  "ripara sotto di sé": "vive sotto",
+  "vive vicino a": "ha vicino",
+  "ha vicino": "vive vicino a",
+  "ospite nella dimora di": "accoglie nella dimora",
+  "accoglie nella dimora": "ospite nella dimora di",
+  "si posa su": "fa da posatoio a",
+  "fa da posatoio a": "si posa su",
+  "riposa su": "fa da rifugio a",
+  "fa da rifugio a": "riposa su",
+  "fiore visitato da": "visita i fiori di",
+  "visita il fiore di": "fiori visitati da",
+  impollinato: "impollina",
+  "ha ospite": "ospite di",
+  "ha vettore": "vettore di",
+  "è vettore di": "ha come vettore",
 };
 
+// Descrizioni dell'edge inspector. Regole: una frase, soggetto sottinteso = la
+// specie a sinistra (accordo al femminile), l'altra è sempre "l'altra specie",
+// attivo e passivo speculari; i tipi simmetrici iniziano con "Le due specie".
+// "note" è una seconda riga facoltativa, solo dove evita un fraintendimento.
 const INTERACTION_TAXONOMY = [
   {
-    names: ["acquisisce nutrienti da"],
+    names: ["mangia"],
     dir: "A",
-    desc: "Un'interazione biotica in cui un'entità materiale fornisce nutrimento a un organismo.",
+    desc: "Si nutre dell'altra specie, mangiandola per intero o in parte.",
+    note: "Può riguardare anche individui giovani o non ancora nati, come le uova.",
   },
   {
-    names: ["adiacente a"],
-    dir: "A",
-    desc: "A è adiacente a B se e solo se esiste una distanza piccola, ma diversa da zero, tra A e B.",
-  },
-  {
-    names: ["specie allelopatica nei confronti di"],
-    dir: "A",
-    desc: "Una relazione tra organismi in cui un organismo è influenzato dalle sostanze biochimiche prodotte da un altro. L'allelopatia è un fenomeno in cui un organismo rilascia sostanze chimiche per influenzare positivamente o negativamente la crescita, la sopravvivenza o la riproduzione di altri organismi nelle sue vicinanze.",
-  },
-  {
-    names: ["ospite di micorrize arbuscolari per"],
+    names: ["mangiato da"],
     dir: "B",
-    desc: "La micorriza arbuscolare (AM) (plurale micorrize) è un tipo di micorriza in cui il fungo simbionte (funghi micorrizici arbuscolari, o AMF) penetra nelle cellule corticali delle radici di una pianta vascolare formando degli arbuscoli. La micorriza arbuscolare è un tipo di endomicorriza, insieme alla micorriza ericoide e alla micorriza delle orchidee (da non confondere con l'ectomicorriza).",
-  },
-  {
-    names: ["si trova in associazione con", "coesiste con"],
-    dir: "N",
-    desc: "Una relazione di interazione che descrive organismi che spesso coesistono nello stesso tempo e nello stesso spazio o nello stesso ambiente.",
-  },
-  {
-    names: ["condivide il sito di rifugio con"],
-    dir: "N",
-    desc: "Si riferisce a organismi di specie diverse che condividono lo stesso rifugio o riparo.",
-  },
-  {
-    names: ["commensale di"],
-    dir: "N",
-    desc: "Relazione ecologica in cui un organismo trae beneficio da un altro (l'ospite) senza causargli alcun danno o beneficio significativo.",
-  },
-  {
-    names: ["crea habitat per", "fornisce habitat a"],
-    dir: "A",
-    desc: "Una relazione di interazione in cui un organismo crea una struttura o un ambiente in cui vive un altro organismo.",
-  },
-  {
-    names: ["vettore di dispersione di"],
-    dir: "A",
-    desc: "Un processo ecologico durante il quale semi o altri propaguli vegetali vengono trasportati lontano dalla pianta madre da vettori biotici o abiotici, riducendo la competizione tra piante sorelle e consentendo la colonizzazione di nuovi siti.",
-  },
-  {
-    names: ["predato da", "consumato da"],
-    dir: "B",
-    desc: "Il soggetto viene consumato da un altro organismo attraverso la bocca o un'altra apertura orale di quest'ultimo.",
-  },
-  {
-    names: ["si nutre di", "preda"],
-    dir: "A",
-    desc: "Un'interazione biotica in cui un organismo consuma un'entità materiale attraverso una sorta di bocca o altra apertura orale.",
-  },
-  {
-    names: ["ecologicamente correlato a"],
-    dir: "N",
-    desc: "Una relazione che è in qualche modo mediata dall'ambiente o da una caratteristica ambientale.",
-  },
-  {
-    names: ["ospite di ectomicorrize di"],
-    dir: "A",
-    desc: "Le ectomicorrize si formano sulle radici di circa il 2% delle specie vegetali, solitamente piante legnose. A differenza di altre relazioni micorriziche, i funghi ectomicorrizici non penetrano la parete cellulare dell'ospite. Formano invece un'interfaccia interamente intercellulare nota come rete di Hartig, costituita da ife altamente ramificate che formano un reticolo tra le cellule epidermiche e corticali della radice.",
-  },
-  {
-    names: ["ectoparassita di"],
-    dir: "A",
-    desc: "Una sottorelazione di parassita in cui il parassita vive sul o all'interno del sistema tegumentario dell'ospite.",
-  },
-  {
-    names: ["endoparassita di"],
-    dir: "A",
-    desc: "Una sottorelazione di endoparassiti in cui il parassita abita gli spazi tra le cellule dell'ospite.",
-  },
-  {
-    names: ["epifita di"],
-    dir: "A",
-    desc: "Un rapporto di interazione in cui una pianta o un'alga vive sulla superficie esterna di un'altra pianta.",
-  },
-  {
-    names: ["fiori visitati da"],
-    dir: "B",
-    desc: "Un'interazione in cui un organismo visita i fiori di una pianta.",
-  },
-  {
-    names: ["ha come ospite una specie micorrizata arbuscolarmente"],
-    dir: "B",
-    desc: "Il soggetto, un fungo micorrizico arbuscolare (AMF), penetra le cellule corticali delle radici di questa pianta ospite formando degli arbuscoli: una forma di endomicorriza, distinta dalla micorriza ericoide e da quella delle orchidee (da non confondere con l'ectomicorriza).",
-  },
-  {
-    names: ["ha come vettore di dispersione"],
-    dir: "B",
-    desc: "Il soggetto (una pianta, o i suoi semi e propaguli) viene trasportato lontano dalla pianta madre da questo vettore di dispersione, biotico o abiotico, riducendo la competizione tra piante sorelle e favorendo la colonizzazione di nuovi siti.",
-  },
-  {
-    names: ["ha come ospite ectomicorrizico"],
-    dir: "B",
-    desc: "Il fungo ectomicorrizico forma con le radici di questa pianta ospite un'interfaccia intercellulare nota come rete di Hartig: a differenza di altre relazioni micorriziche, non ne penetra le cellule, ma si dispone a reticolo tra quelle epidermiche e corticali della radice. Le ectomicorrize coinvolgono circa il 2% delle specie vegetali, perlopiù legnose.",
-  },
-  {
-    names: ["ha come ectoparassita"],
-    dir: "B",
-    desc: "Il soggetto ospita un ectoparassita, che vive sul suo sistema tegumentario o al suo interno.",
-  },
-  {
-    names: ["ha come endoparassita"],
-    dir: "B",
-    desc: "Il soggetto ospita un endoparassita, che abita gli spazi tra le sue cellule.",
-  },
-  {
-    names: ["ha come epifita"],
-    dir: "B",
-    desc: "Il soggetto ospita sulla propria superficie esterna un'epifita: una pianta o un'alga che vive appoggiata su di esso, senza radicarsi nel suolo.",
-  },
-  {
-    names: ["ha come habitat", "occupa l'habitat di"],
-    dir: "B",
-    desc: 'x "ha un habitat" y se e solo se: x è un organismo, y è un habitat e y può sostenere e consentire la crescita di una popolazione di x.',
-  },
-  {
-    names: ["ha come parassita"],
-    dir: "B",
-    desc: "Il soggetto ospita un parassita, che trae beneficio a sue spese.",
-  },
-  {
-    names: ["ha come parassitoide"],
-    dir: "B",
-    desc: "Il soggetto è ospite di un parassitoide, che lo ucciderà o lo sterilizzerà.",
-  },
-  {
-    names: ["ha come patogeno"],
-    dir: "B",
-    desc: "Un'interazione tra ospiti in cui il membro più piccolo di una simbiosi causa una malattia nel membro più grande.",
-  },
-  {
-    names: ["ha come vettore"],
-    dir: "B",
-    desc: "Il soggetto viene infettato tramite un vettore: un organismo che trasmette agenti infettivi da un ospite all'altro.",
-  },
-  {
-    names: ["emiparassita di"],
-    dir: "A",
-    desc: "Una sottorelazione di parassita-di in cui il parassita è una pianta, ed è parassitario in condizioni naturali ed è anche fotosintetico in una certa misura.",
-  },
-  {
-    names: ["ospite di"],
-    dir: "A",
-    desc: "L'organismo più grande o di supporto che ospita, nutre o fornisce un habitat a un altro organismo più piccolo o dipendente.",
-  },
-  {
-    names: ["interagisce con"],
-    dir: "A",
-    desc: "Una relazione che intercorre tra due entità in cui i processi eseguiti dalle due entità sono causalmente connessi.",
-  },
-  {
-    names: ["ucciso da", "causa di mortalità per"],
-    dir: "B",
-    desc: "Il soggetto viene ucciso da un altro organismo, senza che vi sia un trasferimento di energia trofica (alimentazione) come nella predazione.",
-  },
-  {
-    names: ["uccide", "causa la morte di"],
-    dir: "A",
-    desc: "Una specifica relazione ecologica in cui un organismo causa la morte di un altro senza trasferimento di energia trofica (alimentazione).",
-  },
-  {
-    names: ["mutualista di"],
-    dir: "N",
-    desc: "Una specie che partecipa a una relazione mutualistica, un tipo di interazione biotica in cui entrambi gli organismi coinvolti traggono beneficio l'uno dall'altro.",
-  },
-  {
-    names: ["parassita di"],
-    dir: "A",
-    desc: "Un'interazione in cui un organismo trae beneficio a spese di un altro.",
-  },
-  {
-    names: ["parassitoide di"],
-    dir: "A",
-    desc: "Un parassita che uccide o sterilizza il suo ospite.",
-  },
-  {
-    names: ["patogeno di"],
-    dir: "A",
-    desc: "Il soggetto è un patogeno: un organismo di dimensioni minori che, in una relazione simbiotica, causa una malattia nell'organismo di dimensioni maggiori che lo ospita.",
-  },
-  {
-    names: ["impollinato da"],
-    dir: "B",
-    desc: "Il soggetto, una pianta, viene impollinato da un organismo che ne trasporta il polline dalle strutture riproduttive maschili a quelle femminili, facilitandone la riproduzione.",
-  },
-  {
-    names: ["impollina"],
-    dir: "A",
-    desc: "Un'interazione in cui l'organismo trasporta il polline dalle strutture riproduttive maschili a quelle femminili di una pianta, facilitando la riproduzione.",
-  },
-  {
-    names: ["predato da"],
-    dir: "B",
-    desc: "Il soggetto viene ucciso da un predatore per esserne cibo, anche a beneficio dei fratelli, della prole o di altri membri del gruppo del predatore.",
+    desc: "Viene mangiata dall'altra specie, per intero o in parte.",
+    note: "Può riguardare anche i suoi individui giovani o le uova.",
   },
   {
     names: ["preda"],
     dir: "A",
-    desc: "Una relazione di interazione che implica un processo di predazione, in cui il soggetto uccide la preda per cibarsene o per nutrire fratelli, prole o membri del gruppo.",
+    desc: "Cattura e uccide l'altra specie per nutrirsene.",
+    note: "A differenza di \"mangia\", implica la caccia.",
   },
   {
-    names: ["fornisce nutrienti a"],
-    dir: "A",
-    desc: "Un'interazione biotica in cui un'entità materiale fornisce nutrimento a un organismo.",
-  },
-  {
-    names: ["parassita radicale di"],
-    dir: "A",
-    desc: "Una forma specializzata di parassitismo in cui un organismo parassita si attacca direttamente alla radice di una pianta ospite per rubare acqua, minerali o sostanze nutritive.",
-  },
-  {
-    names: ["simbionte di"],
-    dir: "A",
-    desc: "Un tipo di interazione biotica che descrive un'associazione stretta e a lungo termine in cui un organismo agisce come simbionte (il partner più piccolo o dipendente) vivendo all'interno o con un organismo ospite.",
-  },
-  {
-    names: ["vettore di"],
-    dir: "A",
-    desc: "Interazione in cui un organismo trasmette agenti infettivi da un ospite all'altro.",
-  },
-  {
-    names: ["visitato da"],
+    names: ["predato da"],
     dir: "B",
-    desc: "Il soggetto viene visitato da un altro organismo, senza che questo implichi necessariamente un danno immediato o il consumo totale della risorsa.",
+    desc: "Viene catturata e uccisa dall'altra specie, che se ne nutre.",
+    note: "A differenza di \"mangiato da\", implica la caccia.",
+  },
+  {
+    names: ["impollina"],
+    dir: "A",
+    desc: "Trasporta il polline dell'altra specie da un fiore all'altro, permettendone la riproduzione.",
+  },
+  {
+    names: ["impollinato da", "impollinato"],
+    dir: "B",
+    desc: "I suoi fiori vengono impollinati dall'altra specie, che ne trasporta il polline.",
+  },
+  {
+    names: ["visita i fiori di", "visita il fiore di"],
+    dir: "A",
+    desc: "Visita i fiori dell'altra specie, per esempio in cerca di nettare o polline.",
+    note: "Non è detto che la impollini.",
+  },
+  {
+    names: ["fiori visitati da", "fiore visitato da"],
+    dir: "B",
+    desc: "I suoi fiori vengono visitati dall'altra specie, per esempio in cerca di nettare o polline.",
+    note: "Non è detto che ne venga impollinata.",
   },
   {
     names: ["visita"],
     dir: "A",
-    desc: "Relazione in cui un organismo visita un altro organismo o una specifica posizione geografica/struttura biologica, senza necessariamente implicare danni immediati o il consumo totale della risorsa.",
+    desc: "Frequenta l'altra specie, senza necessariamente danneggiarla o consumarla.",
   },
   {
-    names: ["visita i fiori di"],
+    names: ["visitato da"],
+    dir: "B",
+    desc: "Viene frequentata dall'altra specie, senza necessariamente esserne danneggiata o consumata.",
+  },
+  {
+    names: ["ospite di"],
     dir: "A",
-    desc: "Il soggetto visita i fiori di una pianta, ad esempio per nutrirsi di nettare o polline.",
+    desc: "Ospita l'altra specie, che vive su di lei o al suo interno.",
+  },
+  {
+    names: ["ha come ospite", "ha ospite"],
+    dir: "B",
+    desc: "Vive sull'altra specie o al suo interno, usandola come ospite.",
+  },
+  {
+    names: ["parassita di"],
+    dir: "A",
+    desc: "Vive a spese dell'altra specie, traendone nutrimento e danneggiandola.",
+  },
+  {
+    names: ["ha come parassita"],
+    dir: "B",
+    desc: "Ospita l'altra specie, che vive a sue spese danneggiandola.",
+  },
+  {
+    names: ["simbionte di"],
+    dir: "N",
+    desc: "Le due specie vivono in un'associazione stretta e duratura.",
+  },
+  {
+    names: ["vettore di dispersione di"],
+    dir: "A",
+    desc: "Trasporta lontano i semi o i frutti dell'altra specie, aiutandola a diffondersi.",
+  },
+  {
+    names: ["ha come vettore di dispersione"],
+    dir: "B",
+    desc: "I suoi semi o frutti vengono trasportati lontano dall'altra specie, che la aiuta a diffondersi.",
+  },
+  {
+    names: ["interagisce con"],
+    dir: "N",
+    desc: "Le due specie sono legate da un'interazione documentata, di cui la fonte non specifica il tipo.",
+  },
+  {
+    names: ["adiacente a"],
+    dir: "N",
+    desc: "Le due specie vivono molto vicine, senza un legame diretto documentato.",
+  },
+  {
+    names: ["si nutre di"],
+    dir: "A",
+    desc: "Si nutre dell'altra specie, mangiandola per intero o in parte.",
+    note: "Può riguardare anche individui giovani o non ancora nati, come le uova.",
+  },
+  {
+    names: ["consumato da"],
+    dir: "B",
+    desc: "Viene mangiata dall'altra specie, per intero o in parte.",
+    note: "Può riguardare anche i suoi individui giovani o le uova.",
+  },
+  {
+    names: ["acquisisce nutrienti da"],
+    dir: "A",
+    desc: "Ricava nutrimento dall'altra specie, senza necessariamente mangiarla.",
+  },
+  {
+    names: ["fornisce nutrienti a"],
+    dir: "B",
+    desc: "Fornisce nutrimento all'altra specie, senza necessariamente esserne mangiata.",
+  },
+  {
+    names: ["uccide"],
+    dir: "A",
+    desc: "Causa la morte dell'altra specie, senza nutrirsene.",
+    note: "A differenza di \"preda\", non c'è alimentazione.",
+  },
+  {
+    names: ["ucciso da"],
+    dir: "B",
+    desc: "Viene uccisa dall'altra specie, che non se ne nutre.",
+    note: "A differenza di \"predato da\", non c'è alimentazione.",
+  },
+  {
+    names: ["causa la morte di"],
+    dir: "A",
+    desc: "Causa la morte dell'altra specie, senza nutrirsene.",
+    note: "A differenza di \"preda\", non c'è alimentazione.",
+  },
+  {
+    names: ["parassitoide di"],
+    dir: "A",
+    desc: "Vive come larva dentro o sopra l'altra specie, finendo per ucciderla.",
+    note: "Tipico di alcune vespe e mosche.",
+  },
+  {
+    names: ["ha come parassitoide"],
+    dir: "B",
+    desc: "Ospita le larve dell'altra specie, che finiscono per ucciderla.",
+  },
+  {
+    names: ["ectoparassita di"],
+    dir: "A",
+    desc: "Vive sulla superficie dell'altra specie, nutrendosi a sue spese.",
+    note: "Per esempio zecche e pidocchi.",
+  },
+  {
+    names: ["ha come ectoparassita"],
+    dir: "B",
+    desc: "Ospita sulla propria superficie l'altra specie, che si nutre a sue spese.",
+  },
+  {
+    names: ["endoparassita di"],
+    dir: "A",
+    desc: "Vive all'interno del corpo dell'altra specie, nutrendosi a sue spese.",
+    note: "Per esempio vermi intestinali.",
+  },
+  {
+    names: ["ha come endoparassita"],
+    dir: "B",
+    desc: "Ospita all'interno del proprio corpo l'altra specie, che si nutre a sue spese.",
+  },
+  {
+    names: ["emiparassita di"],
+    dir: "A",
+    desc: "È una pianta che sottrae acqua e sali all'altra specie, pur facendo anche fotosintesi.",
+    note: "Per esempio il vischio.",
+  },
+  {
+    names: ["parassita radicale di"],
+    dir: "A",
+    desc: "Si attacca alle radici dell'altra specie per sottrarle acqua e nutrienti.",
+  },
+  {
+    names: ["patogeno di"],
+    dir: "A",
+    desc: "Causa una malattia all'altra specie.",
+  },
+  {
+    names: ["ha come patogeno"],
+    dir: "B",
+    desc: "Viene fatta ammalare dall'altra specie.",
+  },
+  {
+    names: ["vettore di", "è vettore di"],
+    dir: "A",
+    desc: "Trasmette all'altra specie agenti di malattia, portandoli da un individuo all'altro.",
+  },
+  {
+    names: ["ha come vettore", "ha vettore"],
+    dir: "B",
+    desc: "Riceve agenti di malattia attraverso l'altra specie, che li trasporta da un individuo all'altro.",
+  },
+  {
+    names: ["epifita di"],
+    dir: "A",
+    desc: "Cresce appoggiata sulla superficie dell'altra specie, senza radicarsi nel suolo e senza danneggiarla.",
+    note: "Per esempio muschi e licheni sui tronchi.",
+  },
+  {
+    names: ["ha come epifita"],
+    dir: "B",
+    desc: "Fa da appoggio all'altra specie, che le cresce sopra senza danneggiarla.",
+  },
+  {
+    names: ["crea habitat per"],
+    dir: "A",
+    desc: "Crea con il proprio corpo o le proprie strutture un ambiente in cui vive l'altra specie.",
+  },
+  {
+    names: ["ha come habitat"],
+    dir: "B",
+    desc: "Vive nell'ambiente creato dall'altra specie.",
+  },
+  {
+    names: ["fornisce habitat a"],
+    dir: "A",
+    desc: "Offre all'altra specie un ambiente in cui vivere.",
+  },
+  {
+    names: ["occupa l'habitat di"],
+    dir: "B",
+    desc: "Vive nell'ambiente offerto dall'altra specie.",
+  },
+  {
+    names: ["ospite di micorrize arbuscolari per"],
+    dir: "A",
+    desc: "Ospita nelle radici l'altra specie, un fungo che vi penetra e scambia con lei acqua e nutrienti.",
+    note: "Si chiama micorriza arbuscolare.",
+  },
+  {
+    names: ["ha come ospite una specie micorrizata arbuscolarmente"],
+    dir: "B",
+    desc: "È un fungo che penetra nelle radici dell'altra specie, scambiando con lei acqua e nutrienti.",
+    note: "Si chiama micorriza arbuscolare.",
+  },
+  {
+    names: ["ospite di ectomicorrize di"],
+    dir: "A",
+    desc: "Ospita sulle radici l'altra specie, un fungo che le avvolge senza penetrarle e scambia con lei nutrienti.",
+    note: "Si chiama ectomicorriza, tipica di alberi come querce e pini.",
+  },
+  {
+    names: ["ha come ospite ectomicorrizico"],
+    dir: "B",
+    desc: "È un fungo che avvolge le radici dell'altra specie senza penetrarle, scambiando con lei nutrienti.",
+    note: "Si chiama ectomicorriza.",
+  },
+  {
+    names: ["specie allelopatica nei confronti di"],
+    dir: "A",
+    desc: "Rilascia sostanze chimiche che influenzano la crescita o la sopravvivenza dell'altra specie.",
+  },
+  {
+    names: ["ha come specie allelopatica"],
+    dir: "B",
+    desc: "Subisce le sostanze chimiche rilasciate dall'altra specie, che ne influenzano la crescita o la sopravvivenza.",
+  },
+  {
+    names: ["commensale di"],
+    dir: "N",
+    desc: "Le due specie convivono: una ne trae vantaggio, senza dare all'altra né danno né beneficio.",
+  },
+  {
+    names: ["mutualista di"],
+    dir: "N",
+    desc: "Le due specie collaborano e ne traggono vantaggio entrambe.",
+  },
+  {
+    names: ["coesiste con"],
+    dir: "N",
+    desc: "Le due specie vivono spesso nello stesso luogo e nello stesso periodo.",
+  },
+  {
+    names: ["si trova in associazione con"],
+    dir: "N",
+    desc: "Le due specie vivono spesso nello stesso luogo e nello stesso periodo.",
+  },
+  {
+    names: ["si verifica con"],
+    dir: "N",
+    desc: "Le due specie sono state osservate insieme, senza un legame diretto documentato.",
+  },
+  {
+    names: ["condivide il sito di rifugio con"],
+    dir: "N",
+    desc: "Le due specie usano lo stesso posatoio o rifugio per riposare.",
+    note: "Di solito uccelli o pipistrelli.",
+  },
+  {
+    names: ["ecologicamente correlato a"],
+    dir: "N",
+    desc: "Le due specie sono legate in modo indiretto, attraverso l'ambiente che condividono.",
+  },
+  {
+    names: ["interagisce troficamente con"],
+    dir: "N",
+    desc: "Le due specie sono legate da un rapporto alimentare, senza che la fonte dica chi mangia chi.",
+  },
+  {
+    names: ["danneggia"],
+    dir: "A",
+    desc: "Danneggia l'altra specie, senza necessariamente ucciderla o mangiarla.",
+  },
+  {
+    names: ["danneggiato da"],
+    dir: "B",
+    desc: "Viene danneggiata dall'altra specie, senza necessariamente essere uccisa o mangiata.",
+  },
+  {
+    names: ["aggredisce"],
+    dir: "A",
+    desc: "Attacca l'altra specie, per esempio per difendere territorio o risorse.",
+  },
+  {
+    names: ["aggredito da"],
+    dir: "B",
+    desc: "Viene attaccata dall'altra specie, per esempio per territorio o risorse.",
+  },
+  {
+    names: ["alleva"],
+    dir: "A",
+    desc: "Alleva o coltiva l'altra specie per nutrirsene.",
+    note: "Per esempio le formiche con gli afidi.",
+  },
+  {
+    names: ["allevato da"],
+    dir: "B",
+    desc: "Viene allevata o coltivata dall'altra specie, che se ne nutre.",
+  },
+  {
+    names: ["cleptoparassita di"],
+    dir: "A",
+    desc: "Ruba all'altra specie il cibo o le risorse che ha raccolto.",
+    note: "Per esempio alcune api che depongono nei nidi altrui.",
+  },
+  {
+    names: ["ha come cleptoparassita"],
+    dir: "B",
+    desc: "Viene derubata dall'altra specie del cibo o delle risorse raccolte.",
+  },
+  {
+    names: ["iperparassita di"],
+    dir: "A",
+    desc: "Vive a spese dell'altra specie, che è a sua volta un parassita.",
+  },
+  {
+    names: ["ha come iperparassita"],
+    dir: "B",
+    desc: "È un parassita che viene a sua volta parassitato dall'altra specie.",
+  },
+  {
+    names: ["endoparassitoide di"],
+    dir: "A",
+    desc: "Vive come larva dentro l'altra specie, finendo per ucciderla.",
+  },
+  {
+    names: ["ha come endoparassitoide"],
+    dir: "B",
+    desc: "Ospita al proprio interno le larve dell'altra specie, che finiscono per ucciderla.",
+  },
+  {
+    names: ["ectoparassitoide di"],
+    dir: "A",
+    desc: "Vive come larva sopra l'altra specie, finendo per ucciderla.",
+  },
+  {
+    names: ["ha come ectoparassitoide"],
+    dir: "B",
+    desc: "Porta su di sé le larve dell'altra specie, che finiscono per ucciderla.",
+  },
+  {
+    names: ["ospite serbatoio di"],
+    dir: "A",
+    desc: "Ospita l'altra specie, un agente di malattia, senza ammalarsi e contribuendo a mantenerla nell'ambiente.",
+  },
+  {
+    names: ["ha come ospite serbatoio"],
+    dir: "B",
+    desc: "È un agente di malattia che si mantiene nell'ambiente grazie all'altra specie, che lo ospita senza ammalarsi.",
+  },
+  {
+    names: ["depone le uova su"],
+    dir: "A",
+    desc: "Depone le uova sulla superficie dell'altra specie.",
+  },
+  {
+    names: ["riceve le uova di"],
+    dir: "B",
+    desc: "Riceve sulla propria superficie le uova dell'altra specie.",
+  },
+  {
+    names: ["depone le uova in"],
+    dir: "A",
+    desc: "Depone le uova all'interno dell'altra specie.",
+  },
+  {
+    names: ["accoglie le uova di"],
+    dir: "B",
+    desc: "Riceve al proprio interno le uova dell'altra specie.",
+  },
+  {
+    names: ["abita"],
+    dir: "A",
+    desc: "Vive dentro o presso l'altra specie, usandola come dimora.",
+  },
+  {
+    names: ["abitato da"],
+    dir: "B",
+    desc: "Fa da dimora all'altra specie, che vive dentro o presso di lei.",
+  },
+  {
+    names: ["vive su"],
+    dir: "A",
+    desc: "Vive sulla superficie dell'altra specie.",
+  },
+  {
+    names: ["ospita sulla superficie"],
+    dir: "B",
+    desc: "Porta sulla propria superficie l'altra specie, che ci vive.",
+  },
+  {
+    names: ["vive dentro"],
+    dir: "A",
+    desc: "Vive all'interno dell'altra specie.",
+  },
+  {
+    names: ["ospita all'interno"],
+    dir: "B",
+    desc: "Ospita al proprio interno l'altra specie, che ci vive.",
+  },
+  {
+    names: ["vive sotto"],
+    dir: "A",
+    desc: "Vive sotto l'altra specie, per esempio sotto la corteccia o le foglie.",
+  },
+  {
+    names: ["ripara sotto di sé"],
+    dir: "B",
+    desc: "Offre riparo sotto di sé all'altra specie, che ci vive.",
+  },
+  {
+    names: ["vive vicino a"],
+    dir: "A",
+    desc: "Vive vicino all'altra specie.",
+  },
+  {
+    names: ["ha vicino"],
+    dir: "B",
+    desc: "Ha vicino a sé l'altra specie, che ci vive.",
+  },
+  {
+    names: ["vive con"],
+    dir: "N",
+    desc: "Le due specie vivono insieme, a stretto contatto.",
+  },
+  {
+    names: ["ospite nella dimora di"],
+    dir: "A",
+    desc: "Vive nella tana o nel nido dell'altra specie, non nel suo corpo.",
+  },
+  {
+    names: ["accoglie nella dimora"],
+    dir: "B",
+    desc: "Accoglie l'altra specie nella propria tana o nel proprio nido.",
+  },
+  {
+    names: ["si posa su"],
+    dir: "A",
+    desc: "Si posa sull'altra specie, per esempio su un ramo.",
+  },
+  {
+    names: ["fa da posatoio a"],
+    dir: "B",
+    desc: "Viene usata dall'altra specie come posatoio.",
+  },
+  {
+    names: ["riposa su"],
+    dir: "A",
+    desc: "Usa l'altra specie come rifugio per riposare.",
+  },
+  {
+    names: ["fa da rifugio a"],
+    dir: "B",
+    desc: "Fa da rifugio all'altra specie, che ci riposa.",
   },
 ];
 
@@ -431,50 +746,17 @@ const SYMMETRIC_TYPES = new Set();
 const ARROW_REVERSED_TYPES = new Set();
 
 const interactionDescriptions = {};
+const interactionNotes = {};
 
-INTERACTION_TAXONOMY.forEach(({ names, dir, desc }) => {
+INTERACTION_TAXONOMY.forEach(({ names, dir, desc, note }) => {
   names.forEach((name) => {
     interactionDescriptions[name] = desc;
+    if (note) interactionNotes[name] = note;
     if (dir === "N") SYMMETRIC_TYPES.add(name);
     else if (dir === "B") ARROW_REVERSED_TYPES.add(name);
     // dir === "A": resta "attivo" di default, non va in nessun Set.
   });
 });
-
-SYMMETRIC_TYPES.add("si verifica con");
-ARROW_REVERSED_TYPES.add("mangiato da");
-// "mangia" resta implicitamente attivo: non va aggiunto a nessun Set.
-interactionDescriptions["mangia"] =
-  "Notare che questa interazione può riferirsi anche a individui cuccioli della specie, o a individui che devono ancora nascere, come ad esempio nel caso delle uova.";
-interactionDescriptions["mangiato da"] =
-  "Il soggetto viene mangiato dall'altro organismo, eventualmente anche allo stadio di cucciolo o di uovo.";
-interactionDescriptions["si verifica con"] =
-  "Una relazione neutra che indica che le due specie sono state osservate verificarsi insieme, senza un verso definito tra le due.";
-
-ARROW_REVERSED_TYPES.add("ha vettore"); // alias di "ha come vettore"
-interactionDescriptions["ha vettore"] =
-  interactionDescriptions["ha come vettore"];
-
-ARROW_REVERSED_TYPES.add("fiore visitato da"); // forma singolare, il dataset ha solo "fiori visitati da" (plurale)
-interactionDescriptions["fiore visitato da"] =
-  interactionDescriptions["fiori visitati da"];
-
-ARROW_REVERSED_TYPES.add("impollinato"); // forma breve, oltre a "impollinato da"
-interactionDescriptions["impollinato"] =
-  interactionDescriptions["impollinato da"];
-
-ARROW_REVERSED_TYPES.add("ha come ospite"); // forma usata in edges.csv (inverso di "ospite di")
-interactionDescriptions["ha come ospite"] =
-  interactionDescriptions["ospite di"];
-ARROW_REVERSED_TYPES.add("ha ospite"); // inverso di "ospite di" (attivo): manca dal dataset, ma per coerenza va passivo
-interactionDescriptions["ha ospite"] = interactionDescriptions["ospite di"];
-
-interactionDescriptions["visita il fiore di"] =
-  interactionDescriptions["visita i fiori di"];
-interactionDescriptions["è vettore di"] = interactionDescriptions["vettore di"];
-
-SYMMETRIC_TYPES.add("interagisce con");
-SYMMETRIC_TYPES.add("adiacente a");
 
 const USE_ROLE_COLORS = false;
 
@@ -868,6 +1150,7 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
 
       const interaction = labelForViewpoint(d, viewpointId);
       const description = interactionDescriptions[interaction] || "";
+      const note = interactionNotes[interaction] || "";
 
       infoBox
         .html(
@@ -890,6 +1173,7 @@ Promise.all([loadCsv("nodes.csv"), loadCsv("edges.csv")]).then(
           }" />
         </div>
         ${description ? `<div class="ei-description">${description}</div>` : ""}
+        ${note ? `<div class="ei-note">${note}</div>` : ""}
       </div>
     `
         )
