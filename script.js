@@ -1331,14 +1331,21 @@ Promise.all([
       d3.select(`#link-path-${links.indexOf(d)}`)
         .attr("stroke", on ? EDGE_COLOR_ACTIVE : edgeRestStroke(d))
         .attr("stroke-width", on ? 1.4 : edgeRestWidth(d));
-      nodeFarChevrons
+      const far = nodeFarChevrons
         .selectAll("path")
         .filter((p) => p === d)
         .attr("marker-end", (p) => roleMarkerId(p, on || p === selectedEdgeDatum));
-      nodeFarNeutralDots
+      const farDot = nodeFarNeutralDots
         .selectAll("circle")
         .filter((p) => p === d)
         .attr("fill", on ? "#F4F4F4" : farDotFill(d));
+      if (on) {
+        // in primo piano, così non resta sotto i marker vicini
+        far.raise();
+        farDot.raise();
+        nodeChevrons.selectAll("path").filter((p) => p === d).raise();
+        nodeNeutralDots.selectAll("circle").filter((p) => p === d).raise();
+      }
     }
 
     linkHitAreas
@@ -1383,18 +1390,11 @@ Promise.all([
         stroke: INTERACTION_COLOR.passive,
         opacity: 1,
       },
-      {
-        id: "node-chevron-marker-active-far",
-        stroke: INTERACTION_COLOR.active,
-        opacity: 0.45,
-      },
-      {
-        id: "node-chevron-marker-passive-far",
-        stroke: INTERACTION_COLOR.passive,
-        opacity: 0.45,
-      },
-      // grigio pieno (come i pallini delle interazioni neutre): marker non
-      // scelti mentre si usa la rotella
+      // chevron vicino agli altri nodi, a riposo: grigio pieno come i
+      // pallini delle interazioni neutre
+      { id: "node-chevron-marker-active-far", stroke: EDGE_COLOR, opacity: 1 },
+      { id: "node-chevron-marker-passive-far", stroke: EDGE_COLOR, opacity: 1 },
+      // stesso grigio per i marker non scelti mentre si usa la rotella
       { id: "node-chevron-marker-active-dim", stroke: EDGE_COLOR, opacity: 1 },
       { id: "node-chevron-marker-passive-dim", stroke: EDGE_COLOR, opacity: 1 },
       { id: "node-chevron-marker-neutral-dim", stroke: EDGE_COLOR, opacity: 1 },

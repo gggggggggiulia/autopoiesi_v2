@@ -1209,9 +1209,10 @@ body.is-moving #edge-blur {
 body.rotella-attiva #info-box {
   visibility: hidden;
 }
-/* ...e il contatore, che l'inspector copriva, torna visibile */
-body.rotella-attiva #top-species-counter.is-covered {
-  opacity: 1;
+/* ...e anche il contatore, che ricompare al rilascio */
+body.rotella-attiva #top-species-counter {
+  opacity: 0;
+  pointer-events: none;
 }
 .rotella-ring,
 .rotella-target {
