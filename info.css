@@ -123,6 +123,16 @@ h3 {
   margin: 4px 0;
 }
 
+/* Voci del menu grigie, la pagina corrente bianca (al posto della
+   sottolineatura); bianche anche al passaggio del mouse. */
+.menu a {
+  color: var(--text-dim);
+}
+.menu a:hover,
+.menu a.corrente {
+  color: var(--text);
+}
+
 /* Colonna visiva, a fianco del testo. La LARGHEZZA resta fissa (stessa
    posizione, stesso ingombro orizzontale sempre); l'ALTEZZA no: ogni
    layer (video o immagine) occupa la larghezza della colonna e si
@@ -193,20 +203,26 @@ h3 {
   aspect-ratio: var(--video-ratio, auto);
 }
 
-/* Parole nel testo che attivano un layer. Stesso stile dei numerini nel
-   pannello del nodo della rete (.ni-count-badge): riquadro grigio, angoli
-   quasi vivi, un po' più chiaro all'hover. Regola unica per tutto il sito:
-   riquadro grigio = passa il mouse e compare qualcosa. Si distingue dai
-   link veri (.cliccabile: puntini e freccia ↗). Il testo non cambia mai
-   colore. box-decoration-break: clone ripete il riquadro su ogni riga se
-   la parola va a capo. Nessuna transition: cambio istantaneo, come lo
-   scambio dei media. */
+/* Parole nel testo che attivano un layer: testo grigio che diventa bianco
+   al passaggio del mouse (o quando è fissato da un tap), cursore a mirino.
+   Si distingue dai link veri (.cliccabile: testo bianco e puntini).
+   Nessuna transition: cambio istantaneo, come lo scambio dei media. */
+.trigger {
+  cursor: url("img/mirino.svg") 12 12, crosshair;
+  color: var(--text-dim);
+}
+.trigger:hover,
+.trigger.is-pinned {
+  color: var(--text);
+}
+
+/* Versione precedente (riquadro grigio), per tornare indietro:
 .trigger {
   cursor: url("img/inspect.svg") 12 12, pointer;
   color: var(--text);
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
-  padding: 2px 4px; /* il 2px verticale rende il riquadro più alto senza cambiare l'interlinea */
+  padding: 2px 4px;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -214,6 +230,7 @@ h3 {
 .trigger.is-pinned {
   background-color: rgba(255, 255, 255, 0.35);
 }
+*/
 
 /* Versione precedente (pillola con contorno), per tornare indietro:
 .trigger {

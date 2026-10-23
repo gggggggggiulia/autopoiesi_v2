@@ -451,6 +451,16 @@ button#reset:hover {
   font-size: 14px;
   margin: 4px 0;
 }
+
+/* Voci del menu grigie, la pagina corrente bianca (al posto della
+   sottolineatura); bianche anche al passaggio del mouse. */
+.menu a {
+  color: var(--text-dim);
+}
+.menu a:hover,
+.menu a.corrente {
+  color: var(--text);
+}
 #lightbox-overlay {
   position: fixed;
   top: 0;

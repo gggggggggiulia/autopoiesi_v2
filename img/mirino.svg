@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cursore a mirino per le parole che mostrano un'immagine (.trigger).
+     Bracci bianchi con contorno nero, così si legge su qualsiasi fondo;
+     il centro (12,12) è il punto attivo del cursore. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-linecap="square">
+  <g stroke="#000" stroke-width="3">
+    <path d="M12 3.5v5M12 15.5v5M3.5 12h5M15.5 12h5"/>
+  </g>
+  <rect x="10.5" y="10.5" width="3" height="3" fill="#000"/>
+  <g stroke="#f2f2f2" stroke-width="1">
+    <path d="M12 3.5v5M12 15.5v5M3.5 12h5M15.5 12h5"/>
+  </g>
+  <rect x="11.5" y="11.5" width="1" height="1" fill="#f2f2f2"/>
+</svg>
