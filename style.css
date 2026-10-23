@@ -1236,10 +1236,6 @@ body.is-moving #edge-blur {
   text-align: center;
   pointer-events: none;
 }
-#rotella-label .rl-count {
-  color: var(--text-dim);
-  margin-right: 10px;
-}
 #rotella-label .rl-hint {
   display: block;
   margin-top: 4px;

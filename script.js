@@ -2138,18 +2138,14 @@ Promise.all([
     // ======================================================================
     // ROTELLA
     // Tenendo premuto un nodo senza muoversi (ROTELLA_HOLD_MS in drag()) la
-    // specie si apre e si evidenzia il suo collegamento più in alto. Ruotando
-    // il dito attorno al nodo si passa agli altri collegamenti in ordine di
-    // angolo: piano, uno scatto ogni ROTELLA_STEP_DEG; più il dito gira veloce,
-    // più collegamenti si scorrono (vedi rotellaGain). Sollevando il dito fuori dal
-    // nodo si apre l'edge inspector di quello evidenziato; sollevandolo sopra
-    // il nodo non si apre niente.
+    // specie si apre e si evidenzia il suo collegamento più in alto. Poi si
+    // illumina il collegamento verso cui punta il dito: quello la cui curva
+    // passa più vicino al dito, alla stessa distanza dal nodo. Più il dito è
+    // lontano dal nodo, più i collegamenti sono distanziati e la scelta è
+    // precisa. Sollevando il dito fuori dal nodo si apre l'edge inspector di
+    // quello illuminato; sollevandolo sopra il nodo non si apre niente.
 
-    const ROTELLA_STEP_DEG = 18;
-    // Accelerazione: sotto ROTELLA_SLOW un giro vale 360/ROTELLA_STEP_DEG
-    // collegamenti; da ROTELLA_FAST in su un giro li scorre tutti.
-    const ROTELLA_SLOW = 2; // radianti al secondo (circa un terzo di giro)
-    const ROTELLA_FAST = 9; // radianti al secondo (circa un giro e mezzo)
+    const ROTELLA_HYSTERESIS_DEG = 2; // margine per non far tremare la scelta tra due vicini
     const ROTELLA_RING_GAP_PX = 22; // distanza dell'anello dal bordo del nodo, sullo schermo
     const ROTELLA_MIN_RADIUS_PX = 28; // sotto questa distanza il dito è "sul nodo"
     let rotellaState = null;
@@ -2165,11 +2161,19 @@ Promise.all([
       return (Math.atan2(x - cx, cy - y) + 2 * Math.PI) % (2 * Math.PI);
     }
 
-    // Quanti scatti vale un ROTELLA_STEP_DEG di rotazione alla velocità speed.
-    function rotellaGain(speed, n) {
-      const max = Math.max(1, n / (360 / ROTELLA_STEP_DEG));
-      const t = Math.min(1, Math.max(0, (speed - ROTELLA_SLOW) / (ROTELLA_FAST - ROTELLA_SLOW)));
-      return 1 + (max - 1) * t;
+    function angleGap(a, b) {
+      const g = Math.abs(a - b) % (2 * Math.PI);
+      return g > Math.PI ? 2 * Math.PI - g : g;
+    }
+
+    // Angolo, attorno al nodo d, del punto in cui l'arco del collegamento l
+    // si trova a distanza dist dal centro (se l'arco finisce prima, verso
+    // l'altra specie).
+    function edgeAngleAt(d, l, dist) {
+      const o = l.source === d ? l.target : l.source;
+      const { ox, oy, R } = arcGeometry(l);
+      const p = arcCircleIntersection(ox, oy, R, d.x, d.y, dist, o.x, o.y) || o;
+      return rotellaAngle(d.x, d.y, p.x, p.y);
     }
 
     function rotellaRender() {
@@ -2188,12 +2192,11 @@ Promise.all([
         .classed("is-inside", !s.outside)
         .style("display", "block")
         .html(
-          `<span class="rl-count">${s.index + 1}/${s.edges.length}</span>` +
-            `${escapeHtml(labelForViewpoint(edge, id))} ` +
+          `${escapeHtml(labelForViewpoint(edge, id))} ` +
             `<strong>${escapeHtml(other ? other.name : "")}</strong>` +
             (s.outside
               ? ""
-              : `<span class="rl-hint">ruota il dito attorno alla specie</span>`)
+              : `<span class="rl-hint">punta il dito verso un collegamento</span>`)
         );
     }
 
@@ -2206,29 +2209,17 @@ Promise.all([
         // l'anello ha la stessa misura sullo schermo a ogni zoom
         const k = d3.zoomTransform(svg.node()).k;
         const r = sizeScale(d.degree) + ROTELLA_RING_GAP_PX / k;
-        // Ordine come si vede a schermo: l'angolo del punto in cui la curva
-        // del collegamento attraversa l'anello (non la direzione dell'altra
-        // specie, che per gli archi e i collegamenti paralleli è diversa).
-        const angle = new Map();
-        edges.forEach((l) => {
-          const o = l.source === d ? l.target : l.source;
-          const { ox, oy, R, p1, p2 } = arcGeometry(l);
-          const p =
-            arcCircleIntersection(ox, oy, R, d.x, d.y, r, o.x, o.y) ||
-            (l.source === d ? p1 : p2);
-          angle.set(l, rotellaAngle(d.x, d.y, p.x, p.y));
+        // si parte dal collegamento che attraversa l'anello più in alto
+        let index = 0;
+        edges.forEach((l, i) => {
+          if (edgeAngleAt(d, l, r) < edgeAngleAt(d, edges[index], r)) index = i;
         });
-        edges.sort((a, b) => angle.get(a) - angle.get(b));
         rotellaState = {
           node: d,
           el,
           edges,
-          index: 0,
+          index,
           outside: false,
-          lastAngle: null,
-          lastTime: 0,
-          speed: 0, // velocità angolare del dito, smussata
-          acc: 0,
           wasFixed: d.fx != null,
           k,
           ring: container
@@ -2239,7 +2230,7 @@ Promise.all([
             .attr("r", r),
           target: container.append("circle").attr("class", "rotella-target"),
         };
-        d.fx = d.x; // il nodo resta fermo mentre si ruota
+        d.fx = d.x; // il nodo resta fermo mentre si sceglie
         d.fy = d.y;
         rotellaRender();
         return true;
@@ -2251,32 +2242,23 @@ Promise.all([
         const cx = box.left + box.width / 2;
         const cy = box.top + box.height / 2;
         const inner = Math.max(box.width / 2, ROTELLA_MIN_RADIUS_PX);
-        s.outside = Math.hypot(clientX - cx, clientY - cy) > inner;
-        if (!s.outside) {
-          s.lastAngle = null; // al rientro riparte senza scatti
-          rotellaRender();
-          return;
-        }
-        const angle = rotellaAngle(cx, cy, clientX, clientY);
-        const now = performance.now();
-        if (s.lastAngle !== null) {
-          let delta = angle - s.lastAngle;
-          if (delta > Math.PI) delta -= 2 * Math.PI;
-          if (delta < -Math.PI) delta += 2 * Math.PI;
-          const dt = Math.max(1, now - s.lastTime) / 1000;
-          s.speed = 0.7 * s.speed + 0.3 * (Math.abs(delta) / dt);
-          s.acc += delta * rotellaGain(s.speed, s.edges.length);
-          const step = (ROTELLA_STEP_DEG * Math.PI) / 180;
-          const steps = Math.trunc(s.acc / step);
-          if (steps) {
-            s.acc -= steps * step;
-            const n = s.edges.length;
-            s.index = (((s.index + steps) % n) + n) % n;
+        const distPx = Math.hypot(clientX - cx, clientY - cy);
+        s.outside = distPx > inner;
+        if (s.outside) {
+          // lo zoom è uniforme: angoli uguali sullo schermo e nella rete
+          const finger = rotellaAngle(cx, cy, clientX, clientY);
+          const dist = distPx / s.k;
+          const gaps = s.edges.map((l) => angleGap(edgeAngleAt(s.node, l, dist), finger));
+          let best = 0;
+          gaps.forEach((g, i) => {
+            if (g < gaps[best]) best = i;
+          });
+          const margin = (ROTELLA_HYSTERESIS_DEG * Math.PI) / 180;
+          if (best !== s.index && gaps[best] + margin < gaps[s.index]) {
+            s.index = best;
             if (navigator.vibrate) navigator.vibrate(5);
           }
         }
-        s.lastAngle = angle;
-        s.lastTime = now;
         rotellaRender();
       },
       end() {
