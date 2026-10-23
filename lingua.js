@@ -175,7 +175,7 @@ const TESTI = {
     "tour.verso.non-disponibile":
       "No example available with the data loaded right now.",
     "tour.verso.esempio":
-      "The same interaction changes depending on the node you click. {a}; the same relationship can also be read as {b}.",
+      "The same interaction changes depending on the node that is clicked. {a}; the same relationship can also be read as {b}.",
     "tour.verso.passivo": "is ",
     "tour.neutre.titolo": "Neutral interactions",
     "tour.neutre":
