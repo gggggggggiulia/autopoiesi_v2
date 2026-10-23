@@ -1043,10 +1043,6 @@ body.spotlight-anim path.link-path {
   font-style: italic;
   color: var(--text-dim);
 }
-#top-species-counter.is-covered {
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* Alone dei bordi: si spegne mentre la vista si muove (classe messa da
    script.js, vedi setMoving) e torna a riposo con una dissolvenza. */

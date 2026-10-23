@@ -183,15 +183,6 @@ function syncInfoBoxClosed() {
   const o = el.style.opacity;
   const closed = o === "" || Number(o) === 0;
   el.classList.toggle("is-closed", closed);
-  requestAnimationFrame(() => {
-    const counter = document.getElementById("top-species-counter");
-    if (!counter) return;
-    const overlaps =
-      !closed &&
-      el.getBoundingClientRect().top <
-        counter.getBoundingClientRect().bottom + 12;
-    counter.classList.toggle("is-covered", overlaps);
-  });
 }
 window.addEventListener("resize", syncInfoBoxClosed);
 new MutationObserver(syncInfoBoxClosed).observe(infoBox.node(), {
@@ -1261,7 +1252,8 @@ Promise.all([
       selectedEdgeDatum = d;
       d3.select(`#link-path-${links.indexOf(d)}`)
         .attr("stroke", EDGE_COLOR_ACTIVE)
-        .attr("stroke-width", 1.4);
+        .attr("stroke-width", 1.4)
+        .raise(); // in primo piano finché è aperto
       updateFarMarkerHighlight();
 
       const viewpointId =
@@ -1328,7 +1320,8 @@ Promise.all([
 
     // Evidenzia un edge come al passaggio del mouse (on) o lo riporta a riposo.
     function setEdgeHover(d, on) {
-      d3.select(`#link-path-${links.indexOf(d)}`)
+      const path = d3
+        .select(`#link-path-${links.indexOf(d)}`)
         .attr("stroke", on ? EDGE_COLOR_ACTIVE : edgeRestStroke(d))
         .attr("stroke-width", on ? 1.4 : edgeRestWidth(d));
       const far = nodeFarChevrons
@@ -1340,7 +1333,8 @@ Promise.all([
         .filter((p) => p === d)
         .attr("fill", on ? "#F4F4F4" : farDotFill(d));
       if (on) {
-        // in primo piano, così non resta sotto i marker vicini
+        // in primo piano (linea e marker), così non resta sotto gli altri
+        path.raise();
         far.raise();
         farDot.raise();
         nodeChevrons.selectAll("path").filter((p) => p === d).raise();
