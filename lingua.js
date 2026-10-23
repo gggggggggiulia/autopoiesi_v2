@@ -1,7 +1,7 @@
 // Lingua del sito: italiano (predefinito) o inglese.
 //
 // La lingua si sceglie con ?lang=en / ?lang=it nell'indirizzo (in mostra si
-// può fissare insieme a ?mostra=1) oppure con la voce "english" / "italiano" in fondo al menu,
+// può fissare insieme a ?mostra=1) oppure con la sigla "en" / "it" in basso a destra,
 // e viene ricordata nel browser per le pagine successive.
 //
 // Va caricato nel <head> di ogni pagina, prima di tutto il resto: imposta
@@ -39,22 +39,28 @@ document.head.insertAdjacentHTML(
   `<style>
     html:not([data-lang="en"]) [data-lang="en"],
     html[data-lang="en"] [data-lang="it"] { display: none !important; }
+    .lang-corner {
+      position: fixed; right: 32px; bottom: 28px; z-index: 1000;
+      font-family: "Inconsolata", monospace; font-size: 14px;
+      color: var(--text, #f4f4f4); text-decoration: none;
+    }
+    .lang-corner:hover { text-decoration: underline; }
+    .mostra .lang-corner { display: none; }
   </style>`
 );
 
-// Voce di menu per cambiare lingua: in fondo al menu, come le altre voci,
-// mostra solo l'altra lingua ("english" / "italiano"). Cambiando lingua si
-// resta sulla stessa pagina e si conservano gli altri parametri (es. ?mostra=1).
+// Sigla per cambiare lingua, fissa in basso a destra: mostra solo la lingua
+// in cui si può passare ("en" / "it"). Cambiando lingua si resta sulla stessa
+// pagina e si conservano gli altri parametri. In mostra è nascosta, come il
+// menu: lì la lingua si fissa con ?lang=en.
 document.addEventListener("DOMContentLoaded", () => {
-  const menu = document.querySelector(".menu");
-  if (!menu) return;
   const altra = LANG === "en" ? "it" : "en";
   const params = new URLSearchParams(location.search);
   params.set("lang", altra);
-  const nome = altra === "en" ? "english" : "italiano";
-  menu.insertAdjacentHTML(
+  const titolo = altra === "en" ? "English" : "Italiano";
+  document.body.insertAdjacentHTML(
     "beforeend",
-    `<br /><a href="?${params}" hreflang="${altra}" lang="${altra}">${nome}</a>`
+    `<a class="lang-corner" href="?${params}" hreflang="${altra}" lang="${altra}" title="${titolo}">${altra}</a>`
   );
 });
 
