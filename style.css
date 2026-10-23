@@ -1223,11 +1223,12 @@ body.rotella-attiva #info-box {
   stroke-dasharray: none;
 }
 #rotella-label {
-  display: none;
   position: fixed;
   top: 76px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -6px);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   z-index: 7;
   max-width: calc(100vw - 32px);
   padding: 10px 18px;
@@ -1239,6 +1240,10 @@ body.rotella-attiva #info-box {
   font-size: var(--fs-base);
   text-align: center;
   pointer-events: none;
+}
+#rotella-label.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 #rotella-label .rl-hint {
   display: block;

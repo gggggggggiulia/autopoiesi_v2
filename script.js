@@ -2182,15 +2182,25 @@ Promise.all([
       s.edges.forEach((e) => setEdgeHover(e, e === edge));
       const id = s.node.scientific_name;
       const other = nodeByName.get(otherNodeIdOf(edge, id));
-      if (other) {
+      if (other && edge !== s.shownEdge) {
+        // il cerchio della nuova specie si stringe su di lei comparendo
+        s.shownEdge = edge;
+        const rFinal = sizeScale(other.degree) + 6 / s.k;
         s.target
+          .interrupt()
           .attr("cx", other.x)
           .attr("cy", other.y)
-          .attr("r", sizeScale(other.degree) + 6 / s.k);
+          .attr("r", rFinal + 10 / s.k)
+          .style("opacity", 0)
+          .transition()
+          .duration(180)
+          .ease(d3.easeCubicOut)
+          .attr("r", rFinal)
+          .style("opacity", 1);
       }
       rotellaLabel
         .classed("is-inside", !s.outside)
-        .style("display", "block")
+        .classed("is-visible", true)
         .html(
           `${escapeHtml(labelForViewpoint(edge, id))} ` +
             `<strong>${escapeHtml(other ? other.name : "")}</strong>` +
@@ -2222,14 +2232,23 @@ Promise.all([
           outside: false,
           wasFixed: d.fx != null,
           k,
+          shownEdge: null,
+          // l'anello esce dal bordo del nodo e si allarga fino al suo posto
           ring: container
             .append("circle")
             .attr("class", "rotella-ring")
             .attr("cx", d.x)
             .attr("cy", d.y)
-            .attr("r", r),
+            .attr("r", sizeScale(d.degree))
+            .style("opacity", 0),
           target: container.append("circle").attr("class", "rotella-target"),
         };
+        rotellaState.ring
+          .transition()
+          .duration(320)
+          .ease(d3.easeCubicOut)
+          .attr("r", r)
+          .style("opacity", 1);
         d.fx = d.x; // il nodo resta fermo mentre si sceglie
         d.fy = d.y;
         document.body.classList.add("rotella-attiva"); // nasconde l'inspector
@@ -2268,9 +2287,17 @@ Promise.all([
         rotellaState = null;
         rotellaEndedAt = Date.now();
         s.edges.forEach((e) => setEdgeHover(e, false));
-        s.ring.remove();
-        s.target.remove();
-        rotellaLabel.style("display", "none");
+        // l'anello rientra nel nodo, il cerchio della specie svanisce
+        s.ring
+          .interrupt()
+          .transition()
+          .duration(200)
+          .ease(d3.easeCubicIn)
+          .attr("r", sizeScale(s.node.degree))
+          .style("opacity", 0)
+          .remove();
+        s.target.interrupt().transition().duration(200).style("opacity", 0).remove();
+        rotellaLabel.classed("is-visible", false);
         document.body.classList.remove("rotella-attiva");
         if (!s.wasFixed) {
           s.node.fx = null;
