@@ -1252,9 +1252,9 @@ Promise.all([
       selectedEdgeDatum = d;
       d3.select(`#link-path-${links.indexOf(d)}`)
         .attr("stroke", EDGE_COLOR_ACTIVE)
-        .attr("stroke-width", 1.4)
-        .raise(); // in primo piano finché è aperto
+        .attr("stroke-width", 1.4);
       updateFarMarkerHighlight();
+      syncTopLayer();
 
       const viewpointId =
         selectedNodeId != null ? selectedNodeId : nodeIdOf(d.source);
@@ -1318,28 +1318,45 @@ Promise.all([
           </button>`;
     }
 
+    const hoveredEdges = new Set(); // edge evidenziati in questo momento (hover o rotella)
+
     // Evidenzia un edge come al passaggio del mouse (on) o lo riporta a riposo.
     function setEdgeHover(d, on) {
-      const path = d3
-        .select(`#link-path-${links.indexOf(d)}`)
+      d3.select(`#link-path-${links.indexOf(d)}`)
         .attr("stroke", on ? EDGE_COLOR_ACTIVE : edgeRestStroke(d))
         .attr("stroke-width", on ? 1.4 : edgeRestWidth(d));
-      const far = nodeFarChevrons
+      nodeFarChevrons
         .selectAll("path")
         .filter((p) => p === d)
         .attr("marker-end", (p) => roleMarkerId(p, on || p === selectedEdgeDatum));
-      const farDot = nodeFarNeutralDots
+      nodeFarNeutralDots
         .selectAll("circle")
         .filter((p) => p === d)
         .attr("fill", on ? "#F4F4F4" : farDotFill(d));
-      if (on) {
-        // in primo piano (linea e marker), così non resta sotto gli altri
-        path.raise();
-        far.raise();
-        farDot.raise();
-        nodeChevrons.selectAll("path").filter((p) => p === d).raise();
-        nodeNeutralDots.selectAll("circle").filter((p) => p === d).raise();
-      }
+      if (on) hoveredEdges.add(d);
+      else hoveredEdges.delete(d);
+      syncTopLayer();
+    }
+
+    // Linee e marker stanno in livelli diversi (prima tutte le linee, poi i
+    // marker), quindi un marker di un altro collegamento può finire tra la
+    // linea evidenziata e il suo marker. Il livello in primo piano ripete con
+    // <use> la linea evidenziata (hover, rotella o edge inspector aperto) e i
+    // suoi marker sopra a tutto il resto; le copie seguono da sole gli originali.
+    function syncTopLayer() {
+      const edges = new Set(hoveredEdges);
+      if (selectedEdgeDatum) edges.add(selectedEdgeDatum);
+      const ids = [];
+      edges.forEach((d) => {
+        const i = links.indexOf(d);
+        ids.push(`link-path-${i}`, `node-dot-${i}`, `node-dot-far-${i}`,
+          `node-chevron-${i}`, `node-chevron-far-${i}`);
+      });
+      topLayer
+        .selectAll("use")
+        .data(ids.filter((id) => document.getElementById(id)))
+        .join("use")
+        .attr("href", (id) => `#${id}`);
     }
 
     linkHitAreas
@@ -1368,6 +1385,11 @@ Promise.all([
     nodeFarNeutralDots = container
       .append("g")
       .attr("class", "node-far-neutral-dots");
+
+    const topLayer = container
+      .append("g")
+      .attr("class", "edge-top-layer")
+      .style("pointer-events", "none");
 
     const defs = svg.select("defs").empty()
       ? svg.append("defs")
@@ -1814,6 +1836,7 @@ Promise.all([
       }
       selectedEdgeDatum = null;
       updateFarMarkerHighlight();
+      syncTopLayer();
     }
 
     function interactionIconHTML(typeLabel) {
@@ -1913,6 +1936,7 @@ Promise.all([
         .enter()
         .append("path")
         .attr("class", "node-chevron")
+        .attr("id", (d) => `node-chevron-${links.indexOf(d)}`)
         .attr("fill", "none")
         .attr("stroke", "none")
         .attr("marker-end", nearChevronMarker)
@@ -1925,6 +1949,7 @@ Promise.all([
         .enter()
         .append("path")
         .attr("class", "node-chevron-far")
+        .attr("id", (d) => `node-chevron-far-${links.indexOf(d)}`)
         .attr("fill", "none")
         .attr("stroke", "none")
         .attr("marker-end", farChevronMarker)
@@ -1940,6 +1965,7 @@ Promise.all([
         .enter()
         .append("circle")
         .attr("class", "node-neutral-dot")
+        .attr("id", (d) => `node-dot-${links.indexOf(d)}`)
         .attr("r", SHOW_INTERACTION_SYMBOLS ? 2 : 0)
         .attr("fill", "#F4F4F4")
         .attr("stroke", "none")
@@ -1952,12 +1978,14 @@ Promise.all([
         .enter()
         .append("circle")
         .attr("class", "node-neutral-dot-far")
+        .attr("id", (d) => `node-dot-far-${links.indexOf(d)}`)
         .attr("r", SHOW_INTERACTION_SYMBOLS ? 2 : 0)
         .attr("fill", farDotFill)
         .attr("stroke", "none")
         .style("pointer-events", "none");
 
       updateNodeChevrons();
+      syncTopLayer(); // i marker sono nuovi: le copie in primo piano vanno rifatte
 
       edgeLabels
         .selectAll("text")
