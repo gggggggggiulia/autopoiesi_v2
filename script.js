@@ -3869,7 +3869,7 @@ function drag(simulation) {
         homeY = d.y;
         [startX, startY] = clientXY(event.sourceEvent);
         clearTimeout(holdTimer);
-        if (rotella) {
+        if (MOSTRA && rotella) { // la rotella esiste solo in modalità mostra
           const el = this;
           holdTimer = setTimeout(() => {
             if (!heated) rotellaOn = rotella.start(d, el);
