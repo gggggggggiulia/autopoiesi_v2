@@ -1393,6 +1393,11 @@ Promise.all([
         stroke: INTERACTION_COLOR.passive,
         opacity: 0.45,
       },
+      // grigio pieno (come i pallini delle interazioni neutre): marker non
+      // scelti mentre si usa la rotella
+      { id: "node-chevron-marker-active-dim", stroke: EDGE_COLOR, opacity: 1 },
+      { id: "node-chevron-marker-passive-dim", stroke: EDGE_COLOR, opacity: 1 },
+      { id: "node-chevron-marker-neutral-dim", stroke: EDGE_COLOR, opacity: 1 },
     ].forEach(({ id, stroke, opacity }) => {
       if (defs.select(`#${id}`).empty()) {
         defs
@@ -2184,7 +2189,11 @@ Promise.all([
     function rotellaMarkers(edge) {
       nodeChevrons
         .selectAll("path")
-        .attr("marker-end", (p) => (edge ? roleMarkerId(p, p === edge) : nearChevronMarker(p)));
+        .attr("marker-end", (p) => {
+          if (!edge || p === edge) return nearChevronMarker(p);
+          const role = interactionRole(labelForViewpoint(p, selectedNodeId));
+          return `url(#node-chevron-marker-${role}-dim)`;
+        });
       nodeNeutralDots
         .selectAll("circle")
         .attr("fill", (p) => (!edge || p === edge ? "#F4F4F4" : EDGE_COLOR));
