@@ -1,7 +1,7 @@
 // Lingua del sito: italiano (predefinito) o inglese.
 //
 // La lingua si sceglie con ?lang=en / ?lang=it nell'indirizzo (in mostra si
-// può fissare insieme a ?mostra=1) oppure con il selettore "it / en" nel menu,
+// può fissare insieme a ?mostra=1) oppure con la voce "english" / "italiano" in fondo al menu,
 // e viene ricordata nel browser per le pagine successive.
 //
 // Va caricato nel <head> di ogni pagina, prima di tutto il resto: imposta
@@ -39,25 +39,22 @@ document.head.insertAdjacentHTML(
   `<style>
     html:not([data-lang="en"]) [data-lang="en"],
     html[data-lang="en"] [data-lang="it"] { display: none !important; }
-    .menu .lang-switch a { text-decoration: none; }
-    .menu .lang-switch a.is-current { text-decoration: underline; }
   </style>`
 );
 
-// Selettore "it / en" in fondo al menu. Cambiando lingua si resta sulla stessa
-// pagina e si conservano gli altri parametri (es. ?mostra=1).
+// Voce di menu per cambiare lingua: in fondo al menu, come le altre voci,
+// mostra solo l'altra lingua ("english" / "italiano"). Cambiando lingua si
+// resta sulla stessa pagina e si conservano gli altri parametri (es. ?mostra=1).
 document.addEventListener("DOMContentLoaded", () => {
   const menu = document.querySelector(".menu");
   if (!menu) return;
-  const link = (lingua) => {
-    const params = new URLSearchParams(location.search);
-    params.set("lang", lingua);
-    const cls = lingua === LANG ? ' class="is-current"' : "";
-    return `<a href="?${params}"${cls} hreflang="${lingua}">${lingua}</a>`;
-  };
+  const altra = LANG === "en" ? "it" : "en";
+  const params = new URLSearchParams(location.search);
+  params.set("lang", altra);
+  const nome = altra === "en" ? "english" : "italiano";
   menu.insertAdjacentHTML(
     "beforeend",
-    `<br /><br /><span class="lang-switch">${link("it")} / ${link("en")}</span>`
+    `<br /><a href="?${params}" hreflang="${altra}" lang="${altra}">${nome}</a>`
   );
 });
 
