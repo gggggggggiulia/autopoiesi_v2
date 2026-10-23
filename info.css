@@ -204,11 +204,11 @@ h3 {
 }
 
 /* Parole nel testo che attivano un layer: testo grigio che diventa bianco
-   al passaggio del mouse (o quando è fissato da un tap), cursore a occhio.
+   al passaggio del mouse (o quando è fissato da un tap), cursore a mirino.
    Si distingue dai link veri (.cliccabile: testo bianco e puntini).
    Nessuna transition: cambio istantaneo, come lo scambio dei media. */
 .trigger {
-  cursor: url("img/inspect.svg") 12 12, pointer;
+  cursor: url("img/mirino.svg") 12 12, crosshair;
   color: var(--text-dim);
 }
 .trigger:hover,
