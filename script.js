@@ -2232,6 +2232,7 @@ Promise.all([
         };
         d.fx = d.x; // il nodo resta fermo mentre si sceglie
         d.fy = d.y;
+        document.body.classList.add("rotella-attiva"); // nasconde l'inspector
         rotellaRender();
         return true;
       },
@@ -2270,6 +2271,7 @@ Promise.all([
         s.ring.remove();
         s.target.remove();
         rotellaLabel.style("display", "none");
+        document.body.classList.remove("rotella-attiva");
         if (!s.wasFixed) {
           s.node.fx = null;
           s.node.fy = null;
