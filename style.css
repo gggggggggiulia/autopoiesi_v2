@@ -1178,14 +1178,14 @@ body.is-moving #edge-blur {
 .view-ring {
   fill: none;
   stroke: var(--text);
-  stroke-opacity: 0.25;
+  stroke-opacity: 0.6; /* a 0.25 sotto i collegamenti non si vedeva */
   stroke-width: 1;
   stroke-dasharray: 3 7;
   vector-effect: non-scaling-stroke;
 }
 .view-ring-label {
   fill: var(--text);
-  fill-opacity: 0.55;
+  fill-opacity: 0.85;
   font-family: var(--font);
   text-anchor: middle;
   letter-spacing: 0.04em;
