@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/x-icon" href="img/apn.ico" />
+    <script src="lingua.js"></script>
     <title>autopoiesi / dati</title>
     <link rel="stylesheet" href="info.css" />
   </head>
@@ -18,14 +19,88 @@
       <nav class="menu">
         <a href="home.html">autopoiesi</a><br />
         <a href="info.html">info</a><br />
-        <a href="#"><u>dati</u></a
+        <a href="#"><u><span data-lang="it">dati</span><span data-lang="en">data</span></u></a
         ><br />
-        <a href="index.html">rete</a>
+        <a href="index.html"><span data-lang="it">rete</span><span data-lang="en">network</span></a>
       </nav>
     </div>
 
     <div class="layout">
       <div class="paragrafo">
+        <div data-lang="en">
+        <h3>structure</h3>
+        The network graph is built on two key elements: <i>nodes</i> and
+        <i>edges</i>. The nodes represent all the species observed within the
+        oasis, while the edges represent their interactions.<br /><br /><br />
+
+        <h3>nodes</h3>
+        They form a list, as complete as possible, of the
+        <span class="trigger" data-layer="nodes">species</span> that live in
+        the area of the Cave di Noale Oasis. The list was compiled by
+        cross-referencing a number of datasets, including
+        <a
+          class="cliccabile"
+          href="https://www.inaturalist.org/"
+          target="_blank"
+          >iNaturalist</a
+        >,
+        <a
+          class="cliccabile"
+          href="https://www.acquerisorgive.it/comunicazione/le-nostre-pubblicazioni/"
+          target="_blank"
+          >Acque Risorgive Consortium</a
+        >,
+        <a
+          class="cliccabile"
+          href="https://www.nnb.isprambiente.it/it"
+          target="_blank"
+          >NNB Ispra (National Biodiversity Network)</a
+        >,
+        <a
+          class="cliccabile"
+          href="https://www.wwf.it/dove-interveniamo/il-nostro-lavoro-in-italia/oasi/cave-di-noale/"
+          target="_blank"
+          >WWF</a
+        >
+        and the
+        <a
+          class="cliccabile"
+          href="https://www.oasicavedinoale.it/fauna/"
+          target="_blank"
+          >Oasis website</a
+        >. <br /><br /><br />
+
+        <h3>edges</h3>
+        The list of
+        <span class="trigger" data-layer="edges">interactions</span> was
+        obtained with
+        <a
+          class="cliccabile"
+          href="https://www.globalbioticinteractions.org/"
+          target="_blank"
+          >GloBI</a
+        >, an open database that collects and connects information on
+        interactions between species from scientific sources around the world.
+        The tool searches a large database of scientific papers from all over
+        the world and, given the name of a source species (A) and a target
+        species (B), returns results based on citations of the species (and
+        sometimes of a specific interaction). For this project, the full list
+        of species was entered both as source and as target. This produced a
+        further database describing the interactions between the species
+        observed in the Noale Oasis. <br /><br /><br />
+
+        <h3>graph</h3>
+        The <span class="trigger" data-layer="grafo">network graph</span> is a
+        visual model that makes it possible to explore each element both in
+        its own right and in relation to the other entities. Unlike other
+        visual models, the network graph invites the user to keep exploring:
+        zooming in and out, moving through the space and clicking on the
+        elements that make it up. This is essential to the project: the
+        visualisation of interactions between species does not aim to show a
+        single, certain result, but to give the user a tool for poking around
+        a highly intricate system.
+        </div>
+        <div data-lang="it">
         <h3>struttura</h3>
         La costruzione del grafico a rete è basata su due elementi chiave:
         <i>nodes</i> e <i>edges</i>. I nodes rappresentano tutte le specie
@@ -99,6 +174,7 @@
         interazioni tra specie non vuole mostrare un unico risultato certo, ma
         fornire all’utente uno strumento per curiosare un sistema molto
         intricato.
+        </div>
       </div>
 
       <div class="media-frame" id="mediaFrame">
@@ -107,7 +183,7 @@
                per l'autoplay), senza controlli. -->
           <figure>
             <img src="img/Scraping-6.gif" alt="Scraping dei dati da GloBi" />
-            <figcaption>Scraping dei dati da GloBi</figcaption>
+            <figcaption><span data-lang="it">Scraping dei dati da GloBi</span><span data-lang="en">Scraping data from GloBI</span></figcaption>
           </figure>
         </div>
 
@@ -121,14 +197,14 @@
         <div class="media-layer" data-layer="nodes">
           <figure>
             <img src="img/Data-2_.gif" alt="Tabella dei nodes" />
-            <figcaption>Dati: nodes</figcaption>
+            <figcaption><span data-lang="it">Dati: nodes</span><span data-lang="en">Data: nodes</span></figcaption>
           </figure>
         </div>
 
         <div class="media-layer" data-layer="edges">
           <figure>
             <img src="img/Data-1_.gif" alt="Tabella degli edges" />
-            <figcaption>Dati: edges</figcaption>
+            <figcaption><span data-lang="it">Dati: edges</span><span data-lang="en">Data: edges</span></figcaption>
           </figure>
         </div>
 
@@ -139,7 +215,7 @@
               alt="Grafo delle interazioni su Gephi"
             />
             <figcaption>
-              Prima visualizzazione delle interazioni su Gephi
+              <span data-lang="it">Prima visualizzazione delle interazioni su Gephi</span><span data-lang="en">First visualisation of the interactions in Gephi</span>
             </figcaption>
           </figure>
         </div>

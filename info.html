@@ -10,6 +10,7 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/x-icon" href="img/apn.ico" />
+    <script src="lingua.js"></script>
     <title>autopoiesi / info</title>
     <link rel="stylesheet" href="info.css" />
   </head>
@@ -19,13 +20,52 @@
         <a href="home.html">autopoiesi</a><br />
         <a href="info.html"><u>info</u></a
         ><br />
-        <a href="dati.html">dati</a><br />
-        <a href="index.html">rete</a>
+        <a href="dati.html"><span data-lang="it">dati</span><span data-lang="en">data</span></a><br />
+        <a href="index.html"><span data-lang="it">rete</span><span data-lang="en">network</span></a>
       </nav>
     </div>
 
     <div class="layout">
       <div class="paragrafo">
+        <div data-lang="en">
+        <h3>oasis</h3>
+        autopoiesi visualises the network of interactions between the species
+        observed in the
+        <span class="trigger" data-layer="bonifica"
+          >Cave di Noale Oasis</span
+        >.<br /><br /><br />
+        <h3>consortium</h3>
+        The Cave di Noale Oasis is one of a series of projects by the
+        <a
+          class="cliccabile"
+          href="https://www.acquerisorgive.it/"
+          target="_blank"
+          >Acque Risorgive Consortium of the Veneto region</a
+        >. The Consortium works on regenerating urban areas and their
+        surroundings, with the aim of reclaiming them while protecting the
+        environment and its biodiversity. <br /><br /><br />
+        One of the Consortium's projects took place
+        <span class="trigger" data-layer="localizzazione"
+          >near the town of Noale</span
+        >, and led to the creation of the oasis, which is now designated a
+        <a
+          class="cliccabile"
+          href="https://www.mase.gov.it/portale/sic-zsc-e-zps-in-italia"
+          target="_blank"
+          >Special Area of Conservation</a
+        >. <br /><br /><br />
+        Creating an environment rich in different species matters, because
+        every system sustains itself through the interactions that take place
+        between the species that inhabit it.
+        <br /><br /><br />
+        <h3>interactions</h3>
+        Interactions between species are a complex and varied phenomenon, at
+        times hard to classify with absolute precision and certainty. The
+        project is built on the interactions currently catalogued by the
+        scientific community, which has developed a detailed list of 48 types
+        of interaction. Like any classification, it remains an approximation.
+        </div>
+        <div data-lang="it">
         <h3>oasi</h3>
         autopoiesi visualizza la rete di interazioni tra le specie osservate
         nell’<span class="trigger" data-layer="bonifica"
@@ -61,6 +101,7 @@
         progetto è costruito sulle interazioni attualmente catalogate dalla
         comunità scientifica, che ha sviluppato una lista dettagliata — per
         quanto sempre approssimativa — di 48 tipologie di interazioni.
+        </div>
       </div>
 
       <!--
@@ -92,7 +133,7 @@
             disablepictureinpicture
           ></video>
           <figcaption>
-            Osservazioni su iNaturalist nella zona delle Cave
+            <span data-lang="it">Osservazioni su iNaturalist nella zona delle Cave</span><span data-lang="en">iNaturalist observations around the Cave</span>
           </figcaption>
         </div>
 
@@ -100,7 +141,7 @@
         <div class="media-layer" data-layer="bonifica">
           <figure>
             <img src="img/ezgif.com-optimize.gif" alt="Le Cave di Noale" />
-            <figcaption>Cave di Noale dopo la bonifica</figcaption>
+            <figcaption><span data-lang="it">Cave di Noale dopo la bonifica</span><span data-lang="en">Cave di Noale after reclamation</span></figcaption>
           </figure>
         </div>
         <!-- Layer VIDEO che riparte ad ogni hover (data-restart): NON ha
@@ -115,7 +156,7 @@
             preload="auto"
             disablepictureinpicture
           ></video>
-          <figcaption>Cave di Noale: localizzazione</figcaption>
+          <figcaption><span data-lang="it">Cave di Noale: localizzazione</span><span data-lang="en">Cave di Noale: location</span></figcaption>
         </div>
 
         <!--
