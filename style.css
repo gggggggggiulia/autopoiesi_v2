@@ -29,6 +29,7 @@
   --line-dim: #8a8a8c;
   --panel: #1a1a1ac1;
   --font: "Inconsolata", monospace;
+  --chevron-available: #9a9a9c; /* marker dei collegamenti che si possono scegliere */
   --fs-base: 16px;
   --fs-small: 14px;
   --fs-tiny: 12px;

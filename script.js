@@ -92,6 +92,10 @@ const NOT_OBSERVED_LIFT = 0.25;
 
 const EDGE_COLOR = "#464646";
 const EDGE_COLOR_ACTIVE = "#F4F4F4";
+// Marker dei collegamenti "disponibili" (si possono scegliere ma non sono
+// evidenziati): colore in style.css (--chevron-available), così si cambia
+// in un posto solo.
+const CHEVRON_AVAILABLE = "var(--chevron-available)";
 
 const FOCUS_DIM_OPACITY = 0.15;
 const INTERACTION_HOVER_DIM = 0.25;
@@ -1240,11 +1244,11 @@ Promise.all([
       return roleMarkerId(d, d === selectedEdgeDatum);
     }
     function farDotFill(d) {
-      return d === selectedEdgeDatum ? EDGE_COLOR_ACTIVE : EDGE_COLOR;
+      return d === selectedEdgeDatum ? EDGE_COLOR_ACTIVE : CHEVRON_AVAILABLE;
     }
     function updateFarMarkerHighlight() {
       nodeFarChevrons.selectAll("path").attr("marker-end", farChevronMarker);
-      nodeFarNeutralDots.selectAll("circle").attr("fill", farDotFill);
+      nodeFarNeutralDots.selectAll("circle").style("fill", farDotFill);
     }
 
     function openEdgeInfo(d) {
@@ -1332,7 +1336,7 @@ Promise.all([
       nodeFarNeutralDots
         .selectAll("circle")
         .filter((p) => p === d)
-        .attr("fill", on ? "#F4F4F4" : farDotFill(d));
+        .style("fill", on ? "#F4F4F4" : farDotFill(d));
       if (on) hoveredEdges.add(d);
       else hoveredEdges.delete(d);
       syncTopLayer();
@@ -1406,14 +1410,13 @@ Promise.all([
         stroke: INTERACTION_COLOR.passive,
         opacity: 1,
       },
-      // chevron vicino agli altri nodi, a riposo: grigio pieno come i
-      // pallini delle interazioni neutre
-      { id: "node-chevron-marker-active-far", stroke: EDGE_COLOR, opacity: 1 },
-      { id: "node-chevron-marker-passive-far", stroke: EDGE_COLOR, opacity: 1 },
-      // stesso grigio per i marker non scelti mentre si usa la rotella
-      { id: "node-chevron-marker-active-dim", stroke: EDGE_COLOR, opacity: 1 },
-      { id: "node-chevron-marker-passive-dim", stroke: EDGE_COLOR, opacity: 1 },
-      { id: "node-chevron-marker-neutral-dim", stroke: EDGE_COLOR, opacity: 1 },
+      // chevron "disponibili": vicino agli altri nodi a riposo, e attorno al
+      // nodo quelle non scelte mentre si usa la rotella
+      { id: "node-chevron-marker-active-far", stroke: CHEVRON_AVAILABLE, opacity: 1 },
+      { id: "node-chevron-marker-passive-far", stroke: CHEVRON_AVAILABLE, opacity: 1 },
+      { id: "node-chevron-marker-active-dim", stroke: CHEVRON_AVAILABLE, opacity: 1 },
+      { id: "node-chevron-marker-passive-dim", stroke: CHEVRON_AVAILABLE, opacity: 1 },
+      { id: "node-chevron-marker-neutral-dim", stroke: CHEVRON_AVAILABLE, opacity: 1 },
     ].forEach(({ id, stroke, opacity }) => {
       if (defs.select(`#${id}`).empty()) {
         defs
@@ -1429,7 +1432,7 @@ Promise.all([
           .append("path")
           .attr("d", "M2,1.5 L7,5 L2,8.5") // chevron aperto ">" invece di triangolo pieno, più leggero
           .attr("fill", "none")
-          .attr("stroke", stroke)
+          .style("stroke", stroke) // style e non attr: accetta anche var(--...)
           .attr("stroke-opacity", opacity)
           .attr("stroke-width", 1.5)
           .attr("stroke-linecap", "round")
@@ -1967,7 +1970,7 @@ Promise.all([
         .attr("class", "node-neutral-dot")
         .attr("id", (d) => `node-dot-${links.indexOf(d)}`)
         .attr("r", SHOW_INTERACTION_SYMBOLS ? 2 : 0)
-        .attr("fill", "#F4F4F4")
+        .style("fill", "#F4F4F4")
         .attr("stroke", "none")
         .style("pointer-events", "none");
 
@@ -1980,7 +1983,7 @@ Promise.all([
         .attr("class", "node-neutral-dot-far")
         .attr("id", (d) => `node-dot-far-${links.indexOf(d)}`)
         .attr("r", SHOW_INTERACTION_SYMBOLS ? 2 : 0)
-        .attr("fill", farDotFill)
+        .style("fill", farDotFill)
         .attr("stroke", "none")
         .style("pointer-events", "none");
 
@@ -2218,7 +2221,7 @@ Promise.all([
         });
       nodeNeutralDots
         .selectAll("circle")
-        .attr("fill", (p) => (!edge || p === edge ? "#F4F4F4" : EDGE_COLOR));
+        .style("fill", (p) => (!edge || p === edge ? "#F4F4F4" : CHEVRON_AVAILABLE));
     }
 
     function rotellaRender() {
