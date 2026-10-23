@@ -153,7 +153,7 @@ function photoCredit(n) {
     .trim();
   const code = (n.image_license || "").toLowerCase();
   const license = !code
-    ? "tutti i diritti riservati"
+    ? t("crediti.riservati")
     : code === "cc0"
     ? "CC0"
     : code.toUpperCase().replace(/^CC-/, "CC ");
@@ -861,8 +861,10 @@ const interactionNotes = {};
 
 INTERACTION_TAXONOMY.forEach(({ names, dir, desc, note }) => {
   names.forEach((name) => {
-    interactionDescriptions[name] = desc;
-    if (note) interactionNotes[name] = note;
+    // in inglese descrizione e nota vengono da INTERAZIONI_EN (lingua.js)
+    const en = LANG === "en" && INTERAZIONI_EN[name];
+    interactionDescriptions[name] = en ? en[1] : desc;
+    if (en ? en[2] : note) interactionNotes[name] = en ? en[2] : note;
     if (dir === "N") SYMMETRIC_TYPES.add(name);
     else if (dir === "B") ARROW_REVERSED_TYPES.add(name);
     // dir === "A": resta "attivo" di default, non va in nessun Set.
@@ -918,12 +920,25 @@ function loadCsv(url) {
 
 // crediti.csv completa i crediti delle foto che in nodes.csv mancano
 // (generato da tools/aggiorna_crediti.py); se non c'è, il sito funziona uguale.
+// nomi_en.csv ha i nomi comuni inglesi, usati solo con la lingua inglese.
 Promise.all([
   loadCsv("nodes.csv"),
   loadCsv("edges.csv"),
   loadCsv("crediti.csv").catch(() => []),
+  LANG === "en" ? loadCsv("nomi_en.csv").catch(() => []) : [],
 ]).then(
-  ([nodes, allLinks, crediti]) => {
+  ([nodes, allLinks, crediti, nomiEn]) => {
+    const nomeEnPerSpecie = new Map(
+      nomiEn.map((r) => [r.scientific_name, (r.name_en || "").trim()])
+    );
+    if (LANG === "en") {
+      // Senza nome inglese resta il nome scientifico; quello italiano si
+      // conserva in name_it (lo usa il tour per trovare le specie d'esempio).
+      nodes.forEach((n) => {
+        n.name_it = n.name;
+        n.name = nomeEnPerSpecie.get(n.scientific_name) || n.scientific_name;
+      });
+    }
     const creditiPerSpecie = new Map(crediti.map((c) => [c.scientific_name, c]));
     nodes.forEach((n) => {
       const c = creditiPerSpecie.get(n.scientific_name);
@@ -1035,29 +1050,31 @@ Promise.all([
       .attr("id", "top-species-counter")
       .html(
         `<div class="tsc-section tsc-totals">
-          <div class="tsc-eyebrow">Contatore totale</div>
+          <div class="tsc-eyebrow">${t("contatore.totale")}</div>
           <div class="tsc-count">
             <span class="ni-count-badge">${nodes.length.toLocaleString(
-              "it-IT"
+              t("numeri")
             )}</span>
-            <span>specie</span>
+            <span>${t("contatore.specie")}</span>
           </div>
           <div class="tsc-count">
             <span class="ni-count-badge">${links.length.toLocaleString(
-              "it-IT"
+              t("numeri")
             )}</span>
-            <span>interazioni</span>
+            <span>${t("contatore.interazioni")}</span>
           </div>
         </div>
         <div class="tsc-divider"></div>
         <div class="tsc-section tsc-top" role="button" tabindex="0"
-             aria-label="Apri ${escapeHtml(maxDegreeNode.name)}, la specie più connessa">
-          <div class="tsc-eyebrow">Specie più connessa</div>
+             aria-label="${escapeHtml(
+               t("contatore.apri-piu-connessa", { nome: maxDegreeNode.name })
+             )}">
+          <div class="tsc-eyebrow">${t("contatore.piu-connessa")}</div>
           <div class="tsc-name">${escapeHtml(maxDegreeNode.name)}</div>
           <div class="tsc-sci">${escapeHtml(maxDegreeNode.scientific_name)}</div>
           <div class="tsc-count">
             <span class="ni-count-badge">${maxDegreeNode.degree}</span>
-            <span>specie</span>
+            <span>${t("contatore.specie")}</span>
           </div>
         </div>`
       );
@@ -1282,7 +1299,7 @@ Promise.all([
           <div class="ei-name">${escapeHtml(viewpointNode.name)}</div>
           <div class="ei-type" style="color:${interactionColor(
             interaction
-          )}">${interaction}</div>
+          )}">${etichettaInterazione(interaction)}</div>
           <div class="ei-name">${escapeHtml(otherNode.name)}</div>
         </div>
         <div class="ei-photos">
@@ -1316,7 +1333,7 @@ Promise.all([
       return `<button type="button" class="ei-node${
         n.notObserved ? " is-not-observed" : ""
       }" data-species="${escapeHtml(n.scientific_name)}" title="${escapeHtml(
-        `Apri ${n.name}` + (photoCreditText(n) ? `\n${photoCreditText(n)}` : "")
+        t("nodo.apri", { nome: n.name }) + (photoCreditText(n) ? `\n${photoCreditText(n)}` : "")
       )}">
             <img src="${escapeHtml(photoSrc(n))}" alt="${escapeHtml(n.name)}" />
           </button>`;
@@ -1549,7 +1566,7 @@ Promise.all([
       .attr("xlink:href", `#${textPathId}`)
       .attr("startOffset", "65%")
       .attr("text-anchor", "middle")
-      .text("Oasi Cave di Noale");
+      .text(t("mappa.oasi"));
 
     const ARC_BULGE = 0.134;
     // Distanza fra archi paralleli fra la stessa coppia di specie, in px.
@@ -1858,8 +1875,8 @@ Promise.all([
 
     let notObservedSpotlightActive = false;
     const NOT_OBSERVED_TOOLTIP = {
-      off: "Evidenzia le specie senza osservazioni su iNaturalist",
-      on: "Torna alla vista completa",
+      off: t("non-osservate.off"),
+      on: t("non-osservate.on"),
     };
     function syncNotObservedToggle(active) {
       notObservedSpotlightActive = active;
@@ -2005,7 +2022,7 @@ Promise.all([
         .attr("xlink:href", (d, i) => `#link-text-path-${links.indexOf(d)}`)
         .attr("startOffset", "50%")
         .attr("text-anchor", "middle")
-        .text((d) => labelForViewpoint(d, clickedId));
+        .text((d) => etichettaInterazione(labelForViewpoint(d, clickedId)));
 
       setActiveEdges(edgesToShow);
 
@@ -2023,9 +2040,9 @@ Promise.all([
           <span class="ni-icon-slot">${interactionIconHTML(type)}</span>
           <span class="ni-type" style="color:${interactionColor(
             type
-          )}">${type}</span>
+          )}">${etichettaInterazione(type)}</span>
           <span class="ni-count-badge">${count}</span>
-          <span class="ni-unit">specie</span>
+          <span class="ni-unit">${t("nodo.unita-specie")}</span>
         </div>`
         )
         .join("");
@@ -2052,24 +2069,24 @@ Promise.all([
           ${
             Number.isFinite(d.observations)
               ? `<div class="ni-stat-row">
-            <span>Osservazioni iNaturalist</span>
+            <span>${t("nodo.osservazioni")}</span>
             <span class="ni-stat-value">${d.observations}</span>
           </div>
           <div class="ni-divider"></div>`
               : ""
           }
           <div class="ni-stat-row">
-            <span>Specie con cui interagisce</span>
+            <span>${t("nodo.specie-interagisce")}</span>
             <span class="ni-stat-value">${
               adjacency[clickedId]?.size || 0
             }</span>
           </div>
           <div class="ni-divider"></div>
           <div class="ni-interactions">
-            <div class="ni-interactions-title">Interazioni</div>
+            <div class="ni-interactions-title">${t("nodo.interazioni")}</div>
             ${
               interactionRows ||
-              `<div class="ni-row ni-row--empty">Nessuna</div>`
+              `<div class="ni-row ni-row--empty">${t("nodo.nessuna")}</div>`
             }
           </div>
         </div>
@@ -2278,11 +2295,11 @@ Promise.all([
         .classed("is-inside", !s.outside)
         .classed("is-visible", true)
         .html(
-          `${escapeHtml(labelForViewpoint(edge, id))} ` +
+          `${escapeHtml(etichettaInterazione(labelForViewpoint(edge, id)))} ` +
             `<strong>${escapeHtml(other ? other.name : "")}</strong>` +
             (s.outside
               ? ""
-              : `<span class="rl-hint">punta il dito verso un collegamento</span>`)
+              : `<span class="rl-hint">${t("rotella.suggerimento")}</span>`)
         );
     }
 
@@ -2627,14 +2644,14 @@ Promise.all([
       .attr("type", "text")
       .attr("autocomplete", "off")
       .attr("spellcheck", "false")
-      .attr("placeholder", "Cerca una specie\u2026");
+      .attr("placeholder", t("ricerca.placeholder"));
 
     const searchClear = searchField
       .append("button")
       .attr("id", "search-clear")
       .attr("type", "button")
-      .attr("aria-label", "Cancella la ricerca")
-      .attr("data-tooltip", "Cancella la ricerca")
+      .attr("aria-label", t("ricerca.cancella"))
+      .attr("data-tooltip", t("ricerca.cancella"))
       .attr("data-tooltip-pos", "bottom")
       .attr("data-tooltip-align", "end")
       .text("\u00d7");
@@ -2934,7 +2951,10 @@ Promise.all([
 
     function findNodeByName(regex) {
       return nodes.find(
-        (n) => regex.test(n.name || "") || regex.test(n.scientific_name || "")
+        (n) =>
+          regex.test(n.name || "") ||
+          regex.test(n.name_it || "") ||
+          regex.test(n.scientific_name || "")
       );
     }
 
@@ -3175,23 +3195,23 @@ Promise.all([
       const glyph = (inner) =>
         `<span class="ni-count-badge guide-glyph">${inner}</span>`;
       return `
-        <p class="guide-step-body">Ogni interazione ha un verso, segnalato da una freccia che può essere:</p>
+        <p class="guide-step-body">${t("tour.verso")}</p>
         <div class="guide-legend">
-          <span>uscente</span>${glyph(
+          <span>${t("tour.verso.uscente")}</span>${glyph(
             '<span class="ni-chevron"></span>'
-          )}<span>(attiva)</span>
-          <span>entrante</span>${glyph(
+          )}<span>${t("tour.verso.attiva")}</span>
+          <span>${t("tour.verso.entrante")}</span>${glyph(
             '<span class="ni-chevron ni-chevron--in"></span>'
-          )}<span>(passiva)</span>
-          <span>pallino</span>${glyph(
+          )}<span>${t("tour.verso.passiva")}</span>
+          <span>${t("tour.verso.pallino")}</span>${glyph(
             '<span class="ni-dot"></span>'
-          )}<span>(neutra)</span>
+          )}<span>${t("tour.verso.neutra")}</span>
         </div>`;
     }
 
     function directionalSwitchHTML() {
       if (!tourPairIds) {
-        return `<p class="guide-step-body">Esempio non disponibile con i dati caricati in questo momento.</p>`;
+        return `<p class="guide-step-body">${t("tour.verso.non-disponibile")}</p>`;
       }
       const nodeA = nodeByName.get(tourPairIds.a);
       const nodeB = nodeByName.get(tourPairIds.b);
@@ -3199,28 +3219,28 @@ Promise.all([
       const labelB = labelForViewpoint(tourPairIds.edge, tourPairIds.b);
       const verb = (label, subject) => {
         const passive = interactionRole(label) === "passive";
+        const shown = etichettaInterazione(label);
+        // inglese: "is" solo davanti ai participi ("eaten by", non "has host")
+        const addIs = passive && (LANG !== "en" || / by$/.test(shown));
         const text =
-          passive && /a$/i.test(subject.trim())
-            ? label.replace(/(\w)ato da$/i, "$1ata da")
-            : label;
-        return `${passive ? "è " : ""}<em>${text}</em>`;
+          passive && LANG !== "en" && /a$/i.test(subject.trim())
+            ? shown.replace(/(\w)ato da$/i, "$1ata da")
+            : shown;
+        return `${addIs ? t("tour.verso.passivo") : ""}<em>${text}</em>`;
       };
       const flow = (from, label, to) => {
         const dir = interactionRole(label) === "passive" ? "in" : "out";
         return `<div class="guide-flow-row">
           <span class="guide-flow-name">${escapeHtml(from.name)}</span>
-          <span class="guide-flow-arrow guide-flow-arrow--${dir}"><span class="guide-flow-label">${label}</span></span>
+          <span class="guide-flow-arrow guide-flow-arrow--${dir}"><span class="guide-flow-label">${etichettaInterazione(label)}</span></span>
           <span class="guide-flow-name">${escapeHtml(to.name)}</span>
         </div>`;
       };
       return `
-        <p class="guide-step-body">A seconda del nodo cliccato, la stessa interazione si modifica. <strong>${
-          nodeA.name
-        }</strong> ${verb(labelA, nodeA.name)} <strong>${
-        nodeB.name
-      }</strong>, la stessa relazione può essere letta anche come <strong>${
-        nodeB.name
-      }</strong> ${verb(labelB, nodeB.name)} <strong>${nodeA.name}</strong>.</p>
+        <p class="guide-step-body">${t("tour.verso.esempio", {
+          a: `<strong>${nodeA.name}</strong> ${verb(labelA, nodeA.name)} <strong>${nodeB.name}</strong>`,
+          b: `<strong>${nodeB.name}</strong> ${verb(labelB, nodeB.name)} <strong>${nodeA.name}</strong>`,
+        })}</p>
         <div class="guide-flow">
           ${flow(nodeA, labelA, nodeB)}
           <div class="guide-flow-eq">=</div>
@@ -3237,7 +3257,7 @@ Promise.all([
         : null;
     }
     function neutralGuidanceHTML() {
-      return `<p class="guide-step-body">In alcuni casi le interazioni non hanno verso, sono reciproche. In queste relazioni non esistono attori attivi o passivi.</p>`;
+      return `<p class="guide-step-body">${t("tour.neutre")}</p>`;
     }
 
     // ---- Step "specie non osservate": bianco e nero = 0 osservazioni ----
@@ -3287,8 +3307,8 @@ Promise.all([
     }
     function notObservedGuidanceHTML() {
       return `
-        <p class="guide-step-body">Tutti possono contribuire ad ampliare o completare la rete, scopri quali specie non sono ancora state osservate nelle Cave di Noale, esplora l'oasi e prova a trovarle tu.</p>
-        <a class="guide-link" href="https://www.inaturalist.org/" target="_blank" rel="noopener">Scopri iNaturalist</a>`;
+        <p class="guide-step-body">${t("tour.non-osservate")}</p>
+        <a class="guide-link" href="https://www.inaturalist.org/" target="_blank" rel="noopener">${t("tour.non-osservate.link")}</a>`;
     }
 
     let notObservedToggle = d3.select("body").select("#not-observed-toggle");
@@ -3299,7 +3319,7 @@ Promise.all([
         .attr("id", "not-observed-toggle");
     }
     notObservedToggle
-      .attr("aria-label", "Solo specie non osservate")
+      .attr("aria-label", t("non-osservate.etichetta"))
       .html(
         `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3.2"/></svg>`
       );
@@ -3313,14 +3333,14 @@ Promise.all([
     // ---- Vista "Sguardo": stessa rete, stessa dimensione dei nodi, ma
     // disposti in anelli per numero di osservazioni a Cave di Noale ----
     const VIEW_RING_LABELS = [
-      "3+ osservazioni",
-      "2 osservazioni",
-      "1 osservazione",
-      "nessuna osservazione",
+      t("vista.anello-3"),
+      t("vista.anello-2"),
+      t("vista.anello-1"),
+      t("vista.anello-0"),
     ];
     const VIEW_TOOLTIP = {
-      off: "Disponi le specie per numero di osservazioni",
-      on: "Torna alla rete",
+      off: t("vista.off"),
+      on: t("vista.on"),
     };
     const obsRing = (d) => {
       const o = Number.isFinite(d.observations) ? d.observations : 0;
@@ -3480,7 +3500,7 @@ Promise.all([
       viewToggle = d3.select("body").append("button").attr("id", "view-toggle");
     }
     viewToggle
-      .attr("aria-label", "Vista per osservazioni")
+      .attr("aria-label", t("vista.etichetta"))
       .html(
         `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>`
       )
@@ -3494,7 +3514,7 @@ Promise.all([
       {
         key: "cover",
         modifier: "cover",
-        title: "Come leggere la rete",
+        title: t("tour.titolo"),
         onEnter() {
           resolveDirectionalExample();
           resolveNeutralExample();
@@ -3502,11 +3522,11 @@ Promise.all([
           tourFocusOnWholeGraph();
         },
         body: () =>
-          `<p class="guide-step-body">Ogni nodo è una specie.<br>Ogni collegamento è un'interazione.<br> Ogni interazione ha un verso.</p>`,
+          `<p class="guide-step-body">${t("tour.cover")}</p>`,
       },
       {
         key: "click-species",
-        title: "Le specie",
+        title: t("tour.specie.titolo"),
         onEnter() {
           tourResetVisuals();
           if (!tourPairIds) resolveDirectionalExample();
@@ -3522,11 +3542,11 @@ Promise.all([
           }
         },
         body: () =>
-          `<p class="guide-step-body">Clicca una specie per visualizzare le sue interazioni, scopri i dettagli nell'inspector sulla destra.</p>`,
+          `<p class="guide-step-body">${t("tour.specie")}</p>`,
       },
       {
         key: "directional-intro",
-        title: "Il verso dell'interazione",
+        title: t("tour.verso.titolo"),
         onEnter() {
           if (!tourPairIds) resolveDirectionalExample();
           if (tourPairIds) {
@@ -3547,7 +3567,7 @@ Promise.all([
       },
       {
         key: "directional-switch",
-        title: "Il verso dell'interazione",
+        title: t("tour.verso.titolo"),
         onEnter() {
           if (!tourPairIds) {
             tourClearSpotlight();
@@ -3567,7 +3587,7 @@ Promise.all([
       },
       {
         key: "neutral",
-        title: "Interazioni neutre",
+        title: t("tour.neutre.titolo"),
         onEnter() {
           if (!tourNeutralPair) resolveNeutralExample();
           if (tourNeutralPair) {
@@ -3592,7 +3612,7 @@ Promise.all([
       },
       {
         key: "notobserved",
-        title: "Specie non ancora osservate",
+        title: t("tour.non-osservate.titolo"),
         onEnter() {
           applyNotObservedSpotlight(true);
           const pts = nodes.filter((n) => n.notObserved);
@@ -3607,13 +3627,13 @@ Promise.all([
       {
         key: "closing",
         modifier: "cover",
-        title: "Esplora la rete",
+        title: t("tour.chiusura.titolo"),
         onEnter() {
           tourClearSpotlight();
           tourFocusOnWholeGraph();
         },
         body: () =>
-          `<p class="guide-step-body">Avvicinati, allontanati, spostati nello spazio, trascina i nodi per districare la rete e farti spazio tra le interazioni non-umane che tengono viva l'oasi.</p>`,
+          `<p class="guide-step-body">${t("tour.chiusura")}</p>`,
       },
     ];
 
@@ -3626,20 +3646,20 @@ Promise.all([
       guideCard
         .append("button")
         .attr("id", "guide-close")
-        .attr("aria-label", "Chiudi il tour")
+        .attr("aria-label", t("tour.chiudi"))
         .text("×");
       guideCard.append("div").attr("id", "guide-step-content");
       const guideNav = guideCard.append("div").attr("id", "guide-nav");
       guideNav
         .append("button")
         .attr("id", "guide-prev")
-        .attr("aria-label", "Step precedente")
+        .attr("aria-label", t("tour.precedente"))
         .text("");
       guideNav.append("div").attr("id", "guide-dots");
       guideNav
         .append("button")
         .attr("id", "guide-next")
-        .attr("aria-label", "Step successivo")
+        .attr("aria-label", t("tour.successivo"))
         .text("");
     }
 
@@ -3775,10 +3795,10 @@ Promise.all([
         .select("body")
         .append("button")
         .attr("id", "guide-toggle")
-        .attr("aria-label", "Apri il tour")
+        .attr("aria-label", t("tour.apri"))
         .text("?");
     }
-    guideToggle.attr("aria-label", "Come leggere la rete");
+    guideToggle.attr("aria-label", t("tour.titolo"));
     guideToggle.on("click", openGuide);
 
     node.on("click.tour", (event, d) => {
