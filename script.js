@@ -1689,7 +1689,9 @@ Promise.all([
       const ry = nearPoint.y - oy;
       const radius = Math.hypot(rx, ry) || 1;
       const ccwSign = geomTangent.x * -ry + geomTangent.y * rx >= 0 ? 1 : -1;
-      const dtheta = (ccwSign * NODE_CHEVRON_GAP) / radius;
+      // __lift: di quanto il marker è uscito verso l'anello della rotella
+      const gap = NODE_CHEVRON_GAP + (nodeId === selectedNodeId ? d.__lift || 0 : 0);
+      const dtheta = (ccwSign * gap) / radius;
       const cosT = Math.cos(dtheta);
       const sinT = Math.sin(dtheta);
 
@@ -2224,6 +2226,28 @@ Promise.all([
         .style("fill", (p) => (!edge || p === edge ? "#F4F4F4" : CHEVRON_AVAILABLE));
     }
 
+    // Fa scivolare il marker del collegamento lungo la sua linea: fino quasi
+    // all'anello (to = s.lift) o di nuovo al bordo del nodo (to = 0). Se
+    // cambia idea a metà, riparte da dove si trova.
+    function rotellaLift(edge, to) {
+      const i = links.indexOf(edge);
+      const el =
+        document.getElementById(`node-chevron-${i}`) ||
+        document.getElementById(`node-dot-${i}`);
+      if (!el) return;
+      d3.select(el)
+        .transition("lift")
+        .duration(160)
+        .ease(d3.easeCubicOut)
+        .tween("lift", () => {
+          const interp = d3.interpolate(edge.__lift || 0, to);
+          return (t) => {
+            edge.__lift = interp(t);
+            updateNodeChevrons();
+          };
+        });
+    }
+
     function rotellaRender() {
       const s = rotellaState;
       const edge = s.edges[s.index];
@@ -2232,6 +2256,8 @@ Promise.all([
       const other = nodeByName.get(otherNodeIdOf(edge, id));
       if (other && edge !== s.shownEdge) {
         // il cerchio della nuova specie si stringe su di lei comparendo
+        if (s.shownEdge) rotellaLift(s.shownEdge, 0);
+        rotellaLift(edge, s.lift);
         s.shownEdge = edge;
         rotellaMarkers(edge);
         const rFinal = sizeScale(other.degree) + 6 / s.k;
@@ -2281,6 +2307,8 @@ Promise.all([
           outside: false,
           wasFixed: d.fx != null,
           k,
+          // il marker scelto esce fin quasi all'anello
+          lift: r - sizeScale(d.degree) - NODE_CHEVRON_GAP - 5 / k,
           shownEdge: null,
           // l'anello esce dal bordo del nodo e si allarga fino al suo posto
           ring: container
@@ -2336,6 +2364,7 @@ Promise.all([
         rotellaState = null;
         rotellaEndedAt = Date.now();
         s.edges.forEach((e) => setEdgeHover(e, false));
+        if (s.shownEdge) rotellaLift(s.shownEdge, 0);
         rotellaMarkers(null);
         // l'anello rientra nel nodo, il cerchio della specie svanisce
         s.ring
