@@ -92,9 +92,9 @@ const NOT_OBSERVED_LIFT = 0.25;
 
 const EDGE_COLOR = "#464646";
 const EDGE_COLOR_ACTIVE = "#F4F4F4";
-// Marker dei collegamenti "disponibili" (si possono scegliere ma non sono
-// evidenziati): colore in style.css (--chevron-available), così si cambia
-// in un posto solo.
+// Marker attorno al nodo protagonista che si possono scegliere con la rotella
+// ma non sono puntati: colore in style.css (--chevron-available). I marker
+// vicino agli altri nodi restano nel grigio delle linee (EDGE_COLOR).
 const CHEVRON_AVAILABLE = "var(--chevron-available)";
 
 const FOCUS_DIM_OPACITY = 0.15;
@@ -1244,7 +1244,7 @@ Promise.all([
       return roleMarkerId(d, d === selectedEdgeDatum);
     }
     function farDotFill(d) {
-      return d === selectedEdgeDatum ? EDGE_COLOR_ACTIVE : CHEVRON_AVAILABLE;
+      return d === selectedEdgeDatum ? EDGE_COLOR_ACTIVE : EDGE_COLOR;
     }
     function updateFarMarkerHighlight() {
       nodeFarChevrons.selectAll("path").attr("marker-end", farChevronMarker);
@@ -1410,10 +1410,10 @@ Promise.all([
         stroke: INTERACTION_COLOR.passive,
         opacity: 1,
       },
-      // chevron "disponibili": vicino agli altri nodi a riposo, e attorno al
-      // nodo quelle non scelte mentre si usa la rotella
-      { id: "node-chevron-marker-active-far", stroke: CHEVRON_AVAILABLE, opacity: 1 },
-      { id: "node-chevron-marker-passive-far", stroke: CHEVRON_AVAILABLE, opacity: 1 },
+      // chevron vicino agli altri nodi, a riposo: grigio pieno delle linee
+      { id: "node-chevron-marker-active-far", stroke: EDGE_COLOR, opacity: 1 },
+      { id: "node-chevron-marker-passive-far", stroke: EDGE_COLOR, opacity: 1 },
+      // attorno al nodo protagonista, quelle non puntate durante la rotella
       { id: "node-chevron-marker-active-dim", stroke: CHEVRON_AVAILABLE, opacity: 1 },
       { id: "node-chevron-marker-passive-dim", stroke: CHEVRON_AVAILABLE, opacity: 1 },
       { id: "node-chevron-marker-neutral-dim", stroke: CHEVRON_AVAILABLE, opacity: 1 },
