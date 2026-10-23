@@ -39,12 +39,14 @@ document.head.insertAdjacentHTML(
   `<style>
     html:not([data-lang="en"]) [data-lang="en"],
     html[data-lang="en"] [data-lang="it"] { display: none !important; }
+    /* z-index 2: sopra l'alone dei bordi della rete (1), sotto contatore,
+       inspector, ricerca e guida (5 e oltre). */
     .lang-corner {
-      position: fixed; right: 32px; bottom: 28px; z-index: 1000;
+      position: fixed; right: 32px; bottom: 28px; z-index: 2;
       font-family: "Inconsolata", monospace; font-size: 14px;
-      color: var(--text, #f4f4f4); text-decoration: none;
+      color: var(--text-dim, #9a9a9c); text-decoration: none;
     }
-    .lang-corner:hover { text-decoration: underline; }
+    .lang-corner:hover { color: var(--text, #f4f4f4); }
     .mostra .lang-corner { display: none; }
   </style>`
 );
