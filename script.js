@@ -2203,14 +2203,22 @@ Promise.all([
         const edges = links.filter((l) => l.source === d || l.target === d);
         if (!edges.length) return false;
         selectNode(d);
-        const angleOf = (l) => {
-          const o = l.source === d ? l.target : l.source;
-          return rotellaAngle(d.x, d.y, o.x, o.y);
-        };
-        edges.sort((a, b) => angleOf(a) - angleOf(b));
-        // anello e pallino hanno la stessa misura sullo schermo a ogni zoom
+        // l'anello ha la stessa misura sullo schermo a ogni zoom
         const k = d3.zoomTransform(svg.node()).k;
         const r = sizeScale(d.degree) + ROTELLA_RING_GAP_PX / k;
+        // Ordine come si vede a schermo: l'angolo del punto in cui la curva
+        // del collegamento attraversa l'anello (non la direzione dell'altra
+        // specie, che per gli archi e i collegamenti paralleli è diversa).
+        const angle = new Map();
+        edges.forEach((l) => {
+          const o = l.source === d ? l.target : l.source;
+          const { ox, oy, R, p1, p2 } = arcGeometry(l);
+          const p =
+            arcCircleIntersection(ox, oy, R, d.x, d.y, r, o.x, o.y) ||
+            (l.source === d ? p1 : p2);
+          angle.set(l, rotellaAngle(d.x, d.y, p.x, p.y));
+        });
+        edges.sort((a, b) => angle.get(a) - angle.get(b));
         rotellaState = {
           node: d,
           el,
