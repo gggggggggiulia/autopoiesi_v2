@@ -2263,6 +2263,7 @@ Promise.all([
         const rFinal = sizeScale(other.degree) + 6 / s.k;
         s.target
           .interrupt()
+          .classed("is-not-observed", other.notObserved)
           .attr("cx", other.x)
           .attr("cy", other.y)
           .attr("r", rFinal + 10 / s.k)
@@ -2314,6 +2315,8 @@ Promise.all([
           ring: container
             .append("circle")
             .attr("class", "rotella-ring")
+            // tratteggio = specie non osservata, come il bordo dei nodi
+            .classed("is-not-observed", d.notObserved)
             .attr("cx", d.x)
             .attr("cy", d.y)
             .attr("r", sizeScale(d.degree))

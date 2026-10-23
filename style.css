@@ -1216,13 +1216,16 @@ body.rotella-attiva #top-species-counter {
   fill: none;
   stroke: var(--text);
   stroke-width: 1;
-  stroke-dasharray: 3 4;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
 .rotella-target {
   stroke-width: 1.5;
-  stroke-dasharray: none;
+}
+/* tratteggiati se la specie non è ancora stata osservata (come i nodi) */
+.rotella-ring.is-not-observed,
+.rotella-target.is-not-observed {
+  stroke-dasharray: 4 3;
 }
 #rotella-label {
   position: fixed;
