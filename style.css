@@ -440,6 +440,7 @@ button#reset:hover {
   flex-direction: column;
   margin-top: 10px;
   padding: 10px 12px;
+  line-height: 1.4; /* come nelle altre pagine (info.css), stesse distanze tra le voci */
 }
 .menu a {
   color: var(--text);
