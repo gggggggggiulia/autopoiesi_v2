@@ -29,6 +29,7 @@
   --line-dim: #8a8a8c;
   --panel: #1a1a1ac1;
   --font: "Inconsolata", monospace;
+  --chevron-available: #9a9a9c; /* marker non puntati attorno al nodo, durante la rotella */
   --fs-base: 16px;
   --fs-small: 14px;
   --fs-tiny: 12px;
@@ -1043,10 +1044,6 @@ body.spotlight-anim path.link-path {
   font-style: italic;
   color: var(--text-dim);
 }
-#top-species-counter.is-covered {
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* Alone dei bordi: si spegne mentre la vista si muove (classe messa da
    script.js, vedi setMoving) e torna a riposo con una dissolvenza. */
@@ -1202,4 +1199,63 @@ body.is-moving #edge-blur {
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+}
+
+/* ---- Rotella: tieni premuto un nodo e ruota il dito (vedi script.js) ---- */
+/* mentre si sceglie l'inspector sparisce, così la rete si vede tutta */
+body.rotella-attiva #info-box {
+  visibility: hidden;
+}
+/* ...e anche il contatore, che ricompare al rilascio */
+body.rotella-attiva #top-species-counter {
+  opacity: 0;
+  pointer-events: none;
+}
+.rotella-ring,
+.rotella-target {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.rotella-target {
+  stroke-width: 1.5;
+}
+/* tratteggiati se la specie non è ancora stata osservata (come i nodi) */
+.rotella-ring.is-not-observed,
+.rotella-target.is-not-observed {
+  stroke-dasharray: 4 3;
+}
+#rotella-label {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translate(-50%, -6px);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 7;
+  max-width: calc(100vw - 32px);
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background-color: var(--panel);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  text-align: center;
+  pointer-events: none;
+}
+#rotella-label.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+#rotella-label .rl-hint {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-dim);
+  font-size: var(--fs-small);
+}
+#rotella-label.is-inside strong {
+  font-weight: inherit;
 }
