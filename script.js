@@ -2146,7 +2146,10 @@ Promise.all([
     // quello illuminato; sollevandolo sopra il nodo non si apre niente.
 
     const ROTELLA_HYSTERESIS_DEG = 2; // margine per non far tremare la scelta tra due vicini
-    const ROTELLA_RING_GAP_PX = 22; // distanza dell'anello dal bordo del nodo, sullo schermo
+    // L'anello sta fuori dai marker attorno al nodo (alti circa
+    // ROTELLA_MARKER_SPACE, in unità della rete) più uno spazio fisso sullo schermo.
+    const ROTELLA_MARKER_SPACE = 12;
+    const ROTELLA_RING_GAP_PX = 14;
     const ROTELLA_MIN_RADIUS_PX = 28; // sotto questa distanza il dito è "sul nodo"
     let rotellaState = null;
     let rotellaEndedAt = 0; // per ignorare il click che il browser manda al rilascio
@@ -2176,6 +2179,17 @@ Promise.all([
       return rotellaAngle(d.x, d.y, p.x, p.y);
     }
 
+    // Marker attorno al nodo: durante la scelta resta bianco solo quello del
+    // collegamento puntato, gli altri diventano grigi; con null tornano normali.
+    function rotellaMarkers(edge) {
+      nodeChevrons
+        .selectAll("path")
+        .attr("marker-end", (p) => (edge ? roleMarkerId(p, p === edge) : nearChevronMarker(p)));
+      nodeNeutralDots
+        .selectAll("circle")
+        .attr("fill", (p) => (!edge || p === edge ? "#F4F4F4" : EDGE_COLOR));
+    }
+
     function rotellaRender() {
       const s = rotellaState;
       const edge = s.edges[s.index];
@@ -2185,6 +2199,7 @@ Promise.all([
       if (other && edge !== s.shownEdge) {
         // il cerchio della nuova specie si stringe su di lei comparendo
         s.shownEdge = edge;
+        rotellaMarkers(edge);
         const rFinal = sizeScale(other.degree) + 6 / s.k;
         s.target
           .interrupt()
@@ -2218,7 +2233,7 @@ Promise.all([
         selectNode(d);
         // l'anello ha la stessa misura sullo schermo a ogni zoom
         const k = d3.zoomTransform(svg.node()).k;
-        const r = sizeScale(d.degree) + ROTELLA_RING_GAP_PX / k;
+        const r = sizeScale(d.degree) + ROTELLA_MARKER_SPACE + ROTELLA_RING_GAP_PX / k;
         // si parte dal collegamento che attraversa l'anello più in alto
         let index = 0;
         edges.forEach((l, i) => {
@@ -2287,6 +2302,7 @@ Promise.all([
         rotellaState = null;
         rotellaEndedAt = Date.now();
         s.edges.forEach((e) => setEdgeHover(e, false));
+        rotellaMarkers(null);
         // l'anello rientra nel nodo, il cerchio della specie svanisce
         s.ring
           .interrupt()
