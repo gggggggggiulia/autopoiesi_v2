@@ -918,8 +918,8 @@ function loadCsv(url) {
     });
 }
 
-// crediti.csv completa i crediti delle foto che in nodes.csv mancano
-// (generato da tools/aggiorna_crediti.py); se non c'è, il sito funziona uguale.
+// crediti.csv completa o corregge i crediti delle foto di nodes.csv (primo
+// elenco da tools/aggiorna_crediti.py); se non c'è, il sito funziona uguale.
 // nomi_en.csv ha i nomi comuni inglesi, usati solo con la lingua inglese.
 Promise.all([
   loadCsv("nodes.csv"),
@@ -942,7 +942,7 @@ Promise.all([
     const creditiPerSpecie = new Map(crediti.map((c) => [c.scientific_name, c]));
     nodes.forEach((n) => {
       const c = creditiPerSpecie.get(n.scientific_name);
-      if (c && !n.image_credit) {
+      if (c && c.image_credit) {
         n.image_credit = c.image_credit;
         n.image_license = c.image_license;
       }
